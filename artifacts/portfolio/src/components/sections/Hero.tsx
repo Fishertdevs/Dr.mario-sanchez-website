@@ -1,70 +1,91 @@
 import { motion } from "framer-motion";
-import heroBg from "@/assets/hero-bg.jpg";
+import doctorPhoto from "@assets/image_1781821171932.png";
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-black">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={heroBg}
-          alt="Abstract Medical Background"
-          className="w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-background"></div>
-      </div>
+    <section
+      id="hero"
+      className="min-h-screen bg-white flex items-stretch overflow-hidden"
+      data-testid="section-hero"
+    >
+      <div className="container mx-auto px-6 md:px-12 pt-20 flex items-center">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-0 items-center min-h-[calc(100vh-5rem)]">
 
-      <div className="container relative z-10 mx-auto px-6 md:px-12 pt-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2 className="text-muted text-xs md:text-sm font-semibold tracking-[0.3em] uppercase mb-4">
-            Terapeuta Respiratorio &middot; Salubrista Público
-          </h2>
-        </motion.div>
-
-        <motion.h1
-          className="font-serif text-5xl md:text-7xl lg:text-8xl text-white font-bold tracking-tight mb-8 leading-tight"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        >
-          DR. MARIO<br />SANCHEZ
-        </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-2xl mx-auto"
-        >
-          <p className="text-lg md:text-xl text-gray-300 font-light tracking-wide leading-relaxed">
-            "CLAVES PARA UNA VIDA MÁS SALUDABLE DESDE PROMOCIÓN Y PREVENCIÓN"
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <a
-            href="#about"
-            className="flex flex-col items-center justify-center gap-2 text-white/50 hover:text-white transition-colors"
+          {/* Left: Text content */}
+          <motion.div
+            className="flex flex-col justify-center py-16 md:py-0"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="text-xs uppercase tracking-widest">Descubrir</span>
-            <div className="w-[1px] h-12 bg-white/20 relative overflow-hidden">
-              <motion.div
-                className="absolute top-0 left-0 w-full h-1/2 bg-white"
-                animate={{ top: ["-50%", "100%"] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-              />
-            </div>
-          </a>
-        </motion.div>
+            <motion.p
+              className="font-serif text-xs md:text-sm tracking-[0.35em] uppercase text-black/50 mb-2 leading-relaxed"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.2 }}
+            >
+              Terapeuta Respiratorio
+            </motion.p>
+            <motion.p
+              className="font-serif text-xs md:text-sm tracking-[0.35em] uppercase text-black/50 mb-10 leading-relaxed"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.3 }}
+            >
+              Salubrista Público
+            </motion.p>
+
+            <motion.h1
+              className="font-serif text-[3.5rem] sm:text-[4.5rem] md:text-[5rem] lg:text-[6rem] xl:text-[7rem] font-bold text-black leading-[0.9] tracking-tight"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              DR.&nbsp;MARIO<br />SANCHEZ
+            </motion.h1>
+
+            <motion.div
+              className="mt-12 flex items-center gap-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+            >
+              <div className="w-12 h-px bg-black/30" />
+              <p className="font-serif text-xs tracking-[0.2em] uppercase text-black/40">
+                Claves para una vida más saludable
+              </p>
+            </motion.div>
+
+            <motion.a
+              href="#about"
+              data-testid="link-hero-cta"
+              className="mt-12 inline-flex items-center gap-3 font-serif text-sm tracking-[0.2em] uppercase text-black border border-black px-8 py-4 hover:bg-black hover:text-white transition-all duration-300 w-fit"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1 }}
+            >
+              Conocer más
+              <span className="text-lg leading-none">→</span>
+            </motion.a>
+          </motion.div>
+
+          {/* Right: Doctor photo */}
+          <motion.div
+            className="relative flex items-end justify-center md:justify-end h-full min-h-[420px] md:min-h-0"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <img
+              src={doctorPhoto}
+              alt="Dr. Mario Sanchez"
+              data-testid="img-doctor-hero"
+              className="w-full max-w-xs sm:max-w-sm md:max-w-none md:w-auto md:h-[85vh] object-contain object-bottom"
+              style={{ maxHeight: "85vh" }}
+            />
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
