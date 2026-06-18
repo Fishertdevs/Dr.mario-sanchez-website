@@ -1,0 +1,20 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "xldEUGJgZq08WoLHRkZ8A"
+uri = "file://artifacts/portfolio/src/assets/hero-bg.jpg"
+type = "image"
+title = "Abstract modern medical background, clean elegant black and white or dark grey style, smooth gradient"
+
+[[outputs]]
+id = "aovKX0oXJdrPnwOmrtpd9"
+uri = "file://artifacts/portfolio/src/assets/about-bg.jpg"
+type = "image"
+title = "Professional healthcare clinic environment, blurred abstract, dark charcoal and white aesthetic"
+
+[[outputs]]
+id = "hfEhrIya9K6BBj0MB0Daz"
+uri = "file://artifacts/portfolio/src/assets/service-bg.jpg"
+type = "image"
+title = "Abstract respiratory or lungs concept, elegant line art or soft lighting, dark theme"
