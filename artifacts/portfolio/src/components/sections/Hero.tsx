@@ -119,8 +119,8 @@ export default function Hero() {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1
-            className="font-serif font-bold text-4xl leading-[1.1] mb-5"
-            style={{ color: BLACK }}
+            className="font-serif font-bold leading-[1.1] mb-5"
+            style={{ color: BLACK, fontSize: 'clamp(1.4rem, 6vw, 2rem)' }}
           >
             Terapeuta Respiratorio<br />Salubrista Público
           </h1>
