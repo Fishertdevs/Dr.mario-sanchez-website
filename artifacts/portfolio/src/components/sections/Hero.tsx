@@ -102,10 +102,10 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Black wave — desktop only (mobile wave lives inside the image container below) */}
+      {/* Green wave — desktop only, replaces the black one */}
       <div className="absolute bottom-0 left-0 w-full hidden md:block" style={{ lineHeight: 0, zIndex: 10 }}>
         <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
-          <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="#0a0a0a" />
+          <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill={GREEN} />
         </svg>
       </div>
 
@@ -168,7 +168,7 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Doctor photo — fixed 55vh, wave lives HERE so it's always at the image bottom */}
+        {/* Doctor photo — fixed 55vh, green wave at the bottom */}
         <motion.div
           className="relative w-full"
           style={{ height: '55vh' }}
@@ -182,10 +182,10 @@ export default function Hero() {
             data-testid="img-doctor-hero-mobile"
             className="absolute bottom-0 left-0 w-full h-full object-contain object-bottom"
           />
-          {/* Mobile wave — always at the true bottom of the image container */}
+          {/* Mobile wave — green, always at the true bottom of the image container */}
           <div className="absolute bottom-0 left-0 w-full" style={{ lineHeight: 0, zIndex: 10 }}>
             <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
-              <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="#0a0a0a" />
+              <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill={GREEN} />
             </svg>
           </div>
         </motion.div>
