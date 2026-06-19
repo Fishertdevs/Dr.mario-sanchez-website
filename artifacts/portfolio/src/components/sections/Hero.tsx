@@ -102,8 +102,8 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Black wave at bottom of hero — overlaps image on all breakpoints */}
-      <div className="absolute bottom-0 left-0 w-full" style={{ lineHeight: 0, zIndex: 10 }}>
+      {/* Black wave at bottom of hero — desktop only; mobile transition handled by About's top wave */}
+      <div className="absolute bottom-0 left-0 w-full hidden md:block" style={{ lineHeight: 0, zIndex: 10 }}>
         <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
           <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="#0a0a0a" />
         </svg>
@@ -119,14 +119,13 @@ export default function Hero() {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1
-            className="font-serif font-bold leading-[1.15] mb-5 w-full overflow-hidden"
+            className="font-serif font-bold leading-[1.15] mb-5 w-full"
             style={{ color: BLACK }}
           >
-            {/* Each span whitespace-nowrap + font scales to fit the container width */}
-            <span className="block text-center whitespace-nowrap" style={{ fontSize: 'min(calc((100vw - 40px) / 12), 2.5rem)' }}>
+            <span className="block text-center whitespace-nowrap" style={{ fontSize: 'min(calc((100vw - 64px) / 13.5), 2.5rem)' }}>
               Terapeuta Respiratorio
             </span>
-            <span className="block text-center whitespace-nowrap" style={{ fontSize: 'min(calc((100vw - 40px) / 12), 2.5rem)' }}>
+            <span className="block text-center whitespace-nowrap" style={{ fontSize: 'min(calc((100vw - 64px) / 13.5), 2.5rem)' }}>
               Salubrista Público
             </span>
           </h1>
