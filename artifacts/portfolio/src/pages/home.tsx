@@ -6,6 +6,7 @@ import Contact from "@/components/sections/Contact";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CookieBanner from "@/components/layout/CookieBanner";
+import WhatsAppButton from "@/components/layout/WhatsAppButton";
 
 export default function Home() {
   return (
@@ -13,13 +14,14 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <About />
         <Topics />
+        <About />
         <Blog />
         <Contact />
       </main>
       <Footer />
       <CookieBanner />
+      <WhatsAppButton phone="573143127513" />
     </div>
   );
 }

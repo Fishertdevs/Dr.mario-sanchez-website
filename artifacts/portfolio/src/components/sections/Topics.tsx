@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 
+const GREEN = "#2d5a27";
+
 const topics = [
   "Riesgo cardiovascular a un latido de ti",
   "Que tu única adicción sea el amor propio",
@@ -18,70 +20,78 @@ const topics = [
 export default function Topics() {
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.09 } },
   };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
   };
 
   return (
-    <section id="topics" className="py-24 md:py-32 bg-secondary/30 border-y border-border">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="max-w-3xl mx-auto text-center mb-20">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
+    <section id="topics" className="relative" style={{ background: GREEN }} data-testid="section-topics">
+      {/* Wave top — white fills into previous white hero section */}
+      <div className="w-full overflow-hidden" style={{ lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+          <path d="M0,60 C480,0 960,90 1440,30 L1440,0 L0,0 Z" fill="white" />
+        </svg>
+      </div>
+
+      <div className="container mx-auto px-6 md:px-12 py-20 md:py-28">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <motion.p
+            className="font-serif text-xs tracking-[0.25em] uppercase mb-4"
+            style={{ color: 'rgba(255,255,255,0.6)' }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-sm font-bold tracking-[0.2em] text-muted-foreground uppercase mb-4"
+            transition={{ duration: 0.7 }}
           >
             Especialidades & Charlas
-          </motion.h2>
-          <motion.h3 
+          </motion.p>
+          <motion.h2
+            className="font-serif text-4xl md:text-5xl font-bold text-white leading-tight"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-serif text-4xl md:text-5xl font-bold text-foreground leading-tight"
           >
             Temas de Salud y Prevención
-          </motion.h3>
+          </motion.h2>
         </div>
 
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {topics.map((topic, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
-              className="group relative bg-background p-8 border border-border hover:border-primary/30 transition-all duration-500 hover:-translate-y-1 shadow-sm hover:shadow-md"
+              className="group relative bg-white p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="text-primary/20 font-serif text-5xl font-bold absolute top-4 right-6 opacity-30 group-hover:opacity-10 transition-opacity">
+              <div
+                className="font-serif text-5xl font-bold absolute top-4 right-6 opacity-10 group-hover:opacity-5 transition-opacity"
+                style={{ color: GREEN }}
+              >
                 {(index + 1).toString().padStart(2, '0')}
               </div>
-              <h4 className="font-serif text-lg font-medium text-foreground relative z-10 leading-snug pr-8">
+              <h4 className="font-serif text-lg font-medium relative z-10 leading-snug pr-8" style={{ color: '#0a0a0a' }}>
                 {topic}
               </h4>
-              <div className="w-8 h-[1px] bg-primary mt-6 transition-all duration-300 group-hover:w-16"></div>
+              <div className="w-8 h-[1px] mt-6 transition-all duration-300 group-hover:w-16" style={{ background: GREEN }} />
             </motion.div>
           ))}
         </motion.div>
+      </div>
+
+      {/* Wave bottom — white fills down into white About section */}
+      <div className="w-full overflow-hidden" style={{ lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+          <path d="M0,30 C360,90 1080,0 1440,60 L1440,90 L0,90 Z" fill="white" />
+        </svg>
       </div>
     </section>
   );

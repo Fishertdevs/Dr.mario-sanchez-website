@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 
+const GREEN = "#2d5a27";
+
 const posts = [
   {
     id: 1,
@@ -31,7 +33,6 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
 };
-
 const itemVariants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
@@ -39,14 +40,21 @@ const itemVariants = {
 
 export default function Blog() {
   return (
-    <section id="blog" className="py-24 md:py-36 bg-white" data-testid="section-blog">
-      <div className="container mx-auto px-6 md:px-12">
+    <section id="blog" className="relative" style={{ background: GREEN }} data-testid="section-blog">
+      {/* Wave top — green fills into white About */}
+      <div className="w-full overflow-hidden" style={{ lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+          <path d="M0,60 C480,0 960,90 1440,30 L1440,0 L0,0 Z" fill="white" />
+        </svg>
+      </div>
 
+      <div className="container mx-auto px-6 md:px-12 py-20 md:py-28">
         {/* Header */}
-        <div className="border-b border-black/10 pb-10 mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div className="border-b pb-10 mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
           <div>
             <motion.p
-              className="font-serif text-xs tracking-[0.25em] uppercase text-black/40 mb-3"
+              className="font-serif text-xs tracking-[0.25em] uppercase mb-3"
+              style={{ color: 'rgba(255,255,255,0.55)' }}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -55,7 +63,7 @@ export default function Blog() {
               Artículos & Reflexiones
             </motion.p>
             <motion.h2
-              className="font-serif text-5xl md:text-6xl font-bold text-black leading-tight"
+              className="font-serif text-5xl md:text-6xl font-bold text-white leading-tight"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -65,7 +73,8 @@ export default function Blog() {
             </motion.h2>
           </div>
           <motion.p
-            className="font-serif text-base text-black/50 max-w-xs leading-relaxed"
+            className="font-serif text-base max-w-xs leading-relaxed"
+            style={{ color: 'rgba(255,255,255,0.6)' }}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -81,44 +90,52 @@ export default function Blog() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-black/10"
+          className="grid grid-cols-1 md:grid-cols-3 gap-0 border"
+          style={{ borderColor: 'rgba(255,255,255,0.2)' }}
         >
           {posts.map((post, index) => (
             <motion.article
               key={post.id}
               variants={itemVariants}
               data-testid={`card-blog-${post.id}`}
-              className={`group p-8 md:p-10 flex flex-col gap-6 cursor-pointer hover:bg-black hover:text-white transition-all duration-500 ${
-                index < posts.length - 1 ? "border-b md:border-b-0 md:border-r border-black/10" : ""
+              className={`group p-8 md:p-10 flex flex-col gap-6 cursor-pointer bg-white transition-all duration-500 hover:bg-black ${
+                index < posts.length - 1 ? "border-b md:border-b-0 md:border-r" : ""
               }`}
+              style={{ borderColor: 'rgba(255,255,255,0.2)' }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-serif text-xs tracking-[0.2em] uppercase opacity-50">
+                <span className="font-serif text-xs tracking-[0.2em] uppercase opacity-50 text-black group-hover:text-white">
                   {post.date}
                 </span>
-                <span className="font-serif text-xs tracking-[0.15em] uppercase border border-current px-3 py-1 opacity-40">
+                <span className="font-serif text-xs tracking-[0.15em] uppercase border border-current px-3 py-1 opacity-40 text-black group-hover:text-white">
                   {post.tag}
                 </span>
               </div>
 
-              <div className="w-full h-px bg-current opacity-10" />
+              <div className="w-full h-px bg-black opacity-10 group-hover:bg-white" />
 
-              <h3 className="font-serif text-xl md:text-2xl font-bold leading-snug">
+              <h3 className="font-serif text-xl md:text-2xl font-bold leading-snug text-black group-hover:text-white">
                 {post.title}
               </h3>
 
-              <p className="font-serif text-sm leading-relaxed opacity-60 flex-1">
+              <p className="font-serif text-sm leading-relaxed opacity-60 flex-1 text-black group-hover:text-white">
                 {post.excerpt}
               </p>
 
-              <div className="flex items-center gap-3 font-serif text-xs tracking-[0.2em] uppercase opacity-50 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-3 font-serif text-xs tracking-[0.2em] uppercase opacity-50 group-hover:opacity-100 transition-opacity text-black group-hover:text-white">
                 <span>Leer más</span>
                 <span>→</span>
               </div>
             </motion.article>
           ))}
         </motion.div>
+      </div>
 
+      {/* Wave bottom — white fills into white Contact section */}
+      <div className="w-full overflow-hidden" style={{ lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+          <path d="M0,30 C360,90 1080,0 1440,60 L1440,90 L0,90 Z" fill="white" />
+        </svg>
       </div>
     </section>
   );
