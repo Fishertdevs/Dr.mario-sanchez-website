@@ -21,67 +21,64 @@ export default function About() {
         </svg>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto px-6 md:px-16 py-16 md:py-24">
+      {/* Content — desktop: two columns, mobile: stacked */}
+      <div className="flex flex-col lg:flex-row items-stretch min-h-[80vh]">
 
-        {/* Section label */}
-        <motion.p
-          className="font-serif text-center text-xs tracking-[0.3em] uppercase font-bold mb-14"
-          style={{ color: GREEN }}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+        {/* Photo column — fills height like hero */}
+        <motion.div
+          className="flex items-end justify-center w-full lg:w-[45%] pt-8 lg:pt-0"
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          Perfil Profesional
-        </motion.p>
+          <img
+            src={doctorPhoto}
+            alt="Dr. Mario Sanchez"
+            data-testid="img-doctor-about"
+            className="w-auto object-contain object-bottom"
+            style={{ maxHeight: '80vh', maxWidth: '100%' }}
+          />
+        </motion.div>
 
-        {/* Desktop: two columns — Mobile: stacked */}
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
-
-          {/* Photo */}
-          <motion.div
-            className="flex justify-center w-full lg:w-auto"
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        {/* Text column */}
+        <motion.div
+          className="flex flex-col items-center justify-center text-center w-full lg:w-[55%] px-8 md:px-16 lg:px-20 py-16 lg:py-24"
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Title — same size as Topics heading */}
+          <h2
+            className="font-serif font-bold text-4xl md:text-5xl leading-tight mb-10"
+            style={{ color: '#ffffff' }}
           >
-            <img
-              src={doctorPhoto}
-              alt="Dr. Mario Sanchez"
-              data-testid="img-doctor-about"
-              className="w-56 sm:w-64 md:w-72 lg:w-80 object-contain drop-shadow-2xl"
-            />
-          </motion.div>
+            Perfil Profesional
+          </h2>
 
-          {/* Bio text */}
-          <motion.div
-            className="max-w-xl text-center lg:text-left"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.85, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          {/* Bio paragraphs */}
+          <div
+            className="space-y-5 font-serif leading-relaxed max-w-lg text-left"
+            style={{ color: 'rgba(255,255,255,0.80)', fontWeight: 300, fontSize: '1.05rem' }}
           >
-            <div className="space-y-5 font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)', fontWeight: 300, fontSize: '1.05rem' }}>
-              <p>
-                Terapeuta Respiratorio con 2 años de experiencia en gestión de equipos biomédicos
-                (CPAP, BPAP). Experto en teleorientación y capacitación remota de pacientes.
-              </p>
-              <p>
-                Sólida formación en valoración terapéutica, diseño de programas educativos y
-                gestión de citas. Amplia experiencia en sistemas de registro clínico y CRM.
-              </p>
-              <p>
-                Habilidades adicionales en atención a víctimas de violencia sexual, promoción de
-                la salud, donación de sangre y vacunación. Mi enfoque integral garantiza no solo
-                el tratamiento, sino la educación y prevención como pilares fundamentales del
-                bienestar.
-              </p>
-            </div>
-          </motion.div>
+            <p>
+              Terapeuta Respiratorio con 2 años de experiencia en gestión de equipos biomédicos
+              (CPAP, BPAP). Experto en teleorientación y capacitación remota de pacientes.
+            </p>
+            <p>
+              Sólida formación en valoración terapéutica, diseño de programas educativos y
+              gestión de citas. Amplia experiencia en sistemas de registro clínico y CRM.
+            </p>
+            <p>
+              Habilidades adicionales en atención a víctimas de violencia sexual, promoción de
+              la salud, donación de sangre y vacunación. Mi enfoque integral garantiza no solo
+              el tratamiento, sino la educación y prevención como pilares fundamentales del
+              bienestar.
+            </p>
+          </div>
+        </motion.div>
 
-        </div>
       </div>
 
       {/* Wave bottom — white emerges from black */}
