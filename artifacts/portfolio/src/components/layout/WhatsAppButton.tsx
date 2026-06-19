@@ -1,23 +1,99 @@
-const GREEN = "#2d5a27";
+import { useState } from "react";
+
+const WA_GREEN = "#25D366";
+const WA_DARK = "#128C7E";
 
 interface Props {
   phone: string;
 }
 
+const WhatsAppIcon = ({ size = 28 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
+    <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
+  </svg>
+);
+
 export default function WhatsAppButton({ phone }: Props) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const waUrl = `https://wa.me/${phone}`;
+
+  const handleClick = () => {
+    if (window.innerWidth >= 768) {
+      setModalOpen(true);
+    } else {
+      window.open(waUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
-    <a
-      href={`https://wa.me/${phone}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Contactar por WhatsApp"
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95"
-      style={{ background: GREEN }}
-    >
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
-        <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
-      </svg>
-    </a>
+    <>
+      {/* Floating button */}
+      <button
+        aria-label="Contactar por WhatsApp"
+        onClick={handleClick}
+        className="fixed bottom-20 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 md:bottom-6"
+        style={{ background: WA_GREEN }}
+      >
+        <WhatsAppIcon size={28} />
+      </button>
+
+      {/* Desktop modal */}
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-[200] flex items-end justify-end pb-24 pr-6"
+          onClick={() => setModalOpen(false)}
+        >
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
+
+          <div
+            className="relative rounded-2xl overflow-hidden shadow-2xl w-80"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center gap-3 px-5 py-4" style={{ background: WA_DARK }}>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: WA_GREEN }}>
+                <WhatsAppIcon size={22} />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm tracking-wide font-serif">Dr. Mario Sanchez</p>
+                <p className="text-white/70 text-xs font-serif">En línea</p>
+              </div>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="ml-auto text-white/70 hover:text-white transition-colors text-xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Chat bubble area */}
+            <div className="px-5 py-5" style={{ background: '#ECE5DD' }}>
+              <p className="text-xs uppercase tracking-[0.18em] font-semibold mb-3 font-serif" style={{ color: WA_DARK }}>
+                Chatea con nosotros
+              </p>
+              <div
+                className="rounded-lg rounded-tl-none px-4 py-3 text-sm leading-relaxed shadow-sm font-serif"
+                style={{ background: 'white', color: '#333', maxWidth: '90%' }}
+              >
+                ¡Hola! 👋 ¿En qué podemos ayudarte hoy? Escríbenos y te atenderemos a la brevedad.
+              </div>
+            </div>
+
+            {/* CTA */}
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-3.5 text-white text-sm font-bold tracking-wider uppercase transition-opacity hover:opacity-90 font-serif"
+              style={{ background: WA_GREEN }}
+            >
+              <WhatsAppIcon size={18} />
+              Iniciar conversación
+            </a>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

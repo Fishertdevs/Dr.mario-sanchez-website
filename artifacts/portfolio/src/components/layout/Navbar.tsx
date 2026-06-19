@@ -7,17 +7,26 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const links = [
-    { name: "Inicio", href: "#hero" },
-    { name: "Especializaciones", href: "#topics" },
-    { name: "Perfil", href: "#about" },
-    { name: "Blog", href: "#blog" },
-    { name: "Contacto", href: "#contact" },
+    { name: "Inicio", id: "hero" },
+    { name: "Especializaciones", id: "topics" },
+    { name: "Perfil", id: "about" },
+    { name: "Blog", id: "blog" },
+    { name: "Contacto", id: "contact" },
   ];
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const navHeight = 72;
+    const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+    window.scrollTo({ top, behavior: "smooth" });
+    setMenuOpen(false);
+  };
 
   return (
     <motion.header
@@ -31,26 +40,26 @@ export default function Navbar() {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-        <a
-          href="#hero"
+        <button
+          onClick={() => scrollTo("hero")}
           className="font-serif font-bold text-[10px] md:text-sm tracking-[0.15em] uppercase text-black whitespace-nowrap"
           data-testid="link-logo"
         >
           Dr. Mario Sanchez
-        </a>
+        </button>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex gap-10" data-testid="nav-desktop">
           {links.map((link) => (
-            <a
+            <button
               key={link.name}
-              href={link.href}
+              onClick={() => scrollTo(link.id)}
               data-testid={`link-nav-${link.name.toLowerCase()}`}
-              className="font-serif text-sm tracking-[0.12em] uppercase transition-colors duration-200"
-              style={{ color: '#2d5a27' }}
+              className="font-serif text-sm tracking-[0.12em] uppercase transition-colors duration-200 hover:opacity-60"
+              style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -69,20 +78,24 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-black/10 py-6 px-8 flex flex-col gap-5">
+        <motion.div
+          className="md:hidden bg-white border-t border-black/10 py-6 px-8 flex flex-col gap-5"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        >
           {links.map((link) => (
-            <a
+            <button
               key={link.name}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
+              onClick={() => scrollTo(link.id)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
-              className="font-serif text-xs tracking-[0.2em] uppercase transition-colors"
-              style={{ color: '#2d5a27' }}
+              className="font-serif text-xs tracking-[0.2em] uppercase transition-colors text-left hover:opacity-60"
+              style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
-            </a>
+            </button>
           ))}
-        </div>
+        </motion.div>
       )}
     </motion.header>
   );
