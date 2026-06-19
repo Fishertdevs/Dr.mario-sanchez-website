@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const WA_GREEN = "#25D366";
-const WA_DARK = "#128C7E";
 
 interface Props {
   phone: string;
@@ -15,85 +15,54 @@ const WhatsAppIcon = ({ size = 28 }: { size?: number }) => (
 );
 
 export default function WhatsAppButton({ phone }: Props) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [labelOpen, setLabelOpen] = useState(false);
   const waUrl = `https://wa.me/${phone}`;
 
   const handleClick = () => {
     if (window.innerWidth >= 768) {
-      setModalOpen(true);
+      setLabelOpen((prev) => !prev);
     } else {
       window.open(waUrl, "_blank", "noopener,noreferrer");
     }
   };
 
   return (
-    <>
+    <div className="fixed z-50 flex items-center gap-3 md:bottom-6 bottom-20 right-6">
+      {/* Animated label — desktop only */}
+      <AnimatePresence>
+        {labelOpen && (
+          <motion.a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, x: 24, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 24, scale: 0.9 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden md:flex items-center font-serif font-semibold text-xs tracking-[0.18em] uppercase whitespace-nowrap px-5 py-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+            style={{
+              background: 'white',
+              color: '#0a0a0a',
+              border: '1px solid rgba(0,0,0,0.10)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+            }}
+          >
+            Chatear con nosotros
+          </motion.a>
+        )}
+      </AnimatePresence>
+
       {/* Floating button */}
-      <button
+      <motion.button
         aria-label="Contactar por WhatsApp"
         onClick={handleClick}
-        className="fixed bottom-20 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 md:bottom-6"
-        style={{ background: WA_GREEN }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.93 }}
+        className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+        style={{ background: WA_GREEN, flexShrink: 0 }}
       >
         <WhatsAppIcon size={28} />
-      </button>
-
-      {/* Desktop modal */}
-      {modalOpen && (
-        <div
-          className="fixed inset-0 z-[200] flex items-end justify-end pb-24 pr-6"
-          onClick={() => setModalOpen(false)}
-        >
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
-
-          <div
-            className="relative rounded-2xl overflow-hidden shadow-2xl w-80"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center gap-3 px-5 py-4" style={{ background: WA_DARK }}>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: WA_GREEN }}>
-                <WhatsAppIcon size={22} />
-              </div>
-              <div>
-                <p className="text-white font-bold text-sm tracking-wide font-serif">Dr. Mario Sanchez</p>
-                <p className="text-white/70 text-xs font-serif">En línea</p>
-              </div>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="ml-auto text-white/70 hover:text-white transition-colors text-xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Chat bubble area */}
-            <div className="px-5 py-5" style={{ background: '#ECE5DD' }}>
-              <p className="text-xs uppercase tracking-[0.18em] font-semibold mb-3 font-serif" style={{ color: WA_DARK }}>
-                Chatea con nosotros
-              </p>
-              <div
-                className="rounded-lg rounded-tl-none px-4 py-3 text-sm leading-relaxed shadow-sm font-serif"
-                style={{ background: 'white', color: '#333', maxWidth: '90%' }}
-              >
-                ¡Hola! 👋 ¿En qué podemos ayudarte hoy? Escríbenos y te atenderemos a la brevedad.
-              </div>
-            </div>
-
-            {/* CTA */}
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3.5 text-white text-sm font-bold tracking-wider uppercase transition-opacity hover:opacity-90 font-serif"
-              style={{ background: WA_GREEN }}
-            >
-              <WhatsAppIcon size={18} />
-              Iniciar conversación
-            </a>
-          </div>
-        </div>
-      )}
-    </>
+      </motion.button>
+    </div>
   );
 }
