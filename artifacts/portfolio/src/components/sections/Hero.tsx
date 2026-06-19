@@ -16,7 +16,7 @@ export default function Hero() {
 
         {/* Left: text content */}
         <motion.div
-          className="flex flex-col items-center justify-center text-center px-12 lg:px-20 pt-20"
+          className="flex flex-col items-center justify-center text-center pl-16 pr-6 lg:pl-24 lg:pr-8 pt-20"
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -24,7 +24,7 @@ export default function Hero() {
             {/* Main headline — the titles become the heading */}
           <motion.h1
             className="font-serif font-bold leading-[1.1] mb-6"
-            style={{ color: BLACK, fontSize: 'clamp(1.6rem, 2.8vw, 2.5rem)' }}
+            style={{ color: BLACK, fontSize: 'clamp(2rem, 3.5vw, 3.2rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
@@ -113,7 +113,7 @@ export default function Hero() {
         >
           <h1
             className="font-serif font-bold leading-[1.1] mb-5"
-            style={{ color: BLACK, fontSize: 'clamp(1.7rem, 7vw, 2.6rem)' }}
+            style={{ color: BLACK, fontSize: 'clamp(1.15rem, 4.8vw, 1.7rem)' }}
           >
             Terapeuta Respiratorio<br />Salubrista Público
           </h1>
@@ -143,7 +143,7 @@ export default function Hero() {
               className="font-serif text-[11px] tracking-[0.25em] uppercase hover:opacity-60 transition-opacity"
               style={{ color: GREEN, fontWeight: 600 }}
             >
-              Especialidades
+              Áreas de especialización
             </a>
             <a
               href="#contact"
