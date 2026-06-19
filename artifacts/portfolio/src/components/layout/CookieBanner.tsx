@@ -27,7 +27,7 @@ export default function CookieBanner() {
       className="fixed bottom-0 left-0 right-0 z-[100]"
       style={{ borderTop: '1px solid #d4d4d4', background: 'white' }}
     >
-      <div className="flex flex-col md:flex-row items-center justify-center gap-3 px-6 md:px-12 py-3">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 px-6 md:px-12 py-3">
         <p className="font-serif text-sm text-center" style={{ color: '#555' }}>
           Utilizamos cookies para mejorar su experiencia.{" "}
           <a href="#" className="underline underline-offset-2 transition-opacity hover:opacity-60" style={{ color: GREEN }}>
