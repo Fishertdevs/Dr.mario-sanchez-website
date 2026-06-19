@@ -24,7 +24,7 @@ export default function Hero() {
             {/* Main headline — the titles become the heading */}
           <motion.h1
             className="font-serif font-bold leading-[1.1] mb-6"
-            style={{ color: BLACK, fontSize: 'clamp(2rem, 3.5vw, 3.2rem)' }}
+            style={{ color: BLACK, fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
@@ -69,7 +69,7 @@ export default function Hero() {
             <a
               href="#topics"
               data-testid="link-hero-especialidades"
-              className="font-serif text-[10px] tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
+              className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
               Especialidades
@@ -77,7 +77,7 @@ export default function Hero() {
             <a
               href="#contact"
               data-testid="link-hero-agendar"
-              className="font-serif text-[10px] tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
+              className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
               Agendar consulta
