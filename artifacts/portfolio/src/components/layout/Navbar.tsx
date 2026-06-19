@@ -13,8 +13,8 @@ export default function Navbar() {
 
   const links = [
     { name: "Inicio", href: "#hero" },
+    { name: "Especializaciones", href: "#topics" },
     { name: "Perfil", href: "#about" },
-    { name: "Especialidades", href: "#topics" },
     { name: "Blog", href: "#blog" },
     { name: "Contacto", href: "#contact" },
   ];
