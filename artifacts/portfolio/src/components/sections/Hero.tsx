@@ -168,9 +168,10 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Doctor photo — fills remaining space, feet anchored to bottom (matches desktop behavior) */}
+        {/* Doctor photo — fixed 55vh tall, feet anchored to bottom wave */}
         <motion.div
-          className="relative flex-1"
+          className="relative w-full"
+          style={{ height: '55vh' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
