@@ -12,11 +12,11 @@ export default function Hero() {
       data-testid="section-hero"
     >
       {/* ── Desktop layout: two columns ─────────────────────────────── */}
-      <div className="hidden md:grid grid-cols-2 flex-1 min-h-screen">
+      <div className="hidden md:grid flex-1 min-h-screen" style={{ gridTemplateColumns: '58% 42%' }}>
 
         {/* Left: text content */}
         <motion.div
-          className="flex flex-col items-center justify-center text-center pl-16 pr-6 lg:pl-24 lg:pr-8 pt-20"
+          className="flex flex-col items-center justify-center text-center pl-8 pr-4 lg:pl-12 lg:pr-6 pt-20"
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -24,7 +24,7 @@ export default function Hero() {
             {/* Main headline — the titles become the heading */}
           <motion.h1
             className="font-serif font-bold leading-[1.1] mb-6"
-            style={{ color: BLACK, fontSize: 'clamp(2.2rem, 3.3vw, 3.1rem)' }}
+            style={{ color: BLACK, fontSize: 'clamp(2.5rem, 4vw, 3.8rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
@@ -48,7 +48,7 @@ export default function Hero() {
 
           {/* Description */}
           <motion.p
-            className="font-serif text-base leading-relaxed mb-8 max-w-sm"
+            className="font-serif text-lg leading-relaxed mb-8 max-w-sm"
             style={{ color: '#444', fontWeight: 300 }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export default function Hero() {
             <a
               href="#topics"
               data-testid="link-hero-especialidades"
-              className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
+              className="font-serif text-sm tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
               Especialidades
@@ -77,7 +77,7 @@ export default function Hero() {
             <a
               href="#contact"
               data-testid="link-hero-agendar"
-              className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
+              className="font-serif text-sm tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
               Agendar consulta
