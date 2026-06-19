@@ -24,7 +24,7 @@ export default function Hero() {
             {/* Main headline — the titles become the heading */}
           <motion.h1
             className="font-serif font-bold leading-[1.1] mb-6"
-            style={{ color: BLACK, fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
+            style={{ color: BLACK, fontSize: 'clamp(2.2rem, 3.3vw, 3.1rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
