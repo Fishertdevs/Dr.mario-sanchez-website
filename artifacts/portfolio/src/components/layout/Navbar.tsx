@@ -76,7 +76,7 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
-              className="font-serif text-base tracking-[0.15em] uppercase transition-colors"
+              className="font-serif text-xs tracking-[0.2em] uppercase transition-colors"
               style={{ color: '#2d5a27' }}
             >
               {link.name}
