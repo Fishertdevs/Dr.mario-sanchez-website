@@ -69,7 +69,7 @@ export default function Hero() {
             <a
               href="#topics"
               data-testid="link-hero-especialidades"
-              className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
+              className="font-serif text-[10px] tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
               Especialidades
@@ -77,7 +77,7 @@ export default function Hero() {
             <a
               href="#contact"
               data-testid="link-hero-agendar"
-              className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
+              className="font-serif text-[10px] tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
               Agendar consulta
@@ -113,7 +113,7 @@ export default function Hero() {
         >
           <h1
             className="font-serif font-bold leading-[1.1] mb-5"
-            style={{ color: BLACK, fontSize: 'clamp(1.15rem, 4.8vw, 1.7rem)' }}
+            style={{ color: BLACK, fontSize: 'clamp(1.3rem, 5.5vw, 2rem)' }}
           >
             Terapeuta Respiratorio<br />Salubrista Público
           </h1>

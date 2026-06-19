@@ -33,7 +33,7 @@ export default function Navbar() {
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <a
           href="#hero"
-          className="font-serif font-bold text-sm tracking-[0.15em] uppercase text-black whitespace-nowrap"
+          className="font-serif font-bold text-[10px] tracking-[0.15em] uppercase text-black whitespace-nowrap"
           data-testid="link-logo"
         >
           Dr. Mario Sanchez
