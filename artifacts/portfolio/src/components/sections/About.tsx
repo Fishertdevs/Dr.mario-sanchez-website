@@ -9,13 +9,6 @@ export default function About() {
       style={{ background: '#0a0a0a' }}
     >
 
-      {/* Wave top */}
-      <div className="w-full overflow-hidden" style={{ lineHeight: 0, marginTop: '-2px' }}>
-        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
-          <path d="M0,0 C480,90 960,0 1440,60 L1440,0 L0,0 Z" fill="white" />
-        </svg>
-      </div>
-
       {/* ── Desktop layout ─────────────────────────────────────── */}
       <div className="hidden lg:flex" style={{ minHeight: '88vh' }}>
 
@@ -69,7 +62,7 @@ export default function About() {
       </div>
 
       {/* ── Mobile layout — no image ────────────────────────────── */}
-      <div className="flex lg:hidden flex-col items-center px-6 pt-6 pb-12">
+      <div className="flex lg:hidden flex-col items-center px-6 pt-10 pb-32">
         <motion.h2
           className="font-serif font-bold text-4xl text-white text-center mb-8 leading-tight"
           initial={{ opacity: 0, y: 16 }}

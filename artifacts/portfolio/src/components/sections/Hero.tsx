@@ -102,6 +102,13 @@ export default function Hero() {
         </motion.div>
       </div>
 
+      {/* Black wave at bottom of hero — overlaps image, creates curved transition into About */}
+      <div className="absolute bottom-0 left-0 w-full hidden md:block" style={{ lineHeight: 0, zIndex: 10 }}>
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+          <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="#0a0a0a" />
+        </svg>
+      </div>
+
       {/* ── Mobile layout: stacked ───────────────────────────────────── */}
       <div className="flex md:hidden flex-col min-h-screen">
         {/* Text block */}
@@ -112,8 +119,8 @@ export default function Hero() {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1
-            className="font-serif font-bold leading-[1.1] mb-5"
-            style={{ color: BLACK, fontSize: 'clamp(1.3rem, 5.5vw, 2rem)' }}
+            className="font-serif font-bold text-4xl leading-[1.1] mb-5"
+            style={{ color: BLACK }}
           >
             Terapeuta Respiratorio<br />Salubrista Público
           </h1>
