@@ -46,7 +46,8 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               data-testid={`link-nav-${link.name.toLowerCase()}`}
-              className="font-serif text-sm tracking-[0.12em] uppercase text-black/60 hover:text-black transition-colors duration-200"
+              className="font-serif text-sm tracking-[0.12em] uppercase transition-colors duration-200"
+              style={{ color: '#2d5a27' }}
             >
               {link.name}
             </a>
@@ -75,7 +76,8 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
-              className="font-serif text-base tracking-[0.15em] uppercase text-black/70 hover:text-black transition-colors"
+              className="font-serif text-base tracking-[0.15em] uppercase transition-colors"
+              style={{ color: '#2d5a27' }}
             >
               {link.name}
             </a>

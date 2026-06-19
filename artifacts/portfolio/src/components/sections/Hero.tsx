@@ -21,43 +21,29 @@ export default function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Subtitles */}
-          <p
-            className="font-serif text-[11px] tracking-[0.32em] uppercase mb-1"
-            style={{ color: BLACK, fontWeight: 500 }}
-          >
-            Terapeuta Respiratorio
-          </p>
-          <p
-            className="font-serif text-[11px] tracking-[0.32em] uppercase mb-7"
-            style={{ color: BLACK, fontWeight: 500 }}
-          >
-            Salubrista Público
-          </p>
-
-          {/* Main headline */}
+            {/* Main headline — the titles become the heading */}
           <motion.h1
-            className="font-serif font-bold leading-[1.05] mb-6"
-            style={{ color: BLACK, fontSize: 'clamp(2rem, 3.6vw, 3.2rem)' }}
+            className="font-serif font-bold leading-[1.1] mb-6"
+            style={{ color: BLACK, fontSize: 'clamp(1.6rem, 2.8vw, 2.5rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            Tu salud merece<br />la mejor atención.
+            Terapeuta Respiratorio<br />Salubrista Público
           </motion.h1>
 
-          {/* Decorative separator */}
+          {/* Decorative separator — green */}
           <motion.div
             className="flex items-center justify-center gap-3 w-full max-w-xs mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.55 }}
+            transition={{ duration: 0.8, delay: 0.45 }}
           >
-            <div className="flex-1 h-px" style={{ backgroundColor: '#c8b89a' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: GREEN }} />
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M5 0L6.18 3.82L10 5L6.18 6.18L5 10L3.82 6.18L0 5L3.82 3.82L5 0Z" fill="#c8b89a" />
+              <path d="M5 0L6.18 3.82L10 5L6.18 6.18L5 10L3.82 6.18L0 5L3.82 3.82L5 0Z" fill={GREEN} />
             </svg>
-            <div className="flex-1 h-px" style={{ backgroundColor: '#c8b89a' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: GREEN }} />
           </motion.div>
 
           {/* Description */}
@@ -81,12 +67,12 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.85 }}
           >
             <a
-              href="#about"
-              data-testid="link-hero-conocer"
+              href="#topics"
+              data-testid="link-hero-especialidades"
               className="font-serif text-xs tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200"
               style={{ color: GREEN, fontWeight: 600 }}
             >
-              Conocer más
+              Especialidades
             </a>
             <a
               href="#contact"
@@ -125,33 +111,20 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p
-            className="font-serif text-[10px] tracking-[0.3em] uppercase mb-1"
-            style={{ color: BLACK, fontWeight: 500 }}
-          >
-            Terapeuta Respiratorio
-          </p>
-          <p
-            className="font-serif text-[10px] tracking-[0.3em] uppercase mb-6"
-            style={{ color: BLACK, fontWeight: 500 }}
-          >
-            Salubrista Público
-          </p>
-
           <h1
-            className="font-serif font-bold leading-[1.05] mb-5"
-            style={{ color: BLACK, fontSize: 'clamp(1.9rem, 8vw, 2.8rem)' }}
+            className="font-serif font-bold leading-[1.1] mb-5"
+            style={{ color: BLACK, fontSize: 'clamp(1.7rem, 7vw, 2.6rem)' }}
           >
-            Tu salud merece<br />la mejor atención.
+            Terapeuta Respiratorio<br />Salubrista Público
           </h1>
 
-          {/* Separator */}
+          {/* Separator — green */}
           <div className="flex items-center justify-center gap-3 w-full max-w-[200px] mb-5">
-            <div className="flex-1 h-px" style={{ backgroundColor: '#c8b89a' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: GREEN }} />
             <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-              <path d="M5 0L6.18 3.82L10 5L6.18 6.18L5 10L3.82 6.18L0 5L3.82 3.82L5 0Z" fill="#c8b89a" />
+              <path d="M5 0L6.18 3.82L10 5L6.18 6.18L5 10L3.82 6.18L0 5L3.82 3.82L5 0Z" fill={GREEN} />
             </svg>
-            <div className="flex-1 h-px" style={{ backgroundColor: '#c8b89a' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: GREEN }} />
           </div>
 
           <p
@@ -165,12 +138,12 @@ export default function Hero() {
           {/* Buttons — one line */}
           <div className="flex flex-row items-center justify-center gap-7">
             <a
-              href="#about"
-              data-testid="link-hero-conocer-mobile"
+              href="#topics"
+              data-testid="link-hero-especialidades-mobile"
               className="font-serif text-[11px] tracking-[0.25em] uppercase hover:opacity-60 transition-opacity"
               style={{ color: GREEN, fontWeight: 600 }}
             >
-              Conocer más
+              Especialidades
             </a>
             <a
               href="#contact"
