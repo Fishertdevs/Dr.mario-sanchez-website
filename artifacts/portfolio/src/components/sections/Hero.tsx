@@ -102,7 +102,7 @@ export default function Hero() {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center top',
+              objectPosition: '65% top',
             }}
           />
         </motion.div>

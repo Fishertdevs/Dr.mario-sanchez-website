@@ -71,9 +71,9 @@ export default function About() {
           </div>
         </motion.div>
         {/* Green wave — overlaps bottom of the photo column */}
-        <div className="absolute bottom-0 left-0 w-full hidden lg:block" style={{ lineHeight: 0, zIndex: 20, pointerEvents: 'none' }}>
-          <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
-            <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="#2d5a27" />
+        <div className="absolute bottom-0 left-0 hidden lg:block" style={{ lineHeight: 0, zIndex: 20, pointerEvents: 'none', width: '55%' }}>
+          <svg viewBox="0 0 720 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '160px' }}>
+            <path d="M0,100 C180,20 400,140 720,60 L720,160 L0,160 Z" fill="#2d5a27" />
           </svg>
         </div>
       </div>

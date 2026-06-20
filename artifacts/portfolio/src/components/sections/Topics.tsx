@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
-import medAltImg    from "@assets/image_1781918088749.png";
-import consultaImg  from "@assets/image_1781918588839.png";
+import medAltImg       from "@assets/image_1781918088749.png";
+import consultaImg    from "@assets/image_1781918588839.png";
+import terapeuticoImg from "@assets/image_1781919290751.png";
 
 const GREEN = "#2d5a27";
 const GREEN_LIGHT = "#dff0dc";
@@ -287,7 +288,7 @@ const IlluInyectologia = () => (
 const specializations = [
   { title: "Medicina Alternativa",                    desc: "Terapias complementarias integradas al cuidado convencional para un bienestar integral.",   Illus: IlluAlternativa, imgSrc: medAltImg },
   { title: "Consulta Domiciliaria",                   desc: "Atención médica profesional en la comodidad y seguridad de su hogar.",                       Illus: IlluDomiciliaria, imgSrc: consultaImg },
-  { title: "Proceso Terapéutico",                     desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",                   Illus: IlluTerapeutico },
+  { title: "Proceso Terapéutico",                     desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",                   Illus: IlluTerapeutico, imgSrc: terapeuticoImg },
   { title: "Administración de Medicamentos Inhalados",desc: "Técnicas correctas y seguras para una terapia inhalatoria efectiva.",                        Illus: IlluInhalados },
   { title: "Fisioterapia Respiratoria",               desc: "Ejercicios y maniobras especializadas para optimizar la función pulmonar.",                  Illus: IlluFisioterapia },
   { title: "Manejo de Apnea del Sueño — CPAP & BPAP",desc: "Diagnóstico y control con equipos de última generación para el sueño reparador.",            Illus: IlluApnea },
