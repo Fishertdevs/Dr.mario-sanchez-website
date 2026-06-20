@@ -10,7 +10,7 @@ export default function About() {
       className="relative overflow-hidden bg-white"
     >
       {/* ── Desktop layout ─────────────────────────────────────── */}
-      <div className="hidden lg:flex" style={{ height: '92vh' }}>
+      <div className="hidden lg:flex" style={{ height: '92vh', position: 'relative' }}>
 
         {/* Photo column */}
         <motion.div
@@ -70,6 +70,12 @@ export default function About() {
             </p>
           </div>
         </motion.div>
+        {/* Green wave — overlaps bottom of the photo column */}
+        <div className="absolute bottom-0 left-0 w-full hidden lg:block" style={{ lineHeight: 0, zIndex: 20, pointerEvents: 'none' }}>
+          <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+            <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="#2d5a27" />
+          </svg>
+        </div>
       </div>
 
       {/* ── Mobile layout ────────────────────────────── */}

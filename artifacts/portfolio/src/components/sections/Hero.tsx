@@ -87,17 +87,23 @@ export default function Hero() {
 
         {/* Right: photo */}
         <motion.div
-          className="flex items-end justify-center h-screen"
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{ position: 'relative', height: '92vh', overflow: 'hidden' }}
         >
           <img
             src={doctorPhoto}
             alt="Dr. Mario Sanchez"
             data-testid="img-doctor-hero-desktop"
-            className="w-auto object-contain object-bottom"
-            style={{ maxHeight: '88vh' }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+            }}
           />
         </motion.div>
       </div>
