@@ -512,6 +512,9 @@ export default function Topics() {
           >
             Áreas de Especialización
           </motion.h2>
+          <div className="flex justify-center mt-5">
+            <div className="h-px w-16" style={{ background: 'rgba(255,255,255,0.45)' }} />
+          </div>
         </div>
 
         {/* ── PC grid (hidden on mobile) ── */}

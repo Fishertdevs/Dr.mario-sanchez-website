@@ -51,9 +51,12 @@ export default function About() {
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h2 className="font-serif font-bold text-5xl leading-tight mb-10" style={{ color: BLACK }}>
+          <h2 className="font-serif font-bold text-5xl leading-tight mb-5" style={{ color: BLACK }}>
             Perfil Profesional
           </h2>
+          <div className="flex justify-start mb-8">
+            <div className="h-px w-16" style={{ background: '#2d5a27' }} />
+          </div>
           <div className="space-y-5 font-serif leading-relaxed max-w-lg text-left" style={{ color: '#444', fontWeight: 300, fontSize: '1.05rem' }}>
             <p>
               Terapeuta Respiratorio con 2 años de experiencia en gestión de equipos biomédicos
