@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
-import doctorPhotoProfile from "@assets/image_1781916620650.png";
-import doctorPhotoHero    from "@assets/image_1781821171932.png";
+import doctorPhoto from "@assets/image_1781916620650.png";
 
-const GREEN = "#2d5a27";
 const BLACK = "#0a0a0a";
 
 export default function About() {
@@ -14,7 +12,7 @@ export default function About() {
       {/* ── Desktop layout ─────────────────────────────────────── */}
       <div className="hidden lg:flex" style={{ height: '92vh' }}>
 
-        {/* Photo column — identical approach to hero: flex-end, maxHeight, object-bottom */}
+        {/* Photo column */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -24,22 +22,21 @@ export default function About() {
             width: '42%',
             height: '92vh',
             flexShrink: 0,
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
             overflow: 'hidden',
+            position: 'relative',
           }}
         >
           <img
-            src={doctorPhotoHero}
+            src={doctorPhoto}
             alt="Dr. Mario Sanchez"
             data-testid="img-doctor-about-desktop"
             style={{
-              maxHeight: '92vh',
-              width: 'auto',
-              objectFit: 'contain',
-              objectPosition: 'bottom',
-              display: 'block',
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
             }}
           />
         </motion.div>
@@ -53,11 +50,6 @@ export default function About() {
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Profile photo — small circular, desktop only */}
-          <div className="mb-6" style={{ width: '88px', height: '88px', borderRadius: '50%', overflow: 'hidden', border: `3px solid ${GREEN}` }}>
-            <img src={doctorPhotoProfile} alt="Foto Dr. Mario Sanchez" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
-          </div>
-
           <h2 className="font-serif font-bold text-5xl leading-tight mb-10" style={{ color: BLACK }}>
             Perfil Profesional
           </h2>
