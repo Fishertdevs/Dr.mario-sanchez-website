@@ -303,8 +303,8 @@ const specializations = [
   { title: "Inyectología",                            desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",       Illus: IlluInyectologia, imgSrc: inyectologiaImg },
 ];
 
-const CARD_INTERVAL = 6000; // ms between each card appearing
-const READ_PAUSE    = 4000; // ms after batch 1 done before fade-out
+const CARD_INTERVAL = 4000; // ms between each card appearing
+const READ_PAUSE    = 4000; // ms after batch done before fade-out
 const FADE_DURATION = 600;  // ms fade transition
 
 /* ═══════════════════════════════════
@@ -348,23 +348,25 @@ function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: st
       <div className="mx-5" style={{ height: '1px', background: GREEN_LIGHT }} />
 
       {/* Text */}
-      <div className="flex flex-col items-center text-center px-5 pt-4 pb-6">
-        <h4 className="font-serif font-bold text-sm leading-snug mb-2" style={{ color: '#0e0e0e', fontSize: '0.9rem' }}>
+      <div className="flex flex-col items-center text-center px-5 pt-2 pb-3">
+        <h4 className="font-serif font-bold text-sm leading-snug mb-1" style={{ color: '#0e0e0e', fontSize: '0.9rem' }}>
           {title}
         </h4>
-        <p className="font-serif text-xs leading-relaxed mb-4" style={{ color: '#666' }}>
+        <p className="font-serif text-xs leading-relaxed mb-2" style={{ color: '#666' }}>
           {desc}
         </p>
         <div className="h-[1.5px] w-8 rounded-full" style={{ background: GREEN }} />
       </div>
 
-      {/* Aesthetic number — bottom right */}
+      {/* Page-number style — bottom right */}
       <div
-        className="absolute bottom-3 right-4 flex items-end gap-0.5 select-none pointer-events-none"
-        style={{ opacity: 0.45 }}
+        className="absolute bottom-2 right-3 select-none pointer-events-none"
+        style={{ opacity: 0.55 }}
       >
-        <span className="font-serif text-xs font-light" style={{ color: '#7ecb72', lineHeight: 1, marginBottom: '0.45rem' }}>N°</span>
-        <span className="font-serif font-black" style={{ color: '#7ecb72', fontSize: '2.4rem', lineHeight: 1 }}>
+        <span
+          className="font-serif"
+          style={{ color: '#7ecb72', fontSize: '0.6rem', fontWeight: 300, letterSpacing: '0.18em' }}
+        >
           {num.toString().padStart(2, '0')}
         </span>
       </div>
@@ -377,53 +379,64 @@ function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: st
 ═══════════════════════════════════ */
 export default function Topics() {
   const sectionRef   = useRef<HTMLDivElement>(null);
-  const started      = useRef(false);
   const isInView     = useInView(sectionRef, { once: true, margin: '-120px' });
 
   // PC state
-  const [pcVisible, setPcVisible]   = useState<number[]>([]); // indices currently shown
-  const [pcBatch, setPcBatch]       = useState<1|2>(1);
+  const [pcVisible, setPcVisible] = useState<number[]>([]);
+  const [pcBatch, setPcBatch]     = useState<1|2>(1);
+  const [cycle, setCycle]         = useState(0);
 
   // Mobile state
   const [mobileIdx, setMobileIdx]   = useState(0);
+  const touchStartX                 = useRef(0);
 
-  /* ─── PC timer logic ─── */
+  /* ─── PC timer logic — infinite loop via cycle counter ─── */
   useEffect(() => {
-    if (!isInView || started.current) return;
-    started.current = true;
+    if (!isInView) return;
 
     const ts: ReturnType<typeof setTimeout>[] = [];
-
     const run = (t: () => void, ms: number) => { const id = setTimeout(t, ms); ts.push(id); };
+
+    // Reset to batch 1
+    setPcBatch(1);
+    setPcVisible([]);
 
     // Batch 1: cards 0-3, one every CARD_INTERVAL
     for (let i = 0; i < 4; i++) {
-      const idx = i;
-      run(() => setPcVisible(prev => [...prev, idx]), idx * CARD_INTERVAL);
+      run(() => setPcVisible(prev => [...prev, i]), i * CARD_INTERVAL);
     }
 
-    // After last card of batch 1 + reading pause → fade all out
+    // Fade out after batch 1
     const endBatch1 = 3 * CARD_INTERVAL + READ_PAUSE;
-    run(() => { setPcVisible([]); }, endBatch1);
+    run(() => setPcVisible([]), endBatch1);
 
-    // After fade → switch to batch 2
-    run(() => { setPcBatch(2); }, endBatch1 + FADE_DURATION + 200);
+    // Switch to batch 2
+    run(() => setPcBatch(2), endBatch1 + FADE_DURATION + 200);
 
     // Batch 2: cards 4-7, one every CARD_INTERVAL
     for (let i = 0; i < 4; i++) {
-      const idx = i + 4;
-      run(() => setPcVisible(prev => [...prev, idx]), endBatch1 + FADE_DURATION + 400 + i * CARD_INTERVAL);
+      run(() => setPcVisible(prev => [...prev, i + 4]), endBatch1 + FADE_DURATION + 400 + i * CARD_INTERVAL);
     }
 
-    return () => ts.forEach(clearTimeout);
-  }, [isInView]);
+    // Fade out after batch 2 → trigger next cycle (restart from batch 1)
+    const endBatch2 = endBatch1 + FADE_DURATION + 400 + 3 * CARD_INTERVAL + READ_PAUSE;
+    run(() => setPcVisible([]), endBatch2);
+    run(() => setCycle(c => c + 1), endBatch2 + FADE_DURATION + 200);
 
-  /* ─── Mobile auto-slide ─── */
-  useEffect(() => {
-    if (!isInView) return;
-    const id = setInterval(() => setMobileIdx(p => (p + 1) % specializations.length), 4500);
-    return () => clearInterval(id);
-  }, [isInView]);
+    return () => ts.forEach(clearTimeout);
+  }, [isInView, cycle]);
+
+  /* ─── Mobile: touch swipe (no auto-slide) ─── */
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 40) {
+      if (dx > 0) setMobileIdx(p => (p + 1) % specializations.length);
+      else         setMobileIdx(p => (p - 1 + specializations.length) % specializations.length);
+    }
+  };
 
   const batch1Cards = specializations.slice(0, 4);
   const batch2Cards = specializations.slice(4, 8);
@@ -470,7 +483,12 @@ export default function Topics() {
         </div>
 
         {/* ── Mobile carousel (hidden on desktop) ── */}
-        <div className="md:hidden relative overflow-hidden" style={{ height: '380px' }}>
+        <div
+          className="md:hidden relative overflow-hidden"
+          style={{ height: '380px' }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={mobileIdx}
