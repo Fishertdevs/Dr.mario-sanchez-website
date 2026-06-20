@@ -1,8 +1,10 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const GREEN = "#2d5a27";
 const DARK_GREEN = "#1e3d1a";
+const PHONE = "573143127513";
 
 const infoItems = [
   {
@@ -36,8 +38,61 @@ const infoItems = [
   },
 ];
 
+interface BookingForm {
+  nombre: string; email: string; telefono: string;
+  tipo: string; area: string; fecha: string; hora: string; mensaje: string;
+}
+const INIT: BookingForm = {
+  nombre: "", email: "", telefono: "",
+  tipo: "Presencial", area: "Terapia Respiratoria",
+  fecha: "", hora: "Mañana (8 am – 12 pm)", mensaje: "",
+};
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Buenos días";
+  if (h >= 12 && h < 19) return "Buenas tardes";
+  return "Buenas noches";
+}
+
+const inputCls = "w-full font-serif text-xs px-3 py-2 rounded-lg border outline-none transition-all duration-200 focus:ring-1";
+const inputStyle: React.CSSProperties = {
+  background: "rgba(255,255,255,0.08)",
+  borderColor: "rgba(255,255,255,0.18)",
+  color: "white",
+};
+
+const TABS = ["Contáctenos", "Agendar Cita"];
+
 export default function Contact() {
   const waUrl = getWhatsAppUrl();
+  const [activeTab, setActiveTab] = useState(0);
+  const [form, setForm] = useState<BookingForm>(INIT);
+  const [sent, setSent] = useState(false);
+  const [direction, setDirection] = useState(0);
+
+  const switchTab = (i: number) => {
+    setDirection(i > activeTab ? 1 : -1);
+    setActiveTab(i);
+  };
+
+  const set = (k: keyof BookingForm) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      setForm(f => ({ ...f, [k]: e.target.value }));
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const g = getGreeting();
+    const msg =
+      `${g}, Dr. Mario Sánchez. Le escribo para solicitar una consulta formal.\n\n` +
+      `📋 *DATOS DEL PACIENTE*\n• Nombre: ${form.nombre}\n• Correo: ${form.email}\n• Teléfono: ${form.telefono}\n\n` +
+      `🩺 *DETALLES DE LA CONSULTA*\n• Tipo: ${form.tipo}\n• Área: ${form.area}\n• Fecha preferida: ${form.fecha || "A convenir"}\n• Horario: ${form.hora}` +
+      (form.mensaje ? `\n\n💬 *INFO ADICIONAL*\n${form.mensaje}` : "") +
+      `\n\nQuedo atento/a a su confirmación. Muchas gracias.`;
+    window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+    setSent(true);
+    setTimeout(() => { setSent(false); setForm(INIT); }, 2500);
+  };
 
   const allItems = [
     ...infoItems,
@@ -54,6 +109,12 @@ export default function Contact() {
     },
   ];
 
+  const variants = {
+    enter: (d: number) => ({ x: d > 0 ? 60 : -60, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0 }),
+  };
+
   return (
     <section id="contact" className="relative bg-white overflow-hidden" data-testid="section-contact">
 
@@ -65,32 +126,18 @@ export default function Contact() {
         transition={{ duration: 0.9 }}
         className="text-center pt-6 pb-8 px-6"
       >
-        <p
-          className="font-serif uppercase mb-3"
-          style={{
-            color: '#666',
-            fontSize: 'clamp(0.6rem, 2.2vw, 0.75rem)',
-            letterSpacing: 'clamp(0.08em, 1.5vw, 0.28em)',
-          }}
-        >
+        <p className="font-serif uppercase mb-3" style={{ color: '#666', fontSize: 'clamp(0.6rem, 2.2vw, 0.75rem)', letterSpacing: 'clamp(0.08em, 1.5vw, 0.28em)' }}>
           Agenda tu consulta
         </p>
-        <h2
-          className="font-serif italic font-bold leading-tight"
-          style={{
-            color: '#0a0a0a',
-            fontSize: 'clamp(1.8rem, 5vw, 3rem)',
-          }}
-        >
+        <h2 className="font-serif italic font-bold leading-tight" style={{ color: '#0a0a0a', fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}>
           Estamos para ayudarle.
         </h2>
-        {/* Decorative line */}
         <div className="flex justify-center mt-5">
           <div className="h-[2px] w-20" style={{ background: GREEN }} />
         </div>
       </motion.div>
 
-      {/* Single card containing info + map */}
+      {/* Card */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -98,86 +145,225 @@ export default function Contact() {
         transition={{ duration: 0.9, delay: 0.2 }}
         className="mx-auto w-full max-w-5xl px-4 md:px-8 pb-0"
       >
-        <div
-          className="rounded-3xl overflow-hidden flex flex-col md:flex-row"
-          style={{ background: DARK_GREEN }}
-        >
-          {/* Left: info panel */}
-          <div className="w-full md:w-[38%] p-6 md:p-7 flex flex-col gap-4">
-            <h3
-              className="font-serif text-lg md:text-xl font-semibold text-center"
-              style={{ color: 'white' }}
+        <div className="rounded-3xl overflow-hidden" style={{ background: DARK_GREEN }}>
+
+          {/* ── Tab bar ── */}
+          <div className="flex justify-center pt-5 pb-1 px-6">
+            <div
+              className="relative flex rounded-full p-1 gap-0.5"
+              style={{ background: "rgba(255,255,255,0.1)" }}
             >
-              Contáctenos
-            </h3>
-
-            {/* Hours */}
-            <div className="text-center">
-              <p
-                className="font-serif tracking-[0.18em] uppercase mb-1.5"
-                style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.55rem' }}
-              >
-                Horarios de atención
-              </p>
-              <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
-                Lun – Vie: <span style={{ color: 'white' }}>8:00 am – 6:00 pm</span>
-              </p>
-              <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
-                Sábados: <span style={{ color: 'white' }}>9:00 am – 1:00 pm</span>
-              </p>
-              <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem' }}>
-                Domingos: <em>Cerrado</em>
-              </p>
-            </div>
-
-            {/* Contact items */}
-            <div className="flex flex-col gap-3">
-              {allItems.map(({ icon, label, value, href }) => (
-                <div key={label} className="flex items-start gap-2.5">
-                  <div className="mt-0.5 shrink-0">{icon}</div>
-                  <div>
-                    <p
-                      className="font-serif tracking-[0.16em] uppercase mb-0.5"
-                      style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.52rem' }}
-                    >
-                      {label}
-                    </p>
-                    {href ? (
-                      <a
-                        href={href}
-                        target={href.startsWith('http') ? '_blank' : undefined}
-                        rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                        className="font-serif hover:underline underline-offset-4"
-                        style={{ color: 'white', fontSize: '0.78rem' }}
-                      >
-                        {value}
-                      </a>
-                    ) : (
-                      <p className="font-serif" style={{ color: 'white', fontSize: '0.78rem' }}>{value}</p>
-                    )}
-                  </div>
-                </div>
+              {TABS.map((tab, i) => (
+                <button
+                  key={tab}
+                  onClick={() => switchTab(i)}
+                  className="relative z-10 font-serif tracking-[0.16em] uppercase transition-colors duration-300"
+                  style={{
+                    fontSize: "clamp(0.55rem, 1.8vw, 0.7rem)",
+                    padding: "6px 18px",
+                    color: activeTab === i ? DARK_GREEN : "rgba(255,255,255,0.65)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "9999px",
+                    fontWeight: 600,
+                    minWidth: "100px",
+                  }}
+                >
+                  {activeTab === i && (
+                    <motion.span
+                      layoutId="tab-pill"
+                      className="absolute inset-0 rounded-full"
+                      style={{ background: "white" }}
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab}</span>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Right: Google Map — inside the card */}
-          <div className="w-full md:w-[62%] h-[200px] md:h-auto min-h-[200px] md:min-h-[380px]">
-            <iframe
-              title="Ubicación Dr. Mario Sánchez"
-              src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
-              width="100%"
-              height="100%"
-              style={{ border: 0, display: 'block', minHeight: '200px' }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          {/* ── Content panels ── */}
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction} initial={false}>
+              {activeTab === 0 ? (
+                /* ── Panel 0: Contacto + Mapa ── */
+                <motion.div
+                  key="contact-panel"
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col md:flex-row"
+                >
+                  {/* Left: info */}
+                  <div className="w-full md:w-[38%] p-6 md:p-7 flex flex-col gap-4">
+                    <h3 className="font-serif text-lg md:text-xl font-semibold text-center" style={{ color: 'white' }}>
+                      Contáctenos
+                    </h3>
+                    <div className="text-center">
+                      <p className="font-serif tracking-[0.18em] uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.55rem' }}>
+                        Horarios de atención
+                      </p>
+                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                        Lun – Vie: <span style={{ color: 'white' }}>8:00 am – 6:00 pm</span>
+                      </p>
+                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                        Sábados: <span style={{ color: 'white' }}>9:00 am – 1:00 pm</span>
+                      </p>
+                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem' }}>
+                        Domingos: <em>Cerrado</em>
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      {allItems.map(({ icon, label, value, href }) => (
+                        <div key={label} className="flex items-start gap-2.5">
+                          <div className="mt-0.5 shrink-0">{icon}</div>
+                          <div>
+                            <p className="font-serif tracking-[0.16em] uppercase mb-0.5" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.52rem' }}>{label}</p>
+                            {href ? (
+                              <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined} className="font-serif hover:underline underline-offset-4" style={{ color: 'white', fontSize: '0.78rem' }}>
+                                {value}
+                              </a>
+                            ) : (
+                              <p className="font-serif" style={{ color: 'white', fontSize: '0.78rem' }}>{value}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Right: map */}
+                  <div className="w-full md:w-[62%] h-[200px] md:h-auto min-h-[200px] md:min-h-[380px]">
+                    <iframe
+                      title="Ubicación Dr. Mario Sánchez"
+                      src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
+                      width="100%" height="100%"
+                      style={{ border: 0, display: 'block', minHeight: '200px' }}
+                      allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                </motion.div>
+              ) : (
+                /* ── Panel 1: Agendar Cita ── */
+                <motion.div
+                  key="booking-panel"
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  className="p-6 md:p-8"
+                >
+                  {sent ? (
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: "#25D366" }}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                          <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                      </div>
+                      <p className="font-serif font-bold text-lg text-center" style={{ color: 'white' }}>¡Solicitud enviada!</p>
+                      <p className="font-serif text-sm text-center mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>Abrimos WhatsApp con su información.</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex flex-col gap-4">
+                      <h3 className="font-serif text-lg font-semibold text-center mb-1" style={{ color: 'white' }}>Solicitar Cita</h3>
+                      <p className="font-serif text-center mb-2" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem' }}>
+                        Complete el formulario y se abrirá WhatsApp con su solicitud.
+                      </p>
+
+                      {/* Nombre */}
+                      <div>
+                        <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Nombre completo *</label>
+                        <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
+                      </div>
+
+                      {/* Email + Teléfono */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Correo electrónico *</label>
+                          <input required type="email" value={form.email} onChange={set("email")} placeholder="correo@email.com" className={inputCls} style={inputStyle} />
+                        </div>
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Teléfono / WhatsApp *</label>
+                          <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="300 000 0000" className={inputCls} style={inputStyle} />
+                        </div>
+                      </div>
+
+                      {/* Tipo + Área */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Tipo de consulta</label>
+                          <select value={form.tipo} onChange={set("tipo")} className={inputCls} style={inputStyle}>
+                            <option>Presencial</option>
+                            <option>Teleorientación</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Área de consulta</label>
+                          <select value={form.area} onChange={set("area")} className={inputCls} style={inputStyle}>
+                            <option>Terapia Respiratoria</option>
+                            <option>CPAP / BPAP</option>
+                            <option>Salud Pública</option>
+                            <option>Inyectología</option>
+                            <option>Vacunación</option>
+                            <option>Otra</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Fecha + Hora */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Fecha preferida</label>
+                          <input type="date" value={form.fecha} onChange={set("fecha")} className={inputCls} style={inputStyle} min={new Date().toISOString().split("T")[0]} />
+                        </div>
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Horario preferido</label>
+                          <select value={form.hora} onChange={set("hora")} className={inputCls} style={inputStyle}>
+                            <option>Mañana (8 am – 12 pm)</option>
+                            <option>Tarde (12 pm – 6 pm)</option>
+                            <option>Sábados (9 am – 1 pm)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Mensaje */}
+                      <div>
+                        <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Información adicional</label>
+                        <textarea value={form.mensaje} onChange={set("mensaje")} placeholder="Describa brevemente su motivo de consulta…" rows={3} className={inputCls + " resize-none"} style={inputStyle} />
+                      </div>
+
+                      {/* Submit */}
+                      <button
+                        type="submit"
+                        className="w-full font-serif tracking-[0.18em] uppercase py-3.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 mt-1"
+                        style={{ background: "#25D366", color: "white", fontWeight: 600, fontSize: "0.78rem", border: "none", cursor: "pointer" }}
+                      >
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
+                          <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
+                        </svg>
+                        Enviar por WhatsApp
+                      </button>
+                      <p className="font-serif text-center" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.6rem' }}>
+                        Lun–Vie 8 am–6 pm · Sáb 9 am–1 pm
+                      </p>
+                    </form>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </motion.div>
 
-      {/* Wave bottom */}
+      {/* Wave → Footer */}
       <div className="w-full overflow-hidden mt-0" style={{ lineHeight: 0 }}>
         <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
           <path d="M0,60 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill={GREEN} />
