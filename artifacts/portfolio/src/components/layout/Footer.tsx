@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const GREEN = "#2d5a27";
 
@@ -45,7 +46,7 @@ const socials: SocialIcon[] = [
   },
   {
     label: "WhatsApp",
-    href: "https://wa.me/573143127513",
+    href: getWhatsAppUrl(),
     bg: "#25D366",
     renderIcon: () => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

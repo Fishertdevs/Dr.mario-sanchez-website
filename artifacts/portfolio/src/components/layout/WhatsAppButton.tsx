@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const WA_GREEN = "#25D366";
 
@@ -14,15 +15,15 @@ const WhatsAppIcon = ({ size = 28 }: { size?: number }) => (
   </svg>
 );
 
-export default function WhatsAppButton({ phone }: Props) {
+export default function WhatsAppButton({ phone: _ }: Props) {
   const [labelOpen, setLabelOpen] = useState(false);
-  const waUrl = `https://wa.me/${phone}`;
 
   const handleClick = () => {
+    const url = getWhatsAppUrl();
     if (window.innerWidth >= 768) {
       setLabelOpen((prev) => !prev);
     } else {
-      window.open(waUrl, "_blank", "noopener,noreferrer");
+      window.open(url, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -32,7 +33,7 @@ export default function WhatsAppButton({ phone }: Props) {
       <AnimatePresence>
         {labelOpen && (
           <motion.a
-            href={waUrl}
+            href={getWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, x: 24, scale: 0.9 }}
