@@ -15,19 +15,25 @@ export default function About() {
 
         {/* Photo — fills full column height, left-anchored like hero */}
         <motion.div
-          className="relative flex-shrink-0 overflow-hidden"
-          style={{ width: '50%', height: '92vh' }}
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          style={{ position: 'relative', flexShrink: 0, width: '50%', height: '92vh', overflow: 'hidden' }}
         >
           <img
             src={doctorPhoto}
             alt="Dr. Mario Sanchez"
             data-testid="img-doctor-about-desktop"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-full w-auto"
-            style={{ maxWidth: 'none' }}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+            }}
           />
         </motion.div>
 
