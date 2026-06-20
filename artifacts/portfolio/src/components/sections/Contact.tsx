@@ -66,7 +66,7 @@ function getGreeting() {
   return "Buenas noches";
 }
 
-const inputCls = "w-full font-serif text-xs px-3 py-2.5 rounded-lg border outline-none transition-all duration-200 focus:ring-1";
+const inputCls = "w-full font-serif text-xs px-3 py-2.5 rounded-xl border outline-none transition-all duration-200 focus:ring-1";
 const inputStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.08)",
   borderColor: "rgba(255,255,255,0.2)",
@@ -325,7 +325,7 @@ export default function Contact() {
                               >
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Nombre completo *</label>
-                                  <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
+                                  <input required value={form.nombre} onChange={set("nombre")} placeholder="Tu nombre" className={inputCls} style={inputStyle} />
                                 </div>
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Correo electrónico *</label>
@@ -333,7 +333,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Teléfono / WhatsApp *</label>
-                                  <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="300 000 0000" className={inputCls} style={inputStyle} />
+                                  <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="323 456 789" className={inputCls} style={inputStyle} />
                                 </div>
                               </motion.div>
                             )}
@@ -432,27 +432,30 @@ export default function Contact() {
                           {step > 0 && (
                             <button
                               onClick={() => goStep(step - 1)}
-                              className="font-serif tracking-[0.14em] uppercase px-4 py-2.5 rounded-xl transition-all duration-200 hover:opacity-80"
-                              style={{ background: "rgba(255,255,255,0.1)", color: "white", fontSize: "0.65rem", border: "none", cursor: "pointer", fontWeight: 600 }}
+                              className="font-serif tracking-[0.14em] uppercase transition-colors duration-200 hover:opacity-60"
+                              style={{ background: "none", color: "rgba(255,255,255,0.45)", fontSize: "0.62rem", border: "none", cursor: "pointer", fontWeight: 600, padding: 0 }}
                             >
-                              ← Atrás
+                              Atrás
                             </button>
                           )}
                           {step < 3 ? (
                             <button
                               onClick={() => goStep(step + 1)}
                               disabled={step === 0 && !canNext0}
-                              className="flex-1 font-serif tracking-[0.14em] uppercase py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                              className="font-serif tracking-[0.14em] uppercase transition-all duration-200"
                               style={{
-                                background: step === 0 && !canNext0 ? "rgba(255,255,255,0.15)" : "white",
-                                color: step === 0 && !canNext0 ? "rgba(255,255,255,0.35)" : DARK_GREEN,
+                                background: "none",
+                                color: step === 0 && !canNext0 ? "rgba(255,255,255,0.25)" : "white",
                                 fontSize: "0.68rem",
                                 border: "none",
+                                borderBottom: step === 0 && !canNext0 ? "1px solid rgba(255,255,255,0.2)" : "1px solid white",
                                 cursor: step === 0 && !canNext0 ? "not-allowed" : "pointer",
                                 fontWeight: 700,
+                                padding: "0 0 2px 0",
+                                marginLeft: "auto",
                               }}
                             >
-                              Continuar →
+                              Continuar
                             </button>
                           ) : (
                             <button
