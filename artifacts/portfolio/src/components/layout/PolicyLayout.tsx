@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -12,7 +13,6 @@ interface Section {
 }
 
 interface Props {
-  eyebrow?: string;
   title: string;
   updated?: string;
   sections: Section[];
@@ -42,7 +42,9 @@ function AnimatedSection({ title, content, index }: Section & { index: number })
   );
 }
 
-export default function PolicyLayout({ eyebrow = "Dr. Mario Sánchez", title, updated = "Junio de 2026", sections }: Props) {
+export default function PolicyLayout({ title, updated = "Junio de 2026", sections }: Props) {
+  const [, navigate] = useLocation();
+
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
@@ -52,32 +54,29 @@ export default function PolicyLayout({ eyebrow = "Dr. Mario Sánchez", title, up
       <Navbar />
 
       <main className="flex-1 w-full max-w-3xl mx-auto px-4 md:px-8 pt-28 md:pt-32 pb-16">
-        {/* Header */}
+
+        {/* Header — fully centered, matching approved title sizes */}
         <motion.div
+          className="text-center mb-10 md:mb-14"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p
-            className="font-serif tracking-[0.22em] uppercase mb-2 md:mb-3"
-            style={{ color: "#aaa", fontSize: "clamp(0.55rem, 2vw, 0.72rem)" }}
-          >
-            {eyebrow}
-          </p>
-
-          {/* Title — single line on mobile, scales down */}
           <h1
-            className="font-serif font-bold leading-tight whitespace-nowrap overflow-hidden text-ellipsis text-center md:text-left"
-            style={{ fontSize: "clamp(1.15rem, 5.5vw, 2.8rem)", color: "#0a0a0a" }}
+            className="font-serif italic font-bold leading-tight whitespace-nowrap"
+            style={{ fontSize: "clamp(1.8rem, 5vw, 3rem)", color: "#0a0a0a" }}
           >
             {title}
           </h1>
 
-          <div className="h-[2px] w-12 md:w-16 mt-3 mb-5 md:mb-6" style={{ background: GREEN }} />
+          {/* Decorative line — centered */}
+          <div className="flex justify-center mt-4 mb-4">
+            <div className="h-[2px] w-16" style={{ background: GREEN }} />
+          </div>
 
           <p
-            className="font-serif mb-8 md:mb-12"
-            style={{ color: "#999", fontSize: "clamp(0.68rem, 2.2vw, 0.85rem)" }}
+            className="font-serif"
+            style={{ color: "#999", fontSize: "clamp(0.65rem, 2vw, 0.82rem)" }}
           >
             Última actualización: {updated}
           </p>
@@ -89,6 +88,23 @@ export default function PolicyLayout({ eyebrow = "Dr. Mario Sánchez", title, up
             <AnimatedSection key={s.title} title={s.title} content={s.content} index={i} />
           ))}
         </div>
+
+        {/* Back to home — bottom of content */}
+        <motion.div
+          className="mt-14 md:mt-16 flex justify-center"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.5 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <button
+            onClick={() => navigate("/")}
+            className="font-serif tracking-[0.2em] uppercase inline-flex items-center gap-2 hover:opacity-60 transition-opacity"
+            style={{ color: GREEN, fontSize: "clamp(0.65rem, 2vw, 0.78rem)", background: "none", border: "none", cursor: "pointer" }}
+          >
+            ← Volver al inicio
+          </button>
+        </motion.div>
       </main>
 
       <Footer />
