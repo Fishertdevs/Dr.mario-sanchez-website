@@ -56,7 +56,7 @@ export default function Contact() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.9 }}
-        className="text-center pt-16 pb-10 px-6"
+        className="text-center pt-6 pb-8 px-6"
       >
         <p
           className="font-serif uppercase mb-3"
