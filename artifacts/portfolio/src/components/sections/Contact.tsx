@@ -5,9 +5,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { DayPicker } from "react-day-picker";
+import { Calendar } from "@/components/ui/calendar";
 import { es } from "date-fns/locale";
-import "react-day-picker/style.css";
 
 const GREEN = "#2d5a27";
 const DARK_GREEN = "#1e3d1a";
@@ -420,10 +419,9 @@ export default function Contact() {
                                       align="start"
                                       sideOffset={6}
                                       avoidCollisions={false}
-                                      className="w-auto p-0 border-0 shadow-xl"
-                                      style={{ background: "#162f12" }}
+                                      className="w-auto p-0 shadow-xl"
                                     >
-                                      <DayPicker
+                                      <Calendar
                                         mode="single"
                                         selected={form.fecha ? new Date(form.fecha + "T12:00:00") : undefined}
                                         onSelect={(d) => {
@@ -435,23 +433,6 @@ export default function Contact() {
                                         }}
                                         disabled={{ before: new Date() }}
                                         locale={es}
-                                        classNames={{
-                                          root: "p-3",
-                                          month_caption: "flex items-center justify-center mb-2 font-serif text-xs uppercase tracking-widest text-white/70",
-                                          caption_label: "font-serif text-xs text-white/80 tracking-widest uppercase",
-                                          nav: "flex items-center justify-between mb-1",
-                                          button_previous: "p-1 rounded hover:bg-white/10 text-white/60 hover:text-white transition-colors",
-                                          button_next: "p-1 rounded hover:bg-white/10 text-white/60 hover:text-white transition-colors",
-                                          weekdays: "flex mb-1",
-                                          weekday: "flex-1 text-center text-[0.6rem] text-white/30 font-serif uppercase",
-                                          week: "flex",
-                                          day: "flex-1 aspect-square flex items-center justify-center",
-                                          day_button: "w-full h-full text-[0.68rem] font-serif rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors disabled:opacity-20 disabled:cursor-not-allowed",
-                                          selected: "!bg-white/20 !text-white rounded-lg",
-                                          today: "text-white font-bold",
-                                          outside: "opacity-20",
-                                          disabled: "opacity-20 cursor-not-allowed",
-                                        }}
                                       />
                                     </PopoverContent>
                                   </Popover>
@@ -483,18 +464,17 @@ export default function Contact() {
                                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                                 className="absolute inset-0 flex flex-col gap-3.5"
                               >
-                                <div>
+                                <div className="flex flex-col flex-1 min-h-0">
                                   <label className={labelCls} style={labelStyle}>Información adicional</label>
                                   <textarea
                                     value={form.mensaje}
                                     onChange={set("mensaje")}
                                     placeholder="Describa brevemente su motivo de consulta…"
-                                    rows={4}
-                                    className={inputCls + " resize-none"}
-                                    style={inputStyle}
+                                    className={inputCls + " resize-none flex-1 min-h-0"}
+                                    style={{ ...inputStyle, height: "100%" }}
                                   />
                                 </div>
-                                <p className="font-serif" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem' }}>
+                                <p className="font-serif shrink-0" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem' }}>
                                   Al continuar se abrirá WhatsApp con su solicitud completa.
                                 </p>
                               </motion.div>
