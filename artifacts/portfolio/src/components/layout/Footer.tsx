@@ -134,7 +134,7 @@ export default function Footer() {
           className="font-serif"
           style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.62rem, 1.4vw, 0.72rem)' }}
         >
-          © DrMarioSanchez2026
+          © 2026 DrMarioSanchez
         </p>
       </div>
     </footer>
