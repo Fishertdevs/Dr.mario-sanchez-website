@@ -2,24 +2,25 @@ import { motion } from "framer-motion";
 import doctorPhoto from "@assets/image_1781916620650.png";
 
 const BLACK = "#0a0a0a";
+const GREEN = "#2d5a27";
 
 export default function About() {
   return (
     <section
       id="about"
-      className="relative overflow-hidden bg-white"
+      className="relative bg-white"
     >
       {/* ── Desktop layout ─────────────────────────────────────── */}
-      <div className="hidden lg:flex" style={{ height: '92vh', position: 'relative' }}>
+      <div className="hidden lg:flex" style={{ height: '92vh', position: 'relative', overflow: 'hidden' }}>
 
-        {/* Photo column */}
+        {/* Photo column — slightly narrower so image appears smaller */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            width: '42%',
+            width: '36%',
             height: '92vh',
             flexShrink: 0,
             overflow: 'hidden',
@@ -32,10 +33,9 @@ export default function About() {
             data-testid="img-doctor-about-desktop"
             style={{
               position: 'absolute',
-              bottom: 0,
-              left: 0,
+              inset: 0,
               width: '100%',
-              height: '90%',
+              height: '100%',
               objectFit: 'cover',
               objectPosition: 'center top',
             }}
@@ -71,6 +71,22 @@ export default function About() {
             </p>
           </div>
         </motion.div>
+
+        {/* Wave overlay — green wave at bottom covers the image edge */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+          style={{ lineHeight: 0, zIndex: 10 }}
+        >
+          <svg
+            viewBox="0 0 1440 90"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+            className="w-full block"
+            style={{ height: '90px' }}
+          >
+            <path d="M0,30 C480,90 960,0 1440,60 L1440,90 L0,90 Z" fill={GREEN} />
+          </svg>
+        </div>
       </div>
 
       {/* ── Mobile layout ────────────────────────────── */}
