@@ -27,7 +27,7 @@ export default function WhatsAppButton({ phone }: Props) {
   };
 
   return (
-    <div className="fixed z-50 flex items-center gap-3 md:bottom-6 bottom-20 right-6">
+    <div className="fixed z-50 flex items-center gap-3 bottom-6 right-6">
       {/* Animated label — desktop only */}
       <AnimatePresence>
         {labelOpen && (

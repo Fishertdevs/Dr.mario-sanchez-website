@@ -87,7 +87,7 @@ export default function About() {
       <div className="hidden lg:block" style={{ background: GREEN, height: '2px', marginTop: '-1px' }} />
 
       {/* ── Mobile layout ────────────────────────────── */}
-      <div className="flex lg:hidden flex-col items-center px-6 pt-10 pb-24">
+      <div className="flex lg:hidden flex-col items-center px-6 pt-10 pb-0">
         <motion.h2
           className="font-serif font-bold text-center mb-8 leading-tight whitespace-nowrap"
           style={{ fontSize: 'min(calc((100vw - 64px) / 13.5), 2.5rem)', color: BLACK }}
@@ -98,6 +98,18 @@ export default function About() {
         >
           Perfil Profesional
         </motion.h2>
+        <motion.p
+          className="font-serif text-sm leading-relaxed text-center max-w-xs mb-5"
+          style={{ color: '#555', fontWeight: 300, textWrap: 'balance' } as React.CSSProperties}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.08 }}
+        >
+          Comprometido con brindar atención integral, humana y de calidad. Mi vocación es acompañar
+          a cada paciente con dedicación, escucha activa y conocimiento especializado para lograr
+          su bienestar y recuperación.
+        </motion.p>
         <motion.p
           className="font-serif text-sm leading-relaxed text-center max-w-xs"
           style={{ color: '#555', fontWeight: 300, textWrap: 'balance' } as React.CSSProperties}
@@ -112,6 +124,13 @@ export default function About() {
           clínicos y CRM. Habilidades en promoción de la salud, donación de sangre y vacunación. Mi enfoque
           garantiza la educación y prevención como pilares del bienestar.
         </motion.p>
+
+        {/* Wave — mobile transition to Blog */}
+        <div className="w-full mt-10" style={{ lineHeight: 0 }}>
+          <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '70px' }}>
+            <path d="M0,30 C480,90 960,0 1440,60 L1440,90 L0,90 Z" fill={GREEN} />
+          </svg>
+        </div>
       </div>
 
     </section>
