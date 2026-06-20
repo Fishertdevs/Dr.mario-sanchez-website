@@ -61,7 +61,7 @@ export default function Contact() {
         <p className="font-serif text-xs tracking-[0.28em] uppercase mb-3" style={{ color: '#aaa' }}>
           Agenda tu consulta
         </p>
-        <h2 className="font-serif italic font-bold leading-tight" style={{ color: '#0a0a0a', fontSize: 'clamp(2.4rem, 6vw, 4.5rem)' }}>
+        <h2 className="font-serif italic font-bold leading-tight" style={{ color: '#0a0a0a', fontSize: 'clamp(2.5rem, 4vw, 3.8rem)' }}>
           Estamos para ayudarle.
         </h2>
         {/* decorative dot */}

@@ -101,27 +101,27 @@ export default function Footer() {
         {/* Legal links */}
         <div className="flex flex-col items-center gap-2 md:gap-3 mb-5 md:mb-6">
           {/* Row 1: Cookies + Privacidad — forced single line */}
-          <div className="flex items-center justify-center gap-4 md:gap-6 flex-nowrap">
+          <div className="flex items-center justify-center gap-5 md:gap-8 flex-nowrap">
             {["Política de Cookies", "Política de Privacidad"].map((label) => (
               <a key={label} href="#"
-                className="font-serif uppercase tracking-[0.12em] whitespace-nowrap transition-opacity hover:opacity-60"
-                style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(0.58rem, 1.8vw, 0.72rem)' }}>
+                className="font-serif whitespace-nowrap transition-opacity hover:opacity-60"
+                style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(0.62rem, 1.5vw, 0.75rem)' }}>
                 {label}
               </a>
             ))}
           </div>
           {/* Row 2: Términos */}
           <a href="#"
-            className="font-serif uppercase tracking-[0.12em] whitespace-nowrap transition-opacity hover:opacity-60"
-            style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(0.58rem, 1.8vw, 0.72rem)' }}>
+            className="font-serif whitespace-nowrap transition-opacity hover:opacity-60"
+            style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(0.62rem, 1.5vw, 0.75rem)' }}>
             Términos y Condiciones
           </a>
         </div>
 
         {/* Copyright */}
-        <p className="font-serif uppercase tracking-[0.1em]"
-          style={{ color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(0.5rem, 1.5vw, 0.65rem)' }}>
-          © drmariosanchez2026
+        <p className="font-serif"
+          style={{ color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(0.55rem, 1.3vw, 0.65rem)' }}>
+          © DrMarioSanchez2026
         </p>
       </div>
     </footer>
