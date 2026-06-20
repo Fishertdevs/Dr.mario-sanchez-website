@@ -167,7 +167,7 @@ export default function Contact() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.9, delay: 0.2 }}
-        className="mx-auto w-full max-w-6xl px-4 md:px-6 pb-0"
+        className="mx-auto w-full max-w-5xl px-4 md:px-8 pb-0"
       >
         <div className="rounded-3xl overflow-hidden" style={{ background: DARK_GREEN }}>
 
