@@ -61,7 +61,7 @@ export default function Contact() {
         <p
           className="font-serif uppercase mb-3"
           style={{
-            color: '#aaa',
+            color: '#888',
             fontSize: 'clamp(0.6rem, 2.2vw, 0.75rem)',
             letterSpacing: 'clamp(0.08em, 1.5vw, 0.28em)',
           }}
@@ -77,96 +77,94 @@ export default function Contact() {
         >
           Estamos para ayudarle.
         </h2>
-        <div className="flex justify-center gap-2 mt-4">
-          <div className="w-1 h-1 rounded-full" style={{ background: '#bbb' }} />
-          <div className="w-1 h-1 rounded-full" style={{ background: GREEN }} />
-          <div className="w-1 h-1 rounded-full" style={{ background: '#bbb' }} />
+        {/* Decorative line */}
+        <div className="flex justify-center mt-5">
+          <div className="h-px w-16" style={{ background: GREEN }} />
         </div>
       </motion.div>
 
-      {/* Two-column body */}
+      {/* Single card containing info + map */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.9, delay: 0.2 }}
-        className="flex flex-col md:flex-row mx-auto w-full max-w-5xl px-4 md:px-8 pb-0 gap-4"
+        className="mx-auto w-full max-w-5xl px-4 md:px-8 pb-0"
       >
-        {/* Left: info panel */}
         <div
-          className="w-full md:w-[38%] rounded-3xl p-6 md:p-7 flex flex-col gap-4"
+          className="rounded-3xl overflow-hidden flex flex-col md:flex-row"
           style={{ background: DARK_GREEN }}
         >
-          <h3
-            className="font-serif text-lg md:text-xl font-semibold text-center"
-            style={{ color: 'white' }}
-          >
-            Contáctenos
-          </h3>
-
-          {/* Hours */}
-          <div className="text-center">
-            <p
-              className="font-serif tracking-[0.18em] uppercase mb-1.5"
-              style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.55rem' }}
+          {/* Left: info panel */}
+          <div className="w-full md:w-[38%] p-6 md:p-7 flex flex-col gap-4">
+            <h3
+              className="font-serif text-lg md:text-xl font-semibold text-center"
+              style={{ color: 'white' }}
             >
-              Horarios de atención
-            </p>
-            <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
-              Lun – Vie: <span style={{ color: 'white' }}>8:00 am – 6:00 pm</span>
-            </p>
-            <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
-              Sábados: <span style={{ color: 'white' }}>9:00 am – 1:00 pm</span>
-            </p>
-            <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem' }}>
-              Domingos: <em>Cerrado</em>
-            </p>
-          </div>
+              Contáctenos
+            </h3>
 
-          {/* Contact items */}
-          <div className="flex flex-col gap-3">
-            {infoItems.map(({ icon, label, value, href }) => (
-              <div key={label} className="flex items-start gap-2.5">
-                <div className="mt-0.5 shrink-0">{icon}</div>
-                <div>
-                  <p
-                    className="font-serif tracking-[0.16em] uppercase mb-0.5"
-                    style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.52rem' }}
-                  >
-                    {label}
-                  </p>
-                  {href ? (
-                    <a
-                      href={href}
-                      className="font-serif hover:underline underline-offset-4"
-                      style={{ color: 'white', fontSize: '0.78rem' }}
+            {/* Hours */}
+            <div className="text-center">
+              <p
+                className="font-serif tracking-[0.18em] uppercase mb-1.5"
+                style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.55rem' }}
+              >
+                Horarios de atención
+              </p>
+              <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                Lun – Vie: <span style={{ color: 'white' }}>8:00 am – 6:00 pm</span>
+              </p>
+              <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                Sábados: <span style={{ color: 'white' }}>9:00 am – 1:00 pm</span>
+              </p>
+              <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem' }}>
+                Domingos: <em>Cerrado</em>
+              </p>
+            </div>
+
+            {/* Contact items */}
+            <div className="flex flex-col gap-3">
+              {infoItems.map(({ icon, label, value, href }) => (
+                <div key={label} className="flex items-start gap-2.5">
+                  <div className="mt-0.5 shrink-0">{icon}</div>
+                  <div>
+                    <p
+                      className="font-serif tracking-[0.16em] uppercase mb-0.5"
+                      style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.52rem' }}
                     >
-                      {value}
-                    </a>
-                  ) : (
-                    <p className="font-serif" style={{ color: 'white', fontSize: '0.78rem' }}>{value}</p>
-                  )}
+                      {label}
+                    </p>
+                    {href ? (
+                      <a
+                        href={href}
+                        className="font-serif hover:underline underline-offset-4"
+                        style={{ color: 'white', fontSize: '0.78rem' }}
+                      >
+                        {value}
+                      </a>
+                    ) : (
+                      <p className="font-serif" style={{ color: 'white', fontSize: '0.78rem' }}>{value}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Right: Google Map — half height on mobile */}
-        <div
-          className="w-full md:w-[62%] rounded-3xl overflow-hidden"
-          style={{ minHeight: '170px' }}
-        >
-          <iframe
-            title="Ubicación Dr. Mario Sánchez"
-            src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
-            width="100%"
-            className="h-[170px] md:h-full"
-            style={{ border: 0, minHeight: '170px' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          {/* Right: Google Map — inside the card */}
+          <div className="w-full md:w-[62%] h-[200px] md:h-auto min-h-[200px] md:min-h-[380px]">
+            <iframe
+              title="Ubicación Dr. Mario Sánchez"
+              src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
+              width="100%"
+              height="100%"
+              style={{ border: 0, display: 'block', minHeight: '200px' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
         </div>
       </motion.div>
 
