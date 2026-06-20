@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [location, navigate] = useLocation();
+
+  const isHome = location === "/";
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -19,19 +24,30 @@ export default function Navbar() {
     { name: "Contacto", id: "contact" },
   ];
 
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const navHeight = 72;
-    const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
-    window.scrollTo({ top, behavior: "smooth" });
+  const handleLink = (id: string) => {
     setMenuOpen(false);
+    if (isHome) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 72;
+      window.scrollTo({ top, behavior: "smooth" });
+    } else {
+      navigate("/");
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const top = el.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: "smooth" });
+      }, 120);
+    }
   };
+
+  const solid = !isHome || isScrolled;
 
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
+        solid
           ? "bg-white/97 backdrop-blur-md border-b border-black/10 py-5 shadow-sm"
           : "bg-transparent border-b border-transparent py-7"
       }`}
@@ -41,7 +57,7 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <button
-          onClick={() => scrollTo("hero")}
+          onClick={() => handleLink("hero")}
           className="font-serif font-bold text-[10px] md:text-sm tracking-[0.15em] uppercase text-black whitespace-nowrap"
           data-testid="link-logo"
         >
@@ -53,7 +69,7 @@ export default function Navbar() {
           {links.map((link) => (
             <button
               key={link.name}
-              onClick={() => scrollTo(link.id)}
+              onClick={() => handleLink(link.id)}
               data-testid={`link-nav-${link.name.toLowerCase()}`}
               className="font-serif text-sm tracking-[0.12em] uppercase transition-all duration-200 hover:text-[#6aab5e] relative after:absolute after:bottom-[-3px] after:left-0 after:w-0 after:h-[1.5px] after:bg-[#6aab5e] after:transition-all after:duration-200 hover:after:w-full"
               style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
@@ -87,7 +103,7 @@ export default function Navbar() {
           {links.map((link) => (
             <button
               key={link.name}
-              onClick={() => scrollTo(link.id)}
+              onClick={() => handleLink(link.id)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
               className="font-serif text-xs tracking-[0.2em] uppercase transition-all duration-200 text-left hover:text-[#6aab5e]"
               style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
