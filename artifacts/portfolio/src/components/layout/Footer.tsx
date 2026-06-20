@@ -6,7 +6,7 @@ const socials = [
   {
     label: "YouTube",
     href: "https://youtube.com/@drmariosanchez",
-    color: "#FF0000",
+    bg: "#FF0000",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z" stroke="currentColor" strokeWidth="1.8" fill="none"/>
@@ -17,7 +17,7 @@ const socials = [
   {
     label: "TikTok",
     href: "https://tiktok.com/@dr..terapia",
-    color: "#69C9D0",
+    bg: "#010101",
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
@@ -27,7 +27,7 @@ const socials = [
   {
     label: "WhatsApp",
     href: "https://wa.me/573143127513",
-    color: "#25D366",
+    bg: "#25D366",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="currentColor"/>
@@ -38,19 +38,9 @@ const socials = [
   {
     label: "Instagram",
     href: "https://instagram.com/drmariosanchez7124",
-    color: "#E1306C",
-    gradientId: "ig-grad",
+    bg: "linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="ig-grad-stroke" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#f09433"/>
-            <stop offset="25%" stopColor="#e6683c"/>
-            <stop offset="50%" stopColor="#dc2743"/>
-            <stop offset="75%" stopColor="#cc2366"/>
-            <stop offset="100%" stopColor="#bc1888"/>
-          </linearGradient>
-        </defs>
         <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" strokeWidth="1.8" fill="none"/>
         <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" fill="none"/>
         <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
@@ -68,7 +58,7 @@ export default function Footer() {
 
         {/* Social icons */}
         <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
-          {socials.map(({ label, href, color, icon }) => {
+          {socials.map(({ label, href, bg, icon }) => {
             const isHovered = hoveredIcon === label;
             return (
               <a
@@ -83,9 +73,9 @@ export default function Footer() {
                 style={{
                   width: '42px',
                   height: '42px',
-                  borderColor: isHovered ? color : 'rgba(255,255,255,0.45)',
-                  color: isHovered ? color : 'white',
-                  background: 'transparent',
+                  borderColor: isHovered ? 'transparent' : 'rgba(255,255,255,0.45)',
+                  color: isHovered ? '#ffffff' : 'white',
+                  background: isHovered ? bg : 'transparent',
                   transform: isHovered ? 'scale(1.15)' : 'scale(1)',
                 }}
               >
@@ -113,7 +103,7 @@ export default function Footer() {
               <a
                 key={label}
                 href="#"
-                className="font-serif whitespace-nowrap transition-opacity hover:opacity-70"
+                className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#a8d5a2] hover:underline underline-offset-2"
                 style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}
               >
                 {label}
@@ -122,7 +112,7 @@ export default function Footer() {
           </div>
           <a
             href="#"
-            className="font-serif whitespace-nowrap transition-opacity hover:opacity-70"
+            className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#a8d5a2] hover:underline underline-offset-2"
             style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}
           >
             Términos y Condiciones

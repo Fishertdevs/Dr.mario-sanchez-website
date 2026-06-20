@@ -55,7 +55,7 @@ export default function Navbar() {
               key={link.name}
               onClick={() => scrollTo(link.id)}
               data-testid={`link-nav-${link.name.toLowerCase()}`}
-              className="font-serif text-sm tracking-[0.12em] uppercase transition-colors duration-200 hover:opacity-60"
+              className="font-serif text-sm tracking-[0.12em] uppercase transition-all duration-200 hover:text-[#6aab5e] relative after:absolute after:bottom-[-3px] after:left-0 after:w-0 after:h-[1.5px] after:bg-[#6aab5e] after:transition-all after:duration-200 hover:after:w-full"
               style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
@@ -89,7 +89,7 @@ export default function Navbar() {
               key={link.name}
               onClick={() => scrollTo(link.id)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
-              className="font-serif text-xs tracking-[0.2em] uppercase transition-colors text-left hover:opacity-60"
+              className="font-serif text-xs tracking-[0.2em] uppercase transition-all duration-200 text-left hover:text-[#6aab5e]"
               style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
