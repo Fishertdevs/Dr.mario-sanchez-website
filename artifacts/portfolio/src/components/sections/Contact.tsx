@@ -150,9 +150,6 @@ export default function Contact() {
         transition={{ duration: 0.9 }}
         className="text-center pt-6 pb-8 px-6"
       >
-        <p className="font-serif uppercase mb-3" style={{ color: '#666', fontSize: 'clamp(0.6rem, 2.2vw, 0.75rem)', letterSpacing: 'clamp(0.08em, 1.5vw, 0.28em)' }}>
-          Agenda tu consulta
-        </p>
         <h2 className="font-serif italic font-bold leading-tight" style={{ color: '#0a0a0a', fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}>
           Estamos para ayudarle.
         </h2>
@@ -171,8 +168,9 @@ export default function Contact() {
       >
         <div className="rounded-3xl overflow-hidden" style={{ background: DARK_GREEN }}>
 
-          {/* ── Tab bar ── */}
-          <div className="flex justify-start pt-4 pb-1 px-6">
+          {/* ── Tab bar — centered within left column width ── */}
+          <div className="flex pt-4 pb-1 px-6">
+            <div className="w-full md:w-[40%] flex justify-center">
             <div
               className="relative flex rounded-full p-0.5 gap-0.5"
               style={{ background: "rgba(255,255,255,0.1)" }}
@@ -205,6 +203,7 @@ export default function Contact() {
                   <span className="relative z-10">{tab}</span>
                 </button>
               ))}
+            </div>
             </div>
           </div>
 
