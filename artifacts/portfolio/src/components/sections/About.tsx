@@ -54,7 +54,7 @@ export default function About() {
           <h2 className="font-serif font-bold text-5xl leading-tight mb-5" style={{ color: BLACK }}>
             Perfil Profesional
           </h2>
-          <div className="flex justify-start mb-8">
+          <div className="flex justify-center mb-8">
             <div className="h-px w-16" style={{ background: '#2d5a27' }} />
           </div>
           <div className="space-y-5 font-serif leading-relaxed max-w-lg text-left" style={{ color: '#444', fontWeight: 300, fontSize: '1.05rem' }}>
@@ -92,7 +92,7 @@ export default function About() {
       {/* ── Mobile layout ────────────────────────────── */}
       <div className="flex lg:hidden flex-col items-center px-6 pt-10 pb-0">
         <motion.h2
-          className="font-serif font-bold text-center mb-8 leading-tight whitespace-nowrap"
+          className="font-serif font-bold text-center mb-4 leading-tight whitespace-nowrap"
           style={{ fontSize: 'min(calc((100vw - 64px) / 13.5), 2.5rem)', color: BLACK }}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -101,6 +101,9 @@ export default function About() {
         >
           Perfil Profesional
         </motion.h2>
+        <div className="flex justify-center mb-6">
+          <div className="h-px w-16" style={{ background: '#2d5a27' }} />
+        </div>
         <motion.p
           className="font-serif text-sm leading-relaxed text-center max-w-xs"
           style={{ color: '#555', fontWeight: 300, textWrap: 'balance' } as React.CSSProperties}
