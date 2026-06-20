@@ -233,7 +233,7 @@ export default function Contact() {
         <div className="rounded-3xl overflow-hidden" style={{ background: DARK_GREEN }}>
 
           {/* ── Tab bar — centered within left column width ── */}
-          <div className="flex pt-4 pb-1 px-6">
+          <div className="flex pt-3 pb-1 px-4 md:px-6">
             <div className="w-full md:w-[40%] flex justify-center">
             <div
               className="relative flex rounded-full p-0.5 gap-0.5"
@@ -243,10 +243,10 @@ export default function Contact() {
                 <button
                   key={tab}
                   onClick={() => switchTab(i)}
-                  className="relative z-10 font-serif tracking-[0.14em] uppercase transition-colors duration-300"
+                  className="relative z-10 font-serif tracking-[0.1em] uppercase transition-colors duration-300"
                   style={{
-                    fontSize: "0.6rem",
-                    padding: "5px 14px",
+                    fontSize: "0.55rem",
+                    padding: "4px 10px",
                     color: activeTab === i ? DARK_GREEN : "rgba(255,255,255,0.6)",
                     background: "none",
                     border: "none",
@@ -254,6 +254,7 @@ export default function Contact() {
                     borderRadius: "9999px",
                     fontWeight: 600,
                     minWidth: "auto",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {activeTab === i && (
@@ -275,7 +276,7 @@ export default function Contact() {
           <div className="flex flex-col md:flex-row">
 
             {/* Left column */}
-            <div className="w-full md:w-[40%] overflow-hidden relative min-h-[300px] md:min-h-[380px]">
+            <div className="w-full md:w-[40%] overflow-hidden relative min-h-[420px] md:min-h-[380px]">
               <AnimatePresence mode="wait" custom={tabDir} initial={false}>
                 {activeTab === 0 ? (
 
