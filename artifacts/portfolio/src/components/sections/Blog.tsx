@@ -1,6 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
+import coverPrevImg   from "@assets/image_1781921271859.png";
+import coverEpocImg   from "@assets/image_1781920459455.png";
+import coverEstresImg from "@assets/image_1781919290751.png";
+import coverCpapImg   from "@assets/image_1781926041769.png";
 
 const GREEN = "#2d5a27";
 
@@ -11,6 +15,7 @@ interface Post {
   title: string;
   excerpt: string;
   body: string[];
+  coverImg: string;
   featured?: boolean;
   initialLikes: number;
 }
@@ -21,6 +26,7 @@ const posts: Post[] = [
     date: "Marzo 2025",
     tag: "Prevención",
     title: "Por qué la prevención es tu mejor medicina",
+    coverImg: coverPrevImg,
     excerpt:
       "Conoce cómo pequeñas acciones diarias pueden reducir drásticamente el riesgo de enfermedades cardiovasculares, respiratorias y metabólicas.",
     body: [
@@ -38,6 +44,7 @@ const posts: Post[] = [
     date: "Abril 2025",
     tag: "Salud Respiratoria",
     title: "EPOC: lo que debes saber antes de que robe tu aliento",
+    coverImg: coverEpocImg,
     excerpt:
       "La EPOC afecta a millones sin que lo sepan. Aprende a identificar síntomas tempranos y estrategias de manejo que marcan la diferencia.",
     body: [
@@ -54,6 +61,7 @@ const posts: Post[] = [
     date: "Mayo 2025",
     tag: "Bienestar Laboral",
     title: "Estrés laboral: ¿mito o realidad que destruye tu salud?",
+    coverImg: coverEstresImg,
     excerpt:
       "El estrés crónico tiene consecuencias físicas medibles. Descubre qué dice la ciencia y qué puedes hacer hoy para protegerte.",
     body: [
@@ -71,6 +79,7 @@ const posts: Post[] = [
     date: "Junio 2025",
     tag: "Terapia Respiratoria",
     title: "CPAP y BPAP: todo lo que necesitas para dormir mejor",
+    coverImg: coverCpapImg,
     excerpt:
       "Los dispositivos de presión positiva son la solución más efectiva para la apnea del sueño. Descubre cómo funcionan y cómo adaptarte.",
     body: [
@@ -139,7 +148,7 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
         background: "rgba(8,8,8,0.92)", backdropFilter: "blur(12px)",
         borderBottom: "1px solid rgba(255,255,255,0.07)",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 clamp(20px, 5vw, 80px)", height: "64px", flexShrink: 0,
+        padding: "0 clamp(20px, 5vw, 80px)", height: "60px", flexShrink: 0,
       }}>
         <button
           onClick={onClose}
@@ -147,62 +156,72 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
             display: "flex", alignItems: "center", gap: "8px",
             background: "none", border: "none", cursor: "pointer",
             color: "rgba(255,255,255,0.6)", fontFamily: "serif",
-            fontSize: "0.8rem", letterSpacing: "0.12em", textTransform: "uppercase",
+            fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase",
             transition: "color 0.2s", padding: 0,
           }}
         >
           <ArrowLeftIcon />
           <span>Volver</span>
         </button>
-
         <span style={{
-          fontFamily: "serif", fontSize: "0.62rem", letterSpacing: "0.18em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+          fontFamily: "serif", fontSize: "0.6rem", letterSpacing: "0.18em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.28)",
         }}>
           Dr. Mario Sánchez
         </span>
       </div>
 
-      {/* Article content */}
+      {/* Cover image — full width hero */}
+      <div style={{ width: "100%", height: "clamp(200px, 38vh, 420px)", flexShrink: 0, overflow: "hidden", position: "relative" }}>
+        <img
+          src={post.coverImg}
+          alt={post.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+        />
+        {/* Gradient overlay so text below reads cleanly */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "60%", background: "linear-gradient(to bottom, transparent, #080808)" }} />
+      </div>
+
+      {/* Article body — full width with side padding, left-aligned */}
       <div style={{
-        flex: 1, maxWidth: "760px", width: "100%",
-        margin: "0 auto", padding: "clamp(40px, 8vw, 80px) clamp(20px, 5vw, 48px) 80px",
+        flex: 1,
+        padding: "clamp(28px, 5vw, 56px) clamp(20px, 10vw, 120px) 80px",
       }}>
 
         {/* Meta row */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "28px", flexWrap: "wrap" }}>
-          {post.featured && <span style={{ fontSize: "1rem", color: "#ffd700" }}>★</span>}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "22px", flexWrap: "wrap" }}>
+          {post.featured && <span style={{ fontSize: "0.95rem", color: "#ffd700" }}>★</span>}
           <span style={{
-            fontFamily: "serif", fontSize: "0.6rem", letterSpacing: "0.14em",
+            fontFamily: "serif", fontSize: "0.58rem", letterSpacing: "0.14em",
             textTransform: "uppercase", background: "white", color: "#0a0a0a",
-            padding: "4px 12px", borderRadius: "9999px", fontWeight: 700,
+            padding: "3px 11px", borderRadius: "9999px", fontWeight: 700,
           }}>{post.tag}</span>
-          <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
+          <span style={{ color: "rgba(255,255,255,0.18)" }}>·</span>
           <span style={{
-            fontFamily: "serif", fontSize: "0.65rem", letterSpacing: "0.16em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.35)",
+            fontFamily: "serif", fontSize: "0.62rem", letterSpacing: "0.16em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.32)",
           }}>{post.date}</span>
         </div>
 
         {/* Title — left on desktop, centered on mobile */}
         <h1 className="text-center md:text-left" style={{
           fontFamily: "serif", fontWeight: 700,
-          fontSize: "clamp(1.3rem, 3.5vw, 1.9rem)",
-          color: "white", lineHeight: 1.25, marginBottom: "28px",
+          fontSize: "clamp(1.25rem, 3vw, 1.85rem)",
+          color: "white", lineHeight: 1.25, marginBottom: "22px",
         }}>
           {post.title}
         </h1>
 
-        {/* Decorative line — centered on mobile, left on desktop */}
-        <div className="mx-auto md:mx-0" style={{ height: "2px", width: "40px", background: GREEN, borderRadius: "9999px", marginBottom: "32px" }} />
+        {/* Decorative line */}
+        <div className="mx-auto md:mx-0" style={{ height: "2px", width: "36px", background: GREEN, borderRadius: "9999px", marginBottom: "28px" }} />
 
-        {/* Body paragraphs — left-aligned, small text */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        {/* Body — small readable text, left-aligned, max-width for long-form readability */}
+        <div style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "18px" }}>
           {post.body.map((para, i) => (
             <p key={i} style={{
-              fontFamily: "serif", fontSize: "0.82rem",
-              lineHeight: 1.85, color: "rgba(255,255,255,0.68)", margin: 0,
-              textAlign: "left",
+              fontFamily: "serif", fontSize: "0.83rem",
+              lineHeight: 1.9, color: "rgba(255,255,255,0.65)",
+              margin: 0, textAlign: "left",
             }}>
               {para}
             </p>
@@ -210,8 +229,8 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-          <p style={{ fontFamily: "serif", fontSize: "0.68rem", color: "rgba(255,255,255,0.28)", letterSpacing: "0.08em", margin: 0 }}>
+        <div style={{ maxWidth: "720px", marginTop: "44px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "rgba(255,255,255,0.25)", letterSpacing: "0.08em", margin: 0 }}>
             Dr. Mario Sánchez · Terapeuta Respiratorio &amp; Salubrista Público
           </p>
         </div>
