@@ -61,7 +61,7 @@ export default function Contact() {
         <p
           className="font-serif uppercase mb-3"
           style={{
-            color: '#888',
+            color: '#666',
             fontSize: 'clamp(0.6rem, 2.2vw, 0.75rem)',
             letterSpacing: 'clamp(0.08em, 1.5vw, 0.28em)',
           }}
@@ -72,14 +72,14 @@ export default function Contact() {
           className="font-serif italic font-bold leading-tight"
           style={{
             color: '#0a0a0a',
-            fontSize: 'min(calc((100vw - 56px) / 13), 3.8rem)',
+            fontSize: 'clamp(1.8rem, 5vw, 3rem)',
           }}
         >
           Estamos para ayudarle.
         </h2>
         {/* Decorative line */}
         <div className="flex justify-center mt-5">
-          <div className="h-px w-16" style={{ background: GREEN }} />
+          <div className="h-[2px] w-20" style={{ background: GREEN }} />
         </div>
       </motion.div>
 
