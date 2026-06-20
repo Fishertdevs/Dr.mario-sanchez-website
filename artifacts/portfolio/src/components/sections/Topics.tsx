@@ -327,15 +327,22 @@ function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: st
         width: '100%',
       }}
     >
-      {/* Illustration */}
-      <div className="flex items-center justify-center" style={{ background: 'white', borderRadius: '22px 22px 0 0', height: '155px', padding: '10px' }}>
-        <div style={{ width: '125px', height: '125px' }}>
-          {imgSrc
-            ? <img src={imgSrc} alt={title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-            : <Illus />
-          }
+      {/* Illustration / Photo */}
+      {imgSrc ? (
+        <div style={{ height: '175px', borderRadius: '22px 22px 0 0', overflow: 'hidden', flexShrink: 0 }}>
+          <img
+            src={imgSrc}
+            alt={title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+          />
         </div>
-      </div>
+      ) : (
+        <div className="flex items-center justify-center" style={{ background: 'white', borderRadius: '22px 22px 0 0', height: '155px', padding: '10px' }}>
+          <div style={{ width: '125px', height: '125px' }}>
+            <Illus />
+          </div>
+        </div>
+      )}
 
       {/* Divider */}
       <div className="mx-5" style={{ height: '1px', background: GREEN_LIGHT }} />
@@ -354,10 +361,10 @@ function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: st
       {/* Aesthetic number — bottom right */}
       <div
         className="absolute bottom-3 right-4 flex items-end gap-0.5 select-none pointer-events-none"
-        style={{ opacity: 0.18 }}
+        style={{ opacity: 0.45 }}
       >
-        <span className="font-serif text-xs font-light" style={{ color: GREEN, lineHeight: 1, marginBottom: '0.45rem' }}>N°</span>
-        <span className="font-serif font-black" style={{ color: GREEN, fontSize: '2.4rem', lineHeight: 1 }}>
+        <span className="font-serif text-xs font-light" style={{ color: '#7ecb72', lineHeight: 1, marginBottom: '0.45rem' }}>N°</span>
+        <span className="font-serif font-black" style={{ color: '#7ecb72', fontSize: '2.4rem', lineHeight: 1 }}>
           {num.toString().padStart(2, '0')}
         </span>
       </div>
