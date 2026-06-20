@@ -5,12 +5,69 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { es } from "date-fns/locale";
 
 const GREEN = "#2d5a27";
 const DARK_GREEN = "#1e3d1a";
 const PHONE = "573143127513";
+
+const MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DAYS_ES = ["Do","Lu","Ma","Mi","Ju","Vi","Sá"];
+
+function MiniCalendar({ value, onChange, onClose }: { value: string; onChange: (iso: string) => void; onClose: () => void }) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const sel = value ? (() => { const d = new Date(value+"T00:00:00"); d.setHours(0,0,0,0); return d; })() : null;
+  const [vy, setVy] = useState(sel?.getFullYear() ?? today.getFullYear());
+  const [vm, setVm] = useState(sel?.getMonth() ?? today.getMonth());
+
+  const prev = () => { if (vm === 0) { setVm(11); setVy(y => y-1); } else setVm(m => m-1); };
+  const next = () => { if (vm === 11) { setVm(0); setVy(y => y+1); } else setVm(m => m+1); };
+
+  const first = new Date(vy, vm, 1);
+  const last  = new Date(vy, vm+1, 0);
+  const cells: (number|null)[] = [];
+  for (let i = 0; i < first.getDay(); i++) cells.push(null);
+  for (let d = 1; d <= last.getDate(); d++) cells.push(d);
+
+  const pick = (day: number) => {
+    const iso = `${vy}-${String(vm+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    onChange(iso); onClose();
+  };
+
+  return (
+    <div style={{ padding:"12px 10px 8px", userSelect:"none", background:"white" }}>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:8 }}>
+        <button type="button" onClick={prev} style={{ background:"none", border:"none", cursor:"pointer", padding:"2px 8px", fontSize:"1rem", color:"#374151", lineHeight:1 }}>‹</button>
+        <span style={{ fontWeight:600, fontSize:"0.82rem", color:"#111" }}>
+          {MONTHS_ES[vm]} <span style={{ color:"#3b82f6", textDecoration:"underline" }}>{vy}</span>
+        </span>
+        <button type="button" onClick={next} style={{ background:"none", border:"none", cursor:"pointer", padding:"2px 8px", fontSize:"1rem", color:"#374151", lineHeight:1 }}>›</button>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", textAlign:"center", marginBottom:4 }}>
+        {DAYS_ES.map(d => <div key={d} style={{ fontSize:"0.62rem", fontWeight:700, color:"#9ca3af", padding:"2px 0" }}>{d}</div>)}
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:2 }}>
+        {cells.map((day, i) => {
+          if (!day) return <div key={i} />;
+          const ts = new Date(vy, vm, day).setHours(0,0,0,0);
+          const isT = ts === today.getTime();
+          const isS = sel && ts === sel.getTime();
+          return (
+            <button key={i} type="button" onClick={() => pick(day)}
+              style={{ background: isS ? "#3b82f6" : isT ? "#dbeafe" : "none", color: isS ? "white" : isT ? "#1d4ed8" : "#111",
+                border:"none", borderRadius:"50%", width:"28px", height:"28px", fontSize:"0.78rem", cursor:"pointer",
+                margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"center", fontWeight: isT||isS ? 700 : 400 }}>
+              {day}
+            </button>
+          );
+        })}
+      </div>
+      <div style={{ display:"flex", justifyContent:"space-between", marginTop:8, paddingTop:8, borderTop:"1px solid #e5e7eb" }}>
+        <button type="button" onClick={() => onChange("")} style={{ background:"none", border:"none", cursor:"pointer", color:"#3b82f6", fontSize:"0.75rem" }}>Borrar</button>
+        <button type="button" onClick={() => { pick(today.getDate()); setVy(today.getFullYear()); setVm(today.getMonth()); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#3b82f6", fontSize:"0.75rem" }}>Hoy</button>
+      </div>
+    </div>
+  );
+}
 
 const infoItems = [
   {
@@ -218,7 +275,7 @@ export default function Contact() {
           <div className="flex flex-col md:flex-row">
 
             {/* Left column */}
-            <div className="w-full md:w-[40%] overflow-hidden relative" style={{ minHeight: '380px' }}>
+            <div className="w-full md:w-[40%] overflow-hidden relative min-h-[300px] md:min-h-[380px]">
               <AnimatePresence mode="wait" custom={tabDir} initial={false}>
                 {activeTab === 0 ? (
 
@@ -418,21 +475,13 @@ export default function Contact() {
                                       side="bottom"
                                       align="start"
                                       sideOffset={4}
-                                      className="p-0 shadow-xl overflow-hidden"
+                                      className="p-0 shadow-xl overflow-hidden rounded-lg border"
                                       style={{ width: "var(--radix-popover-trigger-width)" }}
                                     >
-                                      <Calendar
-                                        mode="single"
-                                        selected={form.fecha ? new Date(form.fecha + "T12:00:00") : undefined}
-                                        onSelect={(d) => {
-                                          if (d) {
-                                            const iso = d.toISOString().split("T")[0];
-                                            setForm(f => ({ ...f, fecha: iso }));
-                                            setCalOpen(false);
-                                          }
-                                        }}
-                                        locale={es}
-                                        className="w-full"
+                                      <MiniCalendar
+                                        value={form.fecha}
+                                        onChange={(iso) => setForm(f => ({ ...f, fecha: iso }))}
+                                        onClose={() => setCalOpen(false)}
                                       />
                                     </PopoverContent>
                                   </Popover>
@@ -470,11 +519,11 @@ export default function Contact() {
                                     value={form.mensaje}
                                     onChange={set("mensaje")}
                                     placeholder="Describa brevemente su motivo de consulta…"
-                                    className={inputCls + " resize-none"}
+                                    className={inputCls + " resize-none text-center placeholder:text-center"}
                                     style={{ ...inputStyle, flex: "1 1 0", minHeight: 0 }}
                                   />
                                 </div>
-                                <p className="font-serif" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem', flexShrink: 0 }}>
+                                <p className="font-serif text-center" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem', flexShrink: 0 }}>
                                   Al continuar se abrirá WhatsApp con su solicitud completa.
                                 </p>
                               </motion.div>
