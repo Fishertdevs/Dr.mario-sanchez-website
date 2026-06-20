@@ -32,11 +32,13 @@ export default function About() {
             data-testid="img-doctor-about-desktop"
             style={{
               position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
+              bottom: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '90%',
+              height: '90%',
               objectFit: 'cover',
-              objectPosition: 'center top',
+              objectPosition: 'center bottom',
             }}
           />
         </motion.div>
