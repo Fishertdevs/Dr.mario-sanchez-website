@@ -529,7 +529,7 @@ export default function Topics() {
         {/* ── Mobile carousel (hidden on desktop) ── */}
         <div
           className="md:hidden relative overflow-hidden"
-          style={{ height: '380px' }}
+          style={{ height: '310px' }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -560,7 +560,7 @@ export default function Topics() {
         </div>
 
         {/* Mobile — text below dots */}
-        <div className="md:hidden flex flex-col items-center gap-2 -mt-4">
+        <div className="md:hidden flex flex-col items-center gap-2 -mt-24">
           <p className="font-serif text-center text-sm leading-relaxed mb-3" style={{ color: 'rgba(255,255,255,0.9)', maxWidth: '280px', fontWeight: 400 }}>
             Atención médica integral con enfoque humano, técnico y preventivo para cada etapa de tu salud respiratoria.
           </p>
