@@ -109,10 +109,10 @@ export default function Contact() {
     },
   ];
 
-  const variants = {
-    enter: (d: number) => ({ x: d > 0 ? 60 : -60, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0 }),
+  const leftVariants = {
+    enter: (d: number) => ({ y: d > 0 ? 30 : -30, opacity: 0 }),
+    center: { y: 0, opacity: 1 },
+    exit: (d: number) => ({ y: d > 0 ? -30 : 30, opacity: 0 }),
   };
 
   return (
@@ -184,23 +184,24 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ── Content panels ── */}
-          <div className="overflow-hidden">
-            <AnimatePresence mode="wait" custom={direction} initial={false}>
-              {activeTab === 0 ? (
-                /* ── Panel 0: Contacto + Mapa ── */
-                <motion.div
-                  key="contact-panel"
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-col md:flex-row"
-                >
-                  {/* Left: info */}
-                  <div className="w-full md:w-[38%] p-6 md:p-7 flex flex-col gap-4">
+          {/* ── Two-column layout: left changes, right (map) is always visible ── */}
+          <div className="flex flex-col md:flex-row">
+
+            {/* Left column — animates between info and form */}
+            <div className="w-full md:w-[38%] overflow-hidden relative">
+              <AnimatePresence mode="wait" custom={direction} initial={false}>
+                {activeTab === 0 ? (
+                  /* ── Contact Info ── */
+                  <motion.div
+                    key="info-panel"
+                    custom={direction}
+                    variants={leftVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                    className="p-6 md:p-7 flex flex-col gap-4"
+                  >
                     <h3 className="font-serif text-lg md:text-xl font-semibold text-center" style={{ color: 'white' }}>
                       Contáctenos
                     </h3>
@@ -235,77 +236,61 @@ export default function Contact() {
                         </div>
                       ))}
                     </div>
-                  </div>
-
-                  {/* Right: map */}
-                  <div className="w-full md:w-[62%] h-[200px] md:h-auto min-h-[200px] md:min-h-[380px]">
-                    <iframe
-                      title="Ubicación Dr. Mario Sánchez"
-                      src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
-                      width="100%" height="100%"
-                      style={{ border: 0, display: 'block', minHeight: '200px' }}
-                      allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-                    />
-                  </div>
-                </motion.div>
-              ) : (
-                /* ── Panel 1: Agendar Cita ── */
-                <motion.div
-                  key="booking-panel"
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                  className="p-6 md:p-8"
-                >
-                  {sent ? (
-                    <div className="flex flex-col items-center justify-center py-12">
-                      <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: "#25D366" }}>
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                          <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                        </svg>
+                  </motion.div>
+                ) : (
+                  /* ── Booking Form (compact, fits left column) ── */
+                  <motion.div
+                    key="form-panel"
+                    custom={direction}
+                    variants={leftVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                    className="p-6 md:p-7"
+                  >
+                    {sent ? (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: "#25D366" }}>
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                          </svg>
+                        </div>
+                        <p className="font-serif font-bold text-lg text-center" style={{ color: 'white' }}>¡Solicitud enviada!</p>
+                        <p className="font-serif text-sm text-center mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>Abrimos WhatsApp con su información.</p>
                       </div>
-                      <p className="font-serif font-bold text-lg text-center" style={{ color: 'white' }}>¡Solicitud enviada!</p>
-                      <p className="font-serif text-sm text-center mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>Abrimos WhatsApp con su información.</p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex flex-col gap-4">
-                      <h3 className="font-serif text-lg font-semibold text-center mb-1" style={{ color: 'white' }}>Solicitar Cita</h3>
-                      <p className="font-serif text-center mb-2" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem' }}>
-                        Complete el formulario y se abrirá WhatsApp con su solicitud.
-                      </p>
+                    ) : (
+                      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                        <h3 className="font-serif text-base font-semibold text-center mb-0.5" style={{ color: 'white' }}>Solicitar Cita</h3>
+                        <p className="font-serif text-center mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.65rem' }}>
+                          Complete el formulario y se abrirá WhatsApp.
+                        </p>
 
-                      {/* Nombre */}
-                      <div>
-                        <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Nombre completo *</label>
-                        <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
-                      </div>
-
-                      {/* Email + Teléfono */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Correo electrónico *</label>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Nombre completo *</label>
+                          <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
+                        </div>
+
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Correo electrónico *</label>
                           <input required type="email" value={form.email} onChange={set("email")} placeholder="correo@email.com" className={inputCls} style={inputStyle} />
                         </div>
+
                         <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Teléfono / WhatsApp *</label>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Teléfono / WhatsApp *</label>
                           <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="300 000 0000" className={inputCls} style={inputStyle} />
                         </div>
-                      </div>
 
-                      {/* Tipo + Área */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Tipo de consulta</label>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Tipo de consulta</label>
                           <select value={form.tipo} onChange={set("tipo")} className={inputCls} style={inputStyle}>
                             <option>Presencial</option>
                             <option>Teleorientación</option>
                           </select>
                         </div>
+
                         <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Área de consulta</label>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Área de consulta</label>
                           <select value={form.area} onChange={set("area")} className={inputCls} style={inputStyle}>
                             <option>Terapia Respiratoria</option>
                             <option>CPAP / BPAP</option>
@@ -315,50 +300,58 @@ export default function Contact() {
                             <option>Otra</option>
                           </select>
                         </div>
-                      </div>
 
-                      {/* Fecha + Hora */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Fecha preferida</label>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Fecha preferida</label>
                           <input type="date" value={form.fecha} onChange={set("fecha")} className={inputCls} style={inputStyle} min={new Date().toISOString().split("T")[0]} />
                         </div>
+
                         <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Horario preferido</label>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Horario preferido</label>
                           <select value={form.hora} onChange={set("hora")} className={inputCls} style={inputStyle}>
                             <option>Mañana (8 am – 12 pm)</option>
                             <option>Tarde (12 pm – 6 pm)</option>
                             <option>Sábados (9 am – 1 pm)</option>
                           </select>
                         </div>
-                      </div>
 
-                      {/* Mensaje */}
-                      <div>
-                        <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.58rem' }}>Información adicional</label>
-                        <textarea value={form.mensaje} onChange={set("mensaje")} placeholder="Describa brevemente su motivo de consulta…" rows={3} className={inputCls + " resize-none"} style={inputStyle} />
-                      </div>
+                        <div>
+                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Información adicional</label>
+                          <textarea value={form.mensaje} onChange={set("mensaje")} placeholder="Motivo de consulta…" rows={2} className={inputCls + " resize-none"} style={inputStyle} />
+                        </div>
 
-                      {/* Submit */}
-                      <button
-                        type="submit"
-                        className="w-full font-serif tracking-[0.18em] uppercase py-3.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 mt-1"
-                        style={{ background: "#25D366", color: "white", fontWeight: 600, fontSize: "0.78rem", border: "none", cursor: "pointer" }}
-                      >
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
-                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
-                          <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
-                        </svg>
-                        Enviar por WhatsApp
-                      </button>
-                      <p className="font-serif text-center" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.6rem' }}>
-                        Lun–Vie 8 am–6 pm · Sáb 9 am–1 pm
-                      </p>
-                    </form>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                        <button
+                          type="submit"
+                          className="w-full font-serif tracking-[0.16em] uppercase py-3 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 mt-1"
+                          style={{ background: "#25D366", color: "white", fontWeight: 600, fontSize: "0.72rem", border: "none", cursor: "pointer" }}
+                        >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
+                            <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
+                          </svg>
+                          Enviar por WhatsApp
+                        </button>
+                        <p className="font-serif text-center" style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.58rem' }}>
+                          Lun–Vie 8 am–6 pm · Sáb 9 am–1 pm
+                        </p>
+                      </form>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Right column — map always visible */}
+            <div className="w-full md:w-[62%] h-[220px] md:h-auto" style={{ minHeight: '380px' }}>
+              <iframe
+                title="Ubicación Dr. Mario Sánchez"
+                src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
+                width="100%" height="100%"
+                style={{ border: 0, display: 'block', minHeight: '220px' }}
+                allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
           </div>
         </div>
       </motion.div>
