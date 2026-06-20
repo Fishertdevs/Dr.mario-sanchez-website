@@ -293,14 +293,54 @@ const IlluInyectologia = () => (
    DATA
 ═══════════════════════════════════ */
 const specializations = [
-  { title: "Medicina Alternativa",                    desc: "Terapias complementarias integradas al cuidado convencional para un bienestar integral.",   Illus: IlluAlternativa, imgSrc: medAltImg },
-  { title: "Consulta Domiciliaria",                   desc: "Atención médica profesional en la comodidad y seguridad de su hogar.",                       Illus: IlluDomiciliaria, imgSrc: consultaImg2 },
-  { title: "Proceso Terapéutico",                     desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",                   Illus: IlluTerapeutico, imgSrc: terapeuticoImg2 },
-  { title: "Administración de Medicamentos Inhalados",desc: "Técnicas correctas y seguras para una terapia inhalatoria efectiva.",                        Illus: IlluInhalados, imgSrc: inhaladosImg },
-  { title: "Fisioterapia Respiratoria",               desc: "Ejercicios y maniobras especializadas para optimizar la función pulmonar.",                  Illus: IlluFisioterapia, imgSrc: fisioterapiaImg },
-  { title: "Manejo de Apnea del Sueño — CPAP & BPAP",desc: "Diagnóstico y control con equipos de última generación para el sueño reparador.",            Illus: IlluApnea, imgSrc: apneaImg },
-  { title: "Rehabilitación Cardio Pulmonar",          desc: "Programas especializados de recuperación cardiovascular y respiratoria.",                    Illus: IlluRehabilitacion, imgSrc: rehabImg },
-  { title: "Inyectología",                            desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",       Illus: IlluInyectologia, imgSrc: inyectologiaImg },
+  {
+    title: "Medicina Alternativa",
+    desc: "Terapias complementarias integradas al cuidado convencional para un bienestar integral.",
+    descLong: "Integración de fitoterapia, acupresión y técnicas holísticas al plan de tratamiento convencional, potenciando la recuperación y el bienestar integral del paciente desde una perspectiva integrativa y personalizada.",
+    Illus: IlluAlternativa, imgSrc: medAltImg,
+  },
+  {
+    title: "Consulta Domiciliaria",
+    desc: "Atención médica profesional en la comodidad y seguridad de su hogar.",
+    descLong: "Atención terapéutica especializada en su propio domicilio, con evaluación clínica completa, seguimiento personalizado y todos los recursos necesarios para su comodidad, seguridad y tranquilidad.",
+    Illus: IlluDomiciliaria, imgSrc: consultaImg2,
+  },
+  {
+    title: "Proceso Terapéutico",
+    desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",
+    descLong: "Acompañamiento continuo desde el diagnóstico hasta la recuperación, asegurando adherencia, seguimiento periódico y ajuste oportuno del plan terapéutico para obtener resultados óptimos y duraderos.",
+    Illus: IlluTerapeutico, imgSrc: terapeuticoImg2,
+  },
+  {
+    title: "Administración de Medicamentos Inhalados",
+    desc: "Técnicas correctas y seguras para una terapia inhalatoria efectiva.",
+    descLong: "Instrucción y supervisión de técnicas inhalatorias correctas, manejo adecuado de dispositivos, educación al paciente y ajuste de dosis para maximizar la efectividad del tratamiento respiratorio.",
+    Illus: IlluInhalados, imgSrc: inhaladosImg,
+  },
+  {
+    title: "Fisioterapia Respiratoria",
+    desc: "Ejercicios y maniobras especializadas para optimizar la función pulmonar.",
+    descLong: "Programa de drenaje bronquial, reeducación respiratoria y maniobras terapéuticas especializadas diseñadas para recuperar y mejorar la capacidad funcional pulmonar del paciente.",
+    Illus: IlluFisioterapia, imgSrc: fisioterapiaImg,
+  },
+  {
+    title: "Manejo de Apnea del Sueño — CPAP & BPAP",
+    desc: "Diagnóstico y control con equipos de última generación para el sueño reparador.",
+    descLong: "Evaluación, titulación y seguimiento con equipos CPAP y BPAP de última generación, con acompañamiento técnico y clínico para garantizar adherencia al tratamiento y un sueño verdaderamente reparador.",
+    Illus: IlluApnea, imgSrc: apneaImg,
+  },
+  {
+    title: "Rehabilitación Cardio Pulmonar",
+    desc: "Programas especializados de recuperación cardiovascular y respiratoria.",
+    descLong: "Diseño e implementación de programas individualizados para mejorar la capacidad cardiorrespiratoria, reducir síntomas, fortalecer el sistema cardiovascular y promover un estilo de vida saludable.",
+    Illus: IlluRehabilitacion, imgSrc: rehabImg,
+  },
+  {
+    title: "Inyectología",
+    desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",
+    descLong: "Administración profesional de medicamentos por vía intramuscular, subcutánea o intravenosa con asepsia rigurosa, garantizando seguridad, comodidad y bienestar del paciente en cada procedimiento.",
+    Illus: IlluInyectologia, imgSrc: inyectologiaImg,
+  },
 ];
 
 const CARD_INTERVAL = 4000; // ms between each card appearing
@@ -310,7 +350,7 @@ const FADE_DURATION = 600;  // ms fade transition
 /* ═══════════════════════════════════
    CARD COMPONENT
 ═══════════════════════════════════ */
-function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: string; Illus: () => JSX.Element; num: number; imgSrc?: string }) {
+function SpecCard({ title, desc, descLong, Illus, num, imgSrc }: { title: string; desc: string; descLong?: string; Illus: () => JSX.Element; num: number; imgSrc?: string }) {
   return (
     <motion.div
       layout
@@ -345,28 +385,32 @@ function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: st
       )}
 
       {/* Divider */}
-      <div className="mx-5" style={{ height: '1px', background: GREEN_LIGHT }} />
+      <div style={{ height: '1px', background: GREEN_LIGHT, margin: '0 20px' }} />
 
-      {/* Text — flex-1 so it fills remaining card height on desktop */}
-      <div className="flex flex-col items-center text-center px-4 pt-1.5 pb-2" style={{ flex: 1, justifyContent: 'center' }}>
-        <h4 className="font-serif font-bold leading-snug mb-1" style={{ color: '#0e0e0e', fontSize: '0.88rem' }}>
+      {/* Text */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '6px 16px 8px' }}>
+        <h4 style={{ fontFamily: 'serif', fontWeight: 700, fontSize: '0.88rem', lineHeight: 1.3, color: '#0e0e0e', marginBottom: '5px' }}>
           {title}
         </h4>
-        <p className="font-serif text-xs leading-relaxed mb-1.5" style={{ color: '#666', flex: 1, display: 'flex', alignItems: 'center' }}>
+        {/* Desktop: long description */}
+        {descLong && (
+          <p className="hidden md:block" style={{ fontFamily: 'serif', fontSize: '0.73rem', lineHeight: 1.6, color: '#666', marginBottom: '6px' }}>
+            {descLong}
+          </p>
+        )}
+        {/* Mobile: short description */}
+        <p className={descLong ? 'md:hidden' : ''} style={{ fontFamily: 'serif', fontSize: '0.73rem', lineHeight: 1.6, color: '#666', marginBottom: '6px' }}>
           {desc}
         </p>
-        <div className="h-[1.5px] w-8 rounded-full" style={{ background: GREEN }} />
+        <div style={{ height: '1.5px', width: '32px', borderRadius: '9999px', background: GREEN, marginTop: 'auto' }} />
       </div>
 
-      {/* Page-number — mobile only, no leading zero, legible */}
+      {/* Page-number — mobile only, no leading zero */}
       <div
         className="md:hidden absolute bottom-2 right-3 select-none pointer-events-none"
         style={{ opacity: 0.7 }}
       >
-        <span
-          className="font-serif"
-          style={{ color: '#7ecb72', fontSize: '0.75rem', fontWeight: 400, letterSpacing: '0.05em' }}
-        >
+        <span style={{ fontFamily: 'serif', color: '#7ecb72', fontSize: '0.75rem', fontWeight: 400, letterSpacing: '0.05em' }}>
           {num.toString()}
         </span>
       </div>
