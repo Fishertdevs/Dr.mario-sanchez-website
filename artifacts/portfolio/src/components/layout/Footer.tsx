@@ -72,7 +72,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                onClick={() => handleIconClick(label)}
+                onPointerDown={() => handleIconClick(label)}
                 className="rounded-full border flex items-center justify-center transition-all duration-300 hover:scale-110"
                 style={{
                   width: '38px',
