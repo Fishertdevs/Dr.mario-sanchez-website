@@ -374,7 +374,7 @@ export default function Contact() {
                         </div>
 
                         {/* Sliding step cards */}
-                        <div className="flex-1 relative overflow-hidden">
+                        <div className="h-[200px] md:flex-1 relative overflow-hidden">
                           <AnimatePresence mode="wait" custom={stepDir} initial={false}>
 
                             {step === 0 && (
