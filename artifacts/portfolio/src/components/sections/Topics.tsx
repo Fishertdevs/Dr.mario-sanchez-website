@@ -479,8 +479,8 @@ export default function Topics() {
 
         {/* Mobile — text below dots */}
         <div className="md:hidden flex flex-col items-center gap-3 mt-12">
-          <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '270px' }}>
-            Cada servicio refleja el compromiso del Dr. Sanchez con su salud respiratoria y bienestar integral.
+          <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '280px' }}>
+            Servicios especializados en terapia respiratoria, manejo de equipos biomédicos y atención domiciliaria, orientados a la prevención y el bienestar integral de cada paciente.
           </p>
           <div className="h-[1.5px] w-10 rounded-full" style={{ background: 'rgba(255,255,255,0.35)' }} />
         </div>

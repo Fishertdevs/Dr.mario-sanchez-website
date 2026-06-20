@@ -27,7 +27,7 @@ export default function About() {
             alt="Dr. Mario Sanchez"
             data-testid="img-doctor-about-desktop"
             className="w-auto object-contain object-bottom"
-            style={{ height: '100%', maxWidth: '100%' }}
+            style={{ maxHeight: '88vh', maxWidth: '100%' }}
           />
         </motion.div>
 
@@ -90,12 +90,6 @@ export default function About() {
         </motion.p>
       </div>
 
-      {/* Wave bottom — green fills down into green Blog section */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden" style={{ lineHeight: 0 }}>
-        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
-          <path d="M0,30 C360,90 1080,0 1440,50 L1440,90 L0,90 Z" fill={GREEN} />
-        </svg>
-      </div>
     </section>
   );
 }

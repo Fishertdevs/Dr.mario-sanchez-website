@@ -23,14 +23,14 @@ export default function CookieBanner() {
       <div className="flex flex-row items-center justify-between gap-2 px-3 md:px-12 py-2">
 
         {/* Text — one line on mobile */}
-        <p className="font-serif leading-snug" style={{ color: '#555', fontSize: 'clamp(0.6rem, 2.2vw, 0.8rem)', minWidth: 0 }}>
-          Usamos cookies.{" "}
+        <p className="font-serif leading-snug whitespace-nowrap" style={{ color: '#555', fontSize: 'clamp(0.55rem, 2vw, 0.78rem)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          Al continuar aceptas las{" "}
           <a
             href="#"
-            className="underline underline-offset-2 hover:opacity-60 transition-opacity whitespace-nowrap"
+            className="underline underline-offset-2 hover:opacity-60 transition-opacity"
             style={{ color: GREEN }}
           >
-            Política de Privacidad.
+            Cookies y Privacidad.
           </a>
         </p>
 
