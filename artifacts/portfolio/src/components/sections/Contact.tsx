@@ -36,6 +36,17 @@ const infoItems = [
     value: "314 312 7513",
     href: "tel:3143127513",
   },
+  {
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="rgba(255,255,255,0.7)"/>
+        <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="rgba(255,255,255,0.7)"/>
+      </svg>
+    ),
+    label: "WHATSAPP",
+    value: "+57 314 312 7513",
+    href: "",
+  },
 ];
 
 interface BookingForm {
@@ -55,33 +66,49 @@ function getGreeting() {
   return "Buenas noches";
 }
 
-const inputCls = "w-full font-serif text-xs px-3 py-2 rounded-lg border outline-none transition-all duration-200 focus:ring-1";
+const inputCls = "w-full font-serif text-xs px-3 py-2.5 rounded-lg border outline-none transition-all duration-200 focus:ring-1";
 const inputStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.08)",
-  borderColor: "rgba(255,255,255,0.18)",
+  borderColor: "rgba(255,255,255,0.2)",
   color: "white",
 };
+const labelCls = "block font-serif tracking-[0.14em] uppercase mb-1.5";
+const labelStyle: React.CSSProperties = { color: "rgba(255,255,255,0.5)", fontSize: "0.57rem" };
 
 const TABS = ["Contáctenos", "Agendar Cita"];
+
+const STEPS = [
+  { id: 0, title: "Datos personales", subtitle: "Paso 1 de 4" },
+  { id: 1, title: "Tipo de consulta", subtitle: "Paso 2 de 4" },
+  { id: 2, title: "Fecha y horario", subtitle: "Paso 3 de 4" },
+  { id: 3, title: "Información adicional", subtitle: "Paso 4 de 4" },
+];
 
 export default function Contact() {
   const waUrl = getWhatsAppUrl();
   const [activeTab, setActiveTab] = useState(0);
   const [form, setForm] = useState<BookingForm>(INIT);
   const [sent, setSent] = useState(false);
-  const [direction, setDirection] = useState(0);
+  const [tabDir, setTabDir] = useState(0);
+  const [step, setStep] = useState(0);
+  const [stepDir, setStepDir] = useState(1);
 
   const switchTab = (i: number) => {
-    setDirection(i > activeTab ? 1 : -1);
+    setTabDir(i > activeTab ? 1 : -1);
     setActiveTab(i);
+    setStep(0);
+  };
+
+  const goStep = (next: number) => {
+    setStepDir(next > step ? 1 : -1);
+    setStep(next);
   };
 
   const set = (k: keyof BookingForm) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm(f => ({ ...f, [k]: e.target.value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     const g = getGreeting();
     const msg =
       `${g}, Dr. Mario Sánchez. Le escribo para solicitar una consulta formal.\n\n` +
@@ -91,29 +118,26 @@ export default function Contact() {
       `\n\nQuedo atento/a a su confirmación. Muchas gracias.`;
     window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
     setSent(true);
-    setTimeout(() => { setSent(false); setForm(INIT); }, 2500);
+    setTimeout(() => { setSent(false); setForm(INIT); setStep(0); switchTab(0); }, 3000);
   };
 
-  const allItems = [
-    ...infoItems,
-    {
-      icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="rgba(255,255,255,0.7)"/>
-          <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="rgba(255,255,255,0.7)"/>
-        </svg>
-      ),
-      label: "WHATSAPP",
-      value: "+57 314 312 7513",
-      href: waUrl,
-    },
-  ];
+  const infoWithWa = infoItems.map(item =>
+    item.label === "WHATSAPP" ? { ...item, href: waUrl } : item
+  );
 
-  const leftVariants = {
-    enter: (d: number) => ({ y: d > 0 ? 30 : -30, opacity: 0 }),
+  const tabVariants = {
+    enter: (d: number) => ({ y: d > 0 ? 28 : -28, opacity: 0 }),
     center: { y: 0, opacity: 1 },
-    exit: (d: number) => ({ y: d > 0 ? -30 : 30, opacity: 0 }),
+    exit: (d: number) => ({ y: d > 0 ? -28 : 28, opacity: 0 }),
   };
+
+  const stepVariants = {
+    enter: (d: number) => ({ x: d > 0 ? 80 : -80, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -80 : 80, opacity: 0 }),
+  };
+
+  const canNext0 = form.nombre.trim() && form.email.trim() && form.telefono.trim();
 
   return (
     <section id="contact" className="relative bg-white overflow-hidden" data-testid="section-contact">
@@ -137,13 +161,13 @@ export default function Contact() {
         </div>
       </motion.div>
 
-      {/* Card */}
+      {/* Card — wider */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.9, delay: 0.2 }}
-        className="mx-auto w-full max-w-5xl px-4 md:px-8 pb-0"
+        className="mx-auto w-full max-w-6xl px-4 md:px-6 pb-0"
       >
         <div className="rounded-3xl overflow-hidden" style={{ background: DARK_GREEN }}>
 
@@ -160,14 +184,14 @@ export default function Contact() {
                   className="relative z-10 font-serif tracking-[0.16em] uppercase transition-colors duration-300"
                   style={{
                     fontSize: "clamp(0.55rem, 1.8vw, 0.7rem)",
-                    padding: "6px 18px",
+                    padding: "6px 20px",
                     color: activeTab === i ? DARK_GREEN : "rgba(255,255,255,0.65)",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
                     borderRadius: "9999px",
                     fontWeight: 600,
-                    minWidth: "100px",
+                    minWidth: "110px",
                   }}
                 >
                   {activeTab === i && (
@@ -184,23 +208,24 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ── Two-column layout: left changes, right (map) is always visible ── */}
+          {/* ── Two-column layout ── */}
           <div className="flex flex-col md:flex-row">
 
-            {/* Left column — animates between info and form */}
-            <div className="w-full md:w-[38%] overflow-hidden relative">
-              <AnimatePresence mode="wait" custom={direction} initial={false}>
+            {/* Left column */}
+            <div className="w-full md:w-[40%] overflow-hidden relative" style={{ minHeight: '380px' }}>
+              <AnimatePresence mode="wait" custom={tabDir} initial={false}>
                 {activeTab === 0 ? (
-                  /* ── Contact Info ── */
+
+                  /* ── Contact info ── */
                   <motion.div
                     key="info-panel"
-                    custom={direction}
-                    variants={leftVariants}
+                    custom={tabDir}
+                    variants={tabVariants}
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                    className="p-6 md:p-7 flex flex-col gap-4"
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 p-7 md:p-8 flex flex-col gap-4"
                   >
                     <h3 className="font-serif text-lg md:text-xl font-semibold text-center" style={{ color: 'white' }}>
                       Contáctenos
@@ -209,132 +234,242 @@ export default function Contact() {
                       <p className="font-serif tracking-[0.18em] uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.55rem' }}>
                         Horarios de atención
                       </p>
-                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.78rem' }}>
                         Lun – Vie: <span style={{ color: 'white' }}>8:00 am – 6:00 pm</span>
                       </p>
-                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.78rem' }}>
                         Sábados: <span style={{ color: 'white' }}>9:00 am – 1:00 pm</span>
                       </p>
-                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem' }}>
+                      <p className="font-serif leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.78rem' }}>
                         Domingos: <em>Cerrado</em>
                       </p>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      {allItems.map(({ icon, label, value, href }) => (
+                    <div className="flex flex-col gap-3.5">
+                      {infoWithWa.map(({ icon, label, value, href }) => (
                         <div key={label} className="flex items-start gap-2.5">
                           <div className="mt-0.5 shrink-0">{icon}</div>
                           <div>
                             <p className="font-serif tracking-[0.16em] uppercase mb-0.5" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.52rem' }}>{label}</p>
                             {href ? (
-                              <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined} className="font-serif hover:underline underline-offset-4" style={{ color: 'white', fontSize: '0.78rem' }}>
+                              <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined} className="font-serif hover:underline underline-offset-4" style={{ color: 'white', fontSize: '0.82rem' }}>
                                 {value}
                               </a>
                             ) : (
-                              <p className="font-serif" style={{ color: 'white', fontSize: '0.78rem' }}>{value}</p>
+                              <p className="font-serif" style={{ color: 'white', fontSize: '0.82rem' }}>{value}</p>
                             )}
                           </div>
                         </div>
                       ))}
                     </div>
                   </motion.div>
+
                 ) : (
-                  /* ── Booking Form (compact, fits left column) ── */
+
+                  /* ── Step wizard ── */
                   <motion.div
-                    key="form-panel"
-                    custom={direction}
-                    variants={leftVariants}
+                    key="booking-panel"
+                    custom={tabDir}
+                    variants={tabVariants}
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                    className="p-6 md:p-7"
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 p-7 md:p-8 flex flex-col"
                   >
                     {sent ? (
-                      <div className="flex flex-col items-center justify-center py-12">
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: "#25D366" }}>
+                      <div className="flex flex-col items-center justify-center h-full gap-4">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "#25D366" }}>
                           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                             <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                           </svg>
                         </div>
                         <p className="font-serif font-bold text-lg text-center" style={{ color: 'white' }}>¡Solicitud enviada!</p>
-                        <p className="font-serif text-sm text-center mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>Abrimos WhatsApp con su información.</p>
+                        <p className="font-serif text-sm text-center" style={{ color: 'rgba(255,255,255,0.6)' }}>Abrimos WhatsApp con su información.</p>
                       </div>
                     ) : (
-                      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                        <h3 className="font-serif text-base font-semibold text-center mb-0.5" style={{ color: 'white' }}>Solicitar Cita</h3>
-                        <p className="font-serif text-center mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.65rem' }}>
-                          Complete el formulario y se abrirá WhatsApp.
-                        </p>
-
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Nombre completo *</label>
-                          <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
+                      <>
+                        {/* Step progress dots */}
+                        <div className="flex items-center justify-between mb-5">
+                          <div>
+                            <p className="font-serif font-semibold" style={{ color: 'white', fontSize: '0.85rem' }}>{STEPS[step].title}</p>
+                            <p className="font-serif" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.6rem', letterSpacing: '0.12em' }}>{STEPS[step].subtitle.toUpperCase()}</p>
+                          </div>
+                          <div className="flex gap-1.5">
+                            {STEPS.map((s) => (
+                              <div
+                                key={s.id}
+                                className="rounded-full transition-all duration-300"
+                                style={{
+                                  width: step === s.id ? '18px' : '7px',
+                                  height: '7px',
+                                  background: step === s.id ? 'white' : 'rgba(255,255,255,0.25)',
+                                }}
+                              />
+                            ))}
+                          </div>
                         </div>
 
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Correo electrónico *</label>
-                          <input required type="email" value={form.email} onChange={set("email")} placeholder="correo@email.com" className={inputCls} style={inputStyle} />
+                        {/* Sliding step cards */}
+                        <div className="flex-1 relative overflow-hidden">
+                          <AnimatePresence mode="wait" custom={stepDir} initial={false}>
+
+                            {step === 0 && (
+                              <motion.div
+                                key="step-0"
+                                custom={stepDir}
+                                variants={stepVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                                className="absolute inset-0 flex flex-col gap-3.5"
+                              >
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Nombre completo *</label>
+                                  <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
+                                </div>
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Correo electrónico *</label>
+                                  <input required type="email" value={form.email} onChange={set("email")} placeholder="correo@email.com" className={inputCls} style={inputStyle} />
+                                </div>
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Teléfono / WhatsApp *</label>
+                                  <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="300 000 0000" className={inputCls} style={inputStyle} />
+                                </div>
+                              </motion.div>
+                            )}
+
+                            {step === 1 && (
+                              <motion.div
+                                key="step-1"
+                                custom={stepDir}
+                                variants={stepVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                                className="absolute inset-0 flex flex-col gap-3.5"
+                              >
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Tipo de consulta</label>
+                                  <select value={form.tipo} onChange={set("tipo")} className={inputCls} style={inputStyle}>
+                                    <option>Presencial</option>
+                                    <option>Teleorientación</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Área de consulta</label>
+                                  <select value={form.area} onChange={set("area")} className={inputCls} style={inputStyle}>
+                                    <option>Terapia Respiratoria</option>
+                                    <option>CPAP / BPAP</option>
+                                    <option>Salud Pública</option>
+                                    <option>Inyectología</option>
+                                    <option>Vacunación</option>
+                                    <option>Otra</option>
+                                  </select>
+                                </div>
+                              </motion.div>
+                            )}
+
+                            {step === 2 && (
+                              <motion.div
+                                key="step-2"
+                                custom={stepDir}
+                                variants={stepVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                                className="absolute inset-0 flex flex-col gap-3.5"
+                              >
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Fecha preferida</label>
+                                  <input type="date" value={form.fecha} onChange={set("fecha")} className={inputCls} style={inputStyle} min={new Date().toISOString().split("T")[0]} />
+                                </div>
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Horario preferido</label>
+                                  <select value={form.hora} onChange={set("hora")} className={inputCls} style={inputStyle}>
+                                    <option>Mañana (8 am – 12 pm)</option>
+                                    <option>Tarde (12 pm – 6 pm)</option>
+                                    <option>Sábados (9 am – 1 pm)</option>
+                                  </select>
+                                </div>
+                              </motion.div>
+                            )}
+
+                            {step === 3 && (
+                              <motion.div
+                                key="step-3"
+                                custom={stepDir}
+                                variants={stepVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                                className="absolute inset-0 flex flex-col gap-3.5"
+                              >
+                                <div>
+                                  <label className={labelCls} style={labelStyle}>Información adicional</label>
+                                  <textarea
+                                    value={form.mensaje}
+                                    onChange={set("mensaje")}
+                                    placeholder="Describa brevemente su motivo de consulta…"
+                                    rows={4}
+                                    className={inputCls + " resize-none"}
+                                    style={inputStyle}
+                                  />
+                                </div>
+                                <p className="font-serif" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem' }}>
+                                  Al continuar se abrirá WhatsApp con su solicitud completa.
+                                </p>
+                              </motion.div>
+                            )}
+
+                          </AnimatePresence>
                         </div>
 
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Teléfono / WhatsApp *</label>
-                          <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="300 000 0000" className={inputCls} style={inputStyle} />
+                        {/* Navigation buttons */}
+                        <div className="flex items-center gap-2 mt-5">
+                          {step > 0 && (
+                            <button
+                              onClick={() => goStep(step - 1)}
+                              className="font-serif tracking-[0.14em] uppercase px-4 py-2.5 rounded-xl transition-all duration-200 hover:opacity-80"
+                              style={{ background: "rgba(255,255,255,0.1)", color: "white", fontSize: "0.65rem", border: "none", cursor: "pointer", fontWeight: 600 }}
+                            >
+                              ← Atrás
+                            </button>
+                          )}
+                          {step < 3 ? (
+                            <button
+                              onClick={() => goStep(step + 1)}
+                              disabled={step === 0 && !canNext0}
+                              className="flex-1 font-serif tracking-[0.14em] uppercase py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                              style={{
+                                background: step === 0 && !canNext0 ? "rgba(255,255,255,0.15)" : "white",
+                                color: step === 0 && !canNext0 ? "rgba(255,255,255,0.35)" : DARK_GREEN,
+                                fontSize: "0.68rem",
+                                border: "none",
+                                cursor: step === 0 && !canNext0 ? "not-allowed" : "pointer",
+                                fontWeight: 700,
+                              }}
+                            >
+                              Continuar →
+                            </button>
+                          ) : (
+                            <button
+                              onClick={handleSubmit}
+                              className="flex-1 font-serif tracking-[0.14em] uppercase py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2"
+                              style={{ background: "#25D366", color: "white", fontSize: "0.68rem", border: "none", cursor: "pointer", fontWeight: 700 }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
+                                <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
+                              </svg>
+                              Enviar por WhatsApp
+                            </button>
+                          )}
                         </div>
-
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Tipo de consulta</label>
-                          <select value={form.tipo} onChange={set("tipo")} className={inputCls} style={inputStyle}>
-                            <option>Presencial</option>
-                            <option>Teleorientación</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Área de consulta</label>
-                          <select value={form.area} onChange={set("area")} className={inputCls} style={inputStyle}>
-                            <option>Terapia Respiratoria</option>
-                            <option>CPAP / BPAP</option>
-                            <option>Salud Pública</option>
-                            <option>Inyectología</option>
-                            <option>Vacunación</option>
-                            <option>Otra</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Fecha preferida</label>
-                          <input type="date" value={form.fecha} onChange={set("fecha")} className={inputCls} style={inputStyle} min={new Date().toISOString().split("T")[0]} />
-                        </div>
-
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Horario preferido</label>
-                          <select value={form.hora} onChange={set("hora")} className={inputCls} style={inputStyle}>
-                            <option>Mañana (8 am – 12 pm)</option>
-                            <option>Tarde (12 pm – 6 pm)</option>
-                            <option>Sábados (9 am – 1 pm)</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block font-serif tracking-[0.14em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem' }}>Información adicional</label>
-                          <textarea value={form.mensaje} onChange={set("mensaje")} placeholder="Motivo de consulta…" rows={2} className={inputCls + " resize-none"} style={inputStyle} />
-                        </div>
-
-                        <button
-                          type="submit"
-                          className="w-full font-serif tracking-[0.16em] uppercase py-3 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 mt-1"
-                          style={{ background: "#25D366", color: "white", fontWeight: 600, fontSize: "0.72rem", border: "none", cursor: "pointer" }}
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
-                            <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
-                          </svg>
-                          Enviar por WhatsApp
-                        </button>
-                        <p className="font-serif text-center" style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.58rem' }}>
-                          Lun–Vie 8 am–6 pm · Sáb 9 am–1 pm
-                        </p>
-                      </form>
+                      </>
                     )}
                   </motion.div>
                 )}
@@ -342,7 +477,7 @@ export default function Contact() {
             </div>
 
             {/* Right column — map always visible */}
-            <div className="w-full md:w-[62%] h-[220px] md:h-auto" style={{ minHeight: '380px' }}>
+            <div className="w-full md:w-[60%] h-[220px] md:h-auto" style={{ minHeight: '380px' }}>
               <iframe
                 title="Ubicación Dr. Mario Sánchez"
                 src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
