@@ -39,8 +39,18 @@ const socials = [
     label: "Instagram",
     href: "https://instagram.com/drmariosanchez7124",
     color: "#E1306C",
+    gradientId: "ig-grad",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ig-grad-stroke" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#f09433"/>
+            <stop offset="25%" stopColor="#e6683c"/>
+            <stop offset="50%" stopColor="#dc2743"/>
+            <stop offset="75%" stopColor="#cc2366"/>
+            <stop offset="100%" stopColor="#bc1888"/>
+          </linearGradient>
+        </defs>
         <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" strokeWidth="1.8" fill="none"/>
         <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" fill="none"/>
         <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
@@ -50,12 +60,7 @@ const socials = [
 ];
 
 export default function Footer() {
-  const [activeIcon, setActiveIcon] = useState<string | null>(null);
-
-  const handleIconClick = (label: string) => {
-    setActiveIcon(label);
-    setTimeout(() => setActiveIcon(null), 700);
-  };
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
   return (
     <footer className="relative" style={{ background: GREEN }}>
@@ -64,7 +69,7 @@ export default function Footer() {
         {/* Social icons */}
         <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
           {socials.map(({ label, href, color, icon }) => {
-            const isActive = activeIcon === label;
+            const isHovered = hoveredIcon === label;
             return (
               <a
                 key={label}
@@ -72,15 +77,16 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                onPointerDown={() => handleIconClick(label)}
-                className="rounded-full border flex items-center justify-center transition-all duration-300 hover:scale-110"
+                onMouseEnter={() => setHoveredIcon(label)}
+                onMouseLeave={() => setHoveredIcon(null)}
+                className="rounded-full border flex items-center justify-center transition-all duration-300"
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderColor: isActive ? color : 'rgba(255,255,255,0.5)',
-                  color: isActive ? '#fff' : 'white',
-                  background: isActive ? color : 'transparent',
-                  transform: isActive ? 'scale(1.2)' : undefined,
+                  width: '42px',
+                  height: '42px',
+                  borderColor: isHovered ? color : 'rgba(255,255,255,0.45)',
+                  color: isHovered ? color : 'white',
+                  background: 'transparent',
+                  transform: isHovered ? 'scale(1.15)' : 'scale(1)',
                 }}
               >
                 {icon}
@@ -90,37 +96,44 @@ export default function Footer() {
         </div>
 
         {/* Tagline */}
-        <p className="font-serif italic mb-8 md:mb-10 text-center"
-          style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'clamp(0.8rem, 3vw, 1rem)' }}>
+        <p
+          className="font-serif italic mb-8 md:mb-10 text-center"
+          style={{ color: '#ffffff', fontSize: 'clamp(0.85rem, 3vw, 1.05rem)' }}
+        >
           Porque tu salud es más que una barrera.
         </p>
 
-        {/* Divider */}
-        <div className="w-full max-w-xs md:max-w-md h-px mb-6 md:mb-8" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
+        {/* Divider — full width on all screens */}
+        <div className="w-full h-px mb-6 md:mb-8" style={{ backgroundColor: 'rgba(255,255,255,0.25)' }} />
 
         {/* Legal links */}
         <div className="flex flex-col items-center gap-2 md:gap-3 mb-5 md:mb-6">
-          {/* Row 1: Cookies + Privacidad — forced single line */}
           <div className="flex items-center justify-center gap-5 md:gap-8 flex-nowrap">
             {["Política de Cookies", "Política de Privacidad"].map((label) => (
-              <a key={label} href="#"
-                className="font-serif whitespace-nowrap transition-opacity hover:opacity-60"
-                style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(0.62rem, 1.5vw, 0.75rem)' }}>
+              <a
+                key={label}
+                href="#"
+                className="font-serif whitespace-nowrap transition-opacity hover:opacity-70"
+                style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}
+              >
                 {label}
               </a>
             ))}
           </div>
-          {/* Row 2: Términos */}
-          <a href="#"
-            className="font-serif whitespace-nowrap transition-opacity hover:opacity-60"
-            style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(0.62rem, 1.5vw, 0.75rem)' }}>
+          <a
+            href="#"
+            className="font-serif whitespace-nowrap transition-opacity hover:opacity-70"
+            style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}
+          >
             Términos y Condiciones
           </a>
         </div>
 
         {/* Copyright */}
-        <p className="font-serif"
-          style={{ color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(0.55rem, 1.3vw, 0.65rem)' }}>
+        <p
+          className="font-serif"
+          style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.62rem, 1.4vw, 0.72rem)' }}
+        >
           © DrMarioSanchez2026
         </p>
       </div>
