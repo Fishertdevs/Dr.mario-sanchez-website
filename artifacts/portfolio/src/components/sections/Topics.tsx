@@ -347,27 +347,27 @@ function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: st
       {/* Divider */}
       <div className="mx-5" style={{ height: '1px', background: GREEN_LIGHT }} />
 
-      {/* Text */}
-      <div className="flex flex-col items-center text-center px-5 pt-2 pb-3">
-        <h4 className="font-serif font-bold text-sm leading-snug mb-1" style={{ color: '#0e0e0e', fontSize: '0.9rem' }}>
+      {/* Text — flex-1 so it fills remaining card height on desktop */}
+      <div className="flex flex-col items-center text-center px-4 pt-1.5 pb-2" style={{ flex: 1, justifyContent: 'center' }}>
+        <h4 className="font-serif font-bold leading-snug mb-1" style={{ color: '#0e0e0e', fontSize: '0.88rem' }}>
           {title}
         </h4>
-        <p className="font-serif text-xs leading-relaxed mb-2" style={{ color: '#666' }}>
+        <p className="font-serif text-xs leading-relaxed mb-1.5" style={{ color: '#666', flex: 1, display: 'flex', alignItems: 'center' }}>
           {desc}
         </p>
         <div className="h-[1.5px] w-8 rounded-full" style={{ background: GREEN }} />
       </div>
 
-      {/* Page-number style — bottom right */}
+      {/* Page-number — mobile only, no leading zero, legible */}
       <div
-        className="absolute bottom-2 right-3 select-none pointer-events-none"
-        style={{ opacity: 0.55 }}
+        className="md:hidden absolute bottom-2 right-3 select-none pointer-events-none"
+        style={{ opacity: 0.7 }}
       >
         <span
           className="font-serif"
-          style={{ color: '#7ecb72', fontSize: '0.6rem', fontWeight: 300, letterSpacing: '0.18em' }}
+          style={{ color: '#7ecb72', fontSize: '0.75rem', fontWeight: 400, letterSpacing: '0.05em' }}
         >
-          {num.toString().padStart(2, '0')}
+          {num.toString()}
         </span>
       </div>
     </motion.div>
