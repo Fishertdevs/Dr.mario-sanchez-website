@@ -41,6 +41,12 @@ const itemVariants = {
 export default function Blog() {
   return (
     <section id="blog" className="relative" style={{ background: GREEN }} data-testid="section-blog">
+      {/* Wave top — mobile only (desktop handled by About's green wave) */}
+      <div className="md:hidden w-full overflow-hidden" style={{ lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+          <path d="M0,60 C480,0 960,90 1440,30 L1440,0 L0,0 Z" fill="white" />
+        </svg>
+      </div>
 
       <div className="container mx-auto px-6 md:px-12 py-20 md:py-28">
         {/* Header */}

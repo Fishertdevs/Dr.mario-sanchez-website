@@ -561,6 +561,9 @@ export default function Topics() {
 
         {/* Mobile — text below dots */}
         <div className="md:hidden flex flex-col items-center gap-2 mt-6">
+          <p className="font-serif text-center text-sm leading-relaxed mb-3" style={{ color: 'rgba(255,255,255,0.9)', maxWidth: '280px', fontWeight: 400 }}>
+            Atención médica integral con enfoque humano, técnico y preventivo para cada etapa de tu salud respiratoria.
+          </p>
           <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '280px' }}>
             Servicios especializados en terapia respiratoria, manejo de equipos biomédicos y atención domiciliaria, orientados a la prevención y el bienestar integral de cada paciente.
           </p>
