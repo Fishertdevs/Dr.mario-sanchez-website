@@ -1,36 +1,47 @@
-# [Project name]
+# Dr. Mario Sanchez Portfolio
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A professional portfolio website for Dr. Mario Sanchez, a respiratory therapist and public health specialist based in Bogotá. The site showcases his expertise, blog content, and provides a contact form that connects to WhatsApp.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/portfolio run dev` — run the portfolio frontend (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required env: `DATABASE_URL` — Postgres connection string (auto-provisioned by Replit)
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
+- pnpm workspaces, Node.js 20, TypeScript 5.9
+- Frontend: React 19, Vite 7, Tailwind CSS 4, Framer Motion, Radix UI
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
+- Validation: Zod, drizzle-zod
 - API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Build: esbuild
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/portfolio/` — React SPA (main user-facing portfolio)
+- `artifacts/api-server/` — Express backend (port 8080)
+- `artifacts/mockup-sandbox/` — UI component dev sandbox
+- `lib/db/` — Drizzle ORM schema and database connection
+- `lib/api-spec/` — OpenAPI YAML definition
+- `lib/api-zod/` — Auto-generated Zod schemas
+- `lib/api-client-react/` — Auto-generated React Query hooks
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Monorepo with pnpm workspaces; frontend and API are separate artifacts
+- Portfolio frontend (port 5000) proxies API calls to the API server (port 8080)
+- WhatsApp integration is client-side only via `wa.me` deep links — no external API keys needed
+- Drizzle ORM with PostgreSQL; schema lives in `lib/db/src/schema/`
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+A professional portfolio for Dr. Mario Sanchez featuring: hero section with credentials, about/services section, blog, and a consultation booking flow that routes to WhatsApp.
 
 ## User preferences
 
@@ -38,7 +49,8 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After any schema change in `lib/db/src/schema/`, run `pnpm --filter @workspace/db run push` to apply to dev DB
+- After any OpenAPI spec change in `lib/api-spec/`, run `pnpm --filter @workspace/api-spec run codegen` to regenerate client code
 
 ## Pointers
 
