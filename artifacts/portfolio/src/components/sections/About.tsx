@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import doctorPhoto from "@assets/image-Photoroom_(14)_1781833343312.png";
+import doctorPhoto from "@assets/image_1781916620650.png";
 
 const GREEN = "#2d5a27";
 const BLACK = "#0a0a0a";

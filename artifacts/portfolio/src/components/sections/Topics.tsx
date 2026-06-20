@@ -417,15 +417,20 @@ export default function Topics() {
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-14">
           <motion.p
-            className="font-serif text-xs tracking-[0.25em] uppercase mb-4"
-            style={{ color: 'rgba(255,255,255,0.6)' }}
+            className="font-serif uppercase whitespace-nowrap"
+            style={{
+              color: 'rgba(255,255,255,0.6)',
+              fontSize: 'clamp(0.6rem, 2.2vw, 0.75rem)',
+              letterSpacing: 'clamp(0.08em, 1.5vw, 0.25em)',
+              marginBottom: '1rem',
+            }}
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           >
             Especialidades &amp; Servicios
           </motion.p>
           <motion.h2
-            className="font-serif font-bold text-white leading-tight"
-            style={{ fontSize: 'clamp(2rem, 6vw, 3.2rem)' }}
+            className="font-serif font-bold text-white leading-tight whitespace-nowrap"
+            style={{ fontSize: 'min(calc((100vw - 56px) / 15.5), 3.2rem)' }}
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}
           >
             Áreas de Especialización
@@ -474,8 +479,8 @@ export default function Topics() {
 
         {/* Mobile — text below dots */}
         <div className="md:hidden flex flex-col items-center gap-3 mt-12">
-          <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '260px' }}>
-            Deslice para explorar todas las especialidades disponibles
+          <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '270px' }}>
+            Cada servicio refleja el compromiso del Dr. Sanchez con su salud respiratoria y bienestar integral.
           </p>
           <div className="h-[1.5px] w-10 rounded-full" style={{ background: 'rgba(255,255,255,0.35)' }} />
         </div>
