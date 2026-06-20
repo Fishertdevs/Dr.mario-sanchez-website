@@ -6,7 +6,8 @@ import consultaImg     from "@assets/image_1781918588839.png";
 import terapeuticoImg  from "@assets/image_1781919290751.png";
 import inhaladosImg    from "@assets/image_1781920459455.png";
 import fisioterapiaImg from "@assets/image_1781921271859.png";
-import apneaImg        from "@assets/image_1781924831909.png";
+import apneaImg        from "@assets/image_1781925604226.png";
+import rehabImg        from "@assets/image_1781925230634.png";
 
 const GREEN = "#2d5a27";
 const GREEN_LIGHT = "#dff0dc";
@@ -295,7 +296,7 @@ const specializations = [
   { title: "Administración de Medicamentos Inhalados",desc: "Técnicas correctas y seguras para una terapia inhalatoria efectiva.",                        Illus: IlluInhalados, imgSrc: inhaladosImg },
   { title: "Fisioterapia Respiratoria",               desc: "Ejercicios y maniobras especializadas para optimizar la función pulmonar.",                  Illus: IlluFisioterapia, imgSrc: fisioterapiaImg },
   { title: "Manejo de Apnea del Sueño — CPAP & BPAP",desc: "Diagnóstico y control con equipos de última generación para el sueño reparador.",            Illus: IlluApnea, imgSrc: apneaImg },
-  { title: "Rehabilitación Cardio Pulmonar",          desc: "Programas especializados de recuperación cardiovascular y respiratoria.",                    Illus: IlluRehabilitacion },
+  { title: "Rehabilitación Cardio Pulmonar",          desc: "Programas especializados de recuperación cardiovascular y respiratoria.",                    Illus: IlluRehabilitacion, imgSrc: rehabImg },
   { title: "Inyectología",                            desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",       Illus: IlluInyectologia },
 ];
 
