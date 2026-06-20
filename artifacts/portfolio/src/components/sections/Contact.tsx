@@ -419,7 +419,8 @@ export default function Contact() {
                                       align="start"
                                       sideOffset={6}
                                       avoidCollisions={false}
-                                      className="w-auto p-0 shadow-xl"
+                                      className="p-0 shadow-xl"
+                                      style={{ width: "var(--radix-popover-trigger-width)" }}
                                     >
                                       <Calendar
                                         mode="single"
@@ -431,8 +432,8 @@ export default function Contact() {
                                             setCalOpen(false);
                                           }
                                         }}
-                                        disabled={{ before: new Date() }}
                                         locale={es}
+                                        className="w-full"
                                       />
                                     </PopoverContent>
                                   </Popover>
@@ -464,17 +465,17 @@ export default function Contact() {
                                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                                 className="absolute inset-0 flex flex-col gap-3.5"
                               >
-                                <div className="flex flex-col flex-1 min-h-0">
+                                <div className="flex flex-col" style={{ flex: "1 1 0", minHeight: 0 }}>
                                   <label className={labelCls} style={labelStyle}>Información adicional</label>
                                   <textarea
                                     value={form.mensaje}
                                     onChange={set("mensaje")}
                                     placeholder="Describa brevemente su motivo de consulta…"
-                                    className={inputCls + " resize-none flex-1 min-h-0"}
-                                    style={{ ...inputStyle, height: "100%" }}
+                                    className={inputCls + " resize-none"}
+                                    style={{ ...inputStyle, flex: "1 1 0", minHeight: 0 }}
                                   />
                                 </div>
-                                <p className="font-serif shrink-0" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem' }}>
+                                <p className="font-serif" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.62rem', flexShrink: 0 }}>
                                   Al continuar se abrirá WhatsApp con su solicitud completa.
                                 </p>
                               </motion.div>
