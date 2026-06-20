@@ -58,10 +58,11 @@ export default function WhatsAppButton({ phone }: Props) {
         onClick={handleClick}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.93 }}
-        className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+        className="w-11 h-11 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg"
         style={{ background: WA_GREEN, flexShrink: 0 }}
       >
-        <WhatsAppIcon size={28} />
+        <span className="block md:hidden"><WhatsAppIcon size={22} /></span>
+        <span className="hidden md:block"><WhatsAppIcon size={28} /></span>
       </motion.button>
     </div>
   );
