@@ -72,10 +72,19 @@ export default function About() {
           </div>
         </motion.div>
 
+        {/* Green wave — overlays bottom of image, connects to Blog */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+          style={{ lineHeight: 0, zIndex: 10 }}
+        >
+          <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '90px' }}>
+            <path d="M0,30 C480,90 960,0 1440,60 L1440,90 L0,90 Z" fill={GREEN} />
+          </svg>
+        </div>
       </div>
 
-      {/* Green fill — bridges the gap between About and Blog's wave */}
-      <div className="hidden lg:block" style={{ background: GREEN, height: '90px', marginTop: '-1px' }} />
+      {/* Green fill — connects About wave to Blog */}
+      <div className="hidden lg:block" style={{ background: GREEN, height: '2px', marginTop: '-1px' }} />
 
       {/* ── Mobile layout ────────────────────────────── */}
       <div className="flex lg:hidden flex-col items-center px-6 pt-10 pb-24">
