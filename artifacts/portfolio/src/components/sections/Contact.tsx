@@ -276,7 +276,7 @@ export default function Contact() {
           <div className="flex flex-col md:flex-row">
 
             {/* Left column */}
-            <div className="w-full md:w-[40%] overflow-hidden relative min-h-[420px] md:min-h-[380px]">
+            <div className="w-full md:w-[40%] overflow-hidden relative min-h-[340px] md:min-h-[380px]">
               <AnimatePresence mode="wait" custom={tabDir} initial={false}>
                 {activeTab === 0 ? (
 
@@ -374,7 +374,7 @@ export default function Contact() {
                         </div>
 
                         {/* Sliding step cards */}
-                        <div className="h-[200px] md:flex-1 relative overflow-hidden">
+                        <div className={`${step === 0 ? 'h-[175px]' : 'h-[115px]'} md:flex-1 relative overflow-hidden`}>
                           <AnimatePresence mode="wait" custom={stepDir} initial={false}>
 
                             {step === 0 && (
