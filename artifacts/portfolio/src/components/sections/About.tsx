@@ -11,12 +11,12 @@ export default function About() {
       className="relative overflow-hidden bg-white"
     >
       {/* ── Desktop layout ─────────────────────────────────────── */}
-      <div className="hidden lg:flex" style={{ minHeight: '92vh' }}>
+      <div className="hidden lg:flex" style={{ height: '92vh' }}>
 
         {/* Photo — fills full column height, left-anchored like hero */}
         <motion.div
           className="relative flex-shrink-0 overflow-hidden"
-          style={{ width: '50%', minHeight: '92vh' }}
+          style={{ width: '50%', height: '92vh' }}
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
