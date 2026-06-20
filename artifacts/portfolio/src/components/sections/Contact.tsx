@@ -4,6 +4,10 @@ import { getWhatsAppUrl } from "@/lib/whatsapp";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DayPicker } from "react-day-picker";
+import { es } from "date-fns/locale";
+import "react-day-picker/style.css";
 
 const GREEN = "#2d5a27";
 const DARK_GREEN = "#1e3d1a";
@@ -95,6 +99,7 @@ export default function Contact() {
   const [tabDir, setTabDir] = useState(0);
   const [step, setStep] = useState(0);
   const [stepDir, setStepDir] = useState(1);
+  const [calOpen, setCalOpen] = useState(false);
 
   const switchTab = (i: number) => {
     setTabDir(i > activeTab ? 1 : -1);
@@ -360,7 +365,7 @@ export default function Contact() {
                                     </SelectTrigger>
                                     <SelectContent>
                                       <SelectItem value="Presencial">Presencial</SelectItem>
-                                      <SelectItem value="Teleorientación">Teleorientación</SelectItem>
+                                      <SelectItem value="Virtual">Virtual</SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -396,7 +401,60 @@ export default function Contact() {
                               >
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Fecha preferida</label>
-                                  <input type="date" value={form.fecha} onChange={set("fecha")} className={inputCls} style={inputStyle} min={new Date().toISOString().split("T")[0]} />
+                                  <Popover open={calOpen} onOpenChange={setCalOpen}>
+                                    <PopoverTrigger asChild>
+                                      <button
+                                        type="button"
+                                        className="w-full font-serif text-xs px-3 py-2.5 rounded-xl border outline-none text-left flex items-center justify-between"
+                                        style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: form.fecha ? "white" : "rgba(255,255,255,0.35)", cursor: "pointer" }}
+                                      >
+                                        <span>{form.fecha ? new Date(form.fecha + "T12:00:00").toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" }) : "Seleccionar fecha"}</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}>
+                                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="white" strokeWidth="2"/>
+                                          <path d="M3 9h18M8 2v4M16 2v4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                                        </svg>
+                                      </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                      side="bottom"
+                                      align="start"
+                                      sideOffset={6}
+                                      avoidCollisions={false}
+                                      className="w-auto p-0 border-0 shadow-xl"
+                                      style={{ background: "#162f12" }}
+                                    >
+                                      <DayPicker
+                                        mode="single"
+                                        selected={form.fecha ? new Date(form.fecha + "T12:00:00") : undefined}
+                                        onSelect={(d) => {
+                                          if (d) {
+                                            const iso = d.toISOString().split("T")[0];
+                                            setForm(f => ({ ...f, fecha: iso }));
+                                            setCalOpen(false);
+                                          }
+                                        }}
+                                        disabled={{ before: new Date() }}
+                                        locale={es}
+                                        classNames={{
+                                          root: "p-3",
+                                          month_caption: "flex items-center justify-center mb-2 font-serif text-xs uppercase tracking-widest text-white/70",
+                                          caption_label: "font-serif text-xs text-white/80 tracking-widest uppercase",
+                                          nav: "flex items-center justify-between mb-1",
+                                          button_previous: "p-1 rounded hover:bg-white/10 text-white/60 hover:text-white transition-colors",
+                                          button_next: "p-1 rounded hover:bg-white/10 text-white/60 hover:text-white transition-colors",
+                                          weekdays: "flex mb-1",
+                                          weekday: "flex-1 text-center text-[0.6rem] text-white/30 font-serif uppercase",
+                                          week: "flex",
+                                          day: "flex-1 aspect-square flex items-center justify-center",
+                                          day_button: "w-full h-full text-[0.68rem] font-serif rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors disabled:opacity-20 disabled:cursor-not-allowed",
+                                          selected: "!bg-white/20 !text-white rounded-lg",
+                                          today: "text-white font-bold",
+                                          outside: "opacity-20",
+                                          disabled: "opacity-20 cursor-not-allowed",
+                                        }}
+                                      />
+                                    </PopoverContent>
+                                  </Popover>
                                 </div>
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Horario preferido</label>
