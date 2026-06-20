@@ -184,24 +184,25 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
           }}>{post.date}</span>
         </div>
 
-        {/* Title */}
-        <h1 style={{
+        {/* Title — left on desktop, centered on mobile */}
+        <h1 className="text-center md:text-left" style={{
           fontFamily: "serif", fontWeight: 700,
-          fontSize: "clamp(1.6rem, 5vw, 2.6rem)",
-          color: "white", lineHeight: 1.25, marginBottom: "32px",
+          fontSize: "clamp(1.3rem, 3.5vw, 1.9rem)",
+          color: "white", lineHeight: 1.25, marginBottom: "28px",
         }}>
           {post.title}
         </h1>
 
-        {/* Decorative line */}
-        <div style={{ height: "2px", width: "48px", background: GREEN, borderRadius: "9999px", marginBottom: "36px" }} />
+        {/* Decorative line — centered on mobile, left on desktop */}
+        <div className="mx-auto md:mx-0" style={{ height: "2px", width: "40px", background: GREEN, borderRadius: "9999px", marginBottom: "32px" }} />
 
-        {/* Body paragraphs */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        {/* Body paragraphs — left-aligned, small text */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {post.body.map((para, i) => (
             <p key={i} style={{
-              fontFamily: "serif", fontSize: "clamp(0.88rem, 2.2vw, 1.05rem)",
-              lineHeight: 1.85, color: "rgba(255,255,255,0.72)", margin: 0,
+              fontFamily: "serif", fontSize: "0.82rem",
+              lineHeight: 1.85, color: "rgba(255,255,255,0.68)", margin: 0,
+              textAlign: "left",
             }}>
               {para}
             </p>
@@ -209,21 +210,10 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: "56px", paddingTop: "28px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-          <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", margin: 0 }}>
+        <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          <p style={{ fontFamily: "serif", fontSize: "0.68rem", color: "rgba(255,255,255,0.28)", letterSpacing: "0.08em", margin: 0 }}>
             Dr. Mario Sánchez · Terapeuta Respiratorio &amp; Salubrista Público
           </p>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "9999px", padding: "8px 20px", cursor: "pointer",
-              color: "rgba(255,255,255,0.55)", fontFamily: "serif",
-              fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase",
-            }}
-          >
-            ← Volver al blog
-          </button>
         </div>
       </div>
     </motion.div>
