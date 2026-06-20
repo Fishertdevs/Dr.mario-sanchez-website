@@ -11,12 +11,12 @@ export default function About() {
       className="relative overflow-hidden bg-white"
     >
       {/* ── Desktop layout ─────────────────────────────────────── */}
-      <div className="hidden lg:flex" style={{ minHeight: '88vh' }}>
+      <div className="hidden lg:flex" style={{ minHeight: '92vh' }}>
 
-        {/* Photo — fills section height, image bottom-anchored */}
+        {/* Photo — fills full column height, left-anchored like hero */}
         <motion.div
-          className="relative flex items-end justify-center flex-shrink-0"
-          style={{ width: '45%', height: '88vh' }}
+          className="relative flex-shrink-0 overflow-hidden"
+          style={{ width: '50%', minHeight: '92vh' }}
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -26,15 +26,15 @@ export default function About() {
             src={doctorPhoto}
             alt="Dr. Mario Sanchez"
             data-testid="img-doctor-about-desktop"
-            className="w-auto object-contain object-bottom"
-            style={{ maxHeight: '88vh', maxWidth: '100%' }}
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-full w-auto"
+            style={{ maxWidth: 'none' }}
           />
         </motion.div>
 
         {/* Text column */}
         <motion.div
           className="flex flex-col items-center justify-center text-center px-16 xl:px-24"
-          style={{ width: '55%' }}
+          style={{ width: '50%' }}
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
