@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import doctorPhoto from "@assets/image_1781916620650.png";
+import doctorPhotoProfile from "@assets/image_1781916620650.png";
+import doctorPhotoHero    from "@assets/image_1781821171932.png";
 
 const GREEN = "#2d5a27";
 const BLACK = "#0a0a0a";
@@ -13,26 +14,32 @@ export default function About() {
       {/* ── Desktop layout ─────────────────────────────────────── */}
       <div className="hidden lg:flex" style={{ height: '92vh' }}>
 
-        {/* Photo — fills full column height, left-anchored like hero */}
+        {/* Photo column — identical approach to hero: flex-end, maxHeight, object-bottom */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'relative', flexShrink: 0, width: '50%', height: '92vh', overflow: 'hidden' }}
+          style={{
+            width: '42%',
+            height: '92vh',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
         >
           <img
-            src={doctorPhoto}
+            src={doctorPhotoHero}
             alt="Dr. Mario Sanchez"
             data-testid="img-doctor-about-desktop"
             style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center top',
+              maxHeight: '92vh',
+              width: 'auto',
+              objectFit: 'contain',
+              objectPosition: 'bottom',
+              display: 'block',
             }}
           />
         </motion.div>
@@ -40,12 +47,17 @@ export default function About() {
         {/* Text column */}
         <motion.div
           className="flex flex-col items-center justify-center text-center px-16 xl:px-24"
-          style={{ width: '50%' }}
+          style={{ flex: 1 }}
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
+          {/* Profile photo — small circular, desktop only */}
+          <div className="mb-6" style={{ width: '88px', height: '88px', borderRadius: '50%', overflow: 'hidden', border: `3px solid ${GREEN}` }}>
+            <img src={doctorPhotoProfile} alt="Foto Dr. Mario Sanchez" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+          </div>
+
           <h2 className="font-serif font-bold text-5xl leading-tight mb-10" style={{ color: BLACK }}>
             Perfil Profesional
           </h2>
@@ -68,7 +80,7 @@ export default function About() {
         </motion.div>
       </div>
 
-      {/* ── Mobile layout — no image ────────────────────────────── */}
+      {/* ── Mobile layout ────────────────────────────── */}
       <div className="flex lg:hidden flex-col items-center px-6 pt-10 pb-24">
         <motion.h2
           className="font-serif font-bold text-center mb-8 leading-tight whitespace-nowrap"

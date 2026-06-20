@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
+import medAltImg from "@assets/image_1781918088749.png";
 
 const GREEN = "#2d5a27";
 const GREEN_LIGHT = "#dff0dc";
@@ -283,7 +284,7 @@ const IlluInyectologia = () => (
    DATA
 ═══════════════════════════════════ */
 const specializations = [
-  { title: "Medicina Alternativa",                    desc: "Terapias complementarias integradas al cuidado convencional para un bienestar integral.",   Illus: IlluAlternativa },
+  { title: "Medicina Alternativa",                    desc: "Terapias complementarias integradas al cuidado convencional para un bienestar integral.",   Illus: IlluAlternativa, imgSrc: medAltImg },
   { title: "Consulta Domiciliaria",                   desc: "Atención médica profesional en la comodidad y seguridad de su hogar.",                       Illus: IlluDomiciliaria },
   { title: "Proceso Terapéutico",                     desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",                   Illus: IlluTerapeutico },
   { title: "Administración de Medicamentos Inhalados",desc: "Técnicas correctas y seguras para una terapia inhalatoria efectiva.",                        Illus: IlluInhalados },
@@ -300,7 +301,7 @@ const FADE_DURATION = 600;  // ms fade transition
 /* ═══════════════════════════════════
    CARD COMPONENT
 ═══════════════════════════════════ */
-function SpecCard({ title, desc, Illus, num }: { title: string; desc: string; Illus: () => JSX.Element; num: number }) {
+function SpecCard({ title, desc, Illus, num, imgSrc }: { title: string; desc: string; Illus: () => JSX.Element; num: number; imgSrc?: string }) {
   return (
     <motion.div
       layout
@@ -320,7 +321,10 @@ function SpecCard({ title, desc, Illus, num }: { title: string; desc: string; Il
       {/* Illustration */}
       <div className="flex items-center justify-center" style={{ background: 'white', borderRadius: '22px 22px 0 0', height: '155px', padding: '10px' }}>
         <div style={{ width: '125px', height: '125px' }}>
-          <Illus />
+          {imgSrc
+            ? <img src={imgSrc} alt={title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            : <Illus />
+          }
         </div>
       </div>
 
