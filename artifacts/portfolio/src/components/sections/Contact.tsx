@@ -331,15 +331,15 @@ export default function Contact() {
                                 className="absolute inset-0 flex flex-col gap-3.5"
                               >
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Nombre completo *</label>
+                                  <label className={labelCls} style={labelStyle}>Nombre completo:</label>
                                   <input required value={form.nombre} onChange={set("nombre")} placeholder="Tu nombre" className={inputCls} style={inputStyle} />
                                 </div>
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Correo electrónico *</label>
+                                  <label className={labelCls} style={labelStyle}>Correo electrónico:</label>
                                   <input required type="email" value={form.email} onChange={set("email")} placeholder="correo@email.com" className={inputCls} style={inputStyle} />
                                 </div>
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Teléfono / WhatsApp *</label>
+                                  <label className={labelCls} style={labelStyle}>Teléfono / WhatsApp:</label>
                                   <input required type="tel" value={form.telefono} onChange={set("telefono")} placeholder="323 456 789" className={inputCls} style={inputStyle} />
                                 </div>
                               </motion.div>
@@ -357,7 +357,7 @@ export default function Contact() {
                                 className="absolute inset-0 flex flex-col gap-3.5"
                               >
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Tipo de consulta</label>
+                                  <label className={labelCls} style={labelStyle}>Tipo de consulta:</label>
                                   <Select value={form.tipo} onValueChange={(v) => setForm(f => ({ ...f, tipo: v }))}>
                                     <SelectTrigger className="w-full rounded-xl border text-xs font-serif" style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: "white", height: "36px" }}>
                                       <SelectValue />
@@ -369,7 +369,7 @@ export default function Contact() {
                                   </Select>
                                 </div>
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Área de consulta</label>
+                                  <label className={labelCls} style={labelStyle}>Área de consulta:</label>
                                   <Select value={form.area} onValueChange={(v) => setForm(f => ({ ...f, area: v }))}>
                                     <SelectTrigger className="w-full rounded-xl border text-xs font-serif" style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: "white", height: "36px" }}>
                                       <SelectValue />
@@ -399,7 +399,7 @@ export default function Contact() {
                                 className="absolute inset-0 flex flex-col gap-3.5"
                               >
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Fecha preferida</label>
+                                  <label className={labelCls} style={labelStyle}>Fecha preferida:</label>
                                   <Popover open={calOpen} onOpenChange={setCalOpen}>
                                     <PopoverTrigger asChild>
                                       <button
@@ -417,9 +417,8 @@ export default function Contact() {
                                     <PopoverContent
                                       side="bottom"
                                       align="start"
-                                      sideOffset={6}
-                                      avoidCollisions={false}
-                                      className="p-0 shadow-xl"
+                                      sideOffset={4}
+                                      className="p-0 shadow-xl overflow-hidden"
                                       style={{ width: "var(--radix-popover-trigger-width)" }}
                                     >
                                       <Calendar
@@ -439,7 +438,7 @@ export default function Contact() {
                                   </Popover>
                                 </div>
                                 <div>
-                                  <label className={labelCls} style={labelStyle}>Horario preferido</label>
+                                  <label className={labelCls} style={labelStyle}>Horario preferido:</label>
                                   <Select value={form.hora} onValueChange={(v) => setForm(f => ({ ...f, hora: v }))}>
                                     <SelectTrigger className="w-full rounded-xl border text-xs font-serif" style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: "white", height: "36px" }}>
                                       <SelectValue />
@@ -466,7 +465,7 @@ export default function Contact() {
                                 className="absolute inset-0 flex flex-col gap-3.5"
                               >
                                 <div className="flex flex-col" style={{ flex: "1 1 0", minHeight: 0 }}>
-                                  <label className={labelCls} style={labelStyle}>Información adicional</label>
+                                  <label className={labelCls + " text-center w-full"} style={labelStyle}>Información adicional</label>
                                   <textarea
                                     value={form.mensaje}
                                     onChange={set("mensaje")}
