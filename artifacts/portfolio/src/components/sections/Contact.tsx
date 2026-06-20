@@ -477,12 +477,13 @@ export default function Contact() {
             </div>
 
             {/* Right column — map always visible */}
-            <div className="w-full md:w-[60%] h-[220px] md:h-auto" style={{ minHeight: '380px' }}>
+            <div className="w-full md:w-[60%] h-[120px] md:h-auto" style={{ minHeight: undefined }}>
               <iframe
                 title="Ubicación Dr. Mario Sánchez"
                 src="https://maps.google.com/maps?q=Bogot%C3%A1,+Colombia&output=embed&z=13"
                 width="100%" height="100%"
-                style={{ border: 0, display: 'block', minHeight: '220px' }}
+                style={{ border: 0, display: 'block', minHeight: '120px', height: '100%' }}
+                className="md:min-h-[380px]"
                 allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
