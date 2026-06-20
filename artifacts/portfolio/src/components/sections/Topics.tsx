@@ -320,25 +320,25 @@ const specializations = [
   {
     title: "Fisioterapia Respiratoria",
     desc: "Ejercicios y maniobras especializadas para optimizar la función pulmonar.",
-    descLong: "Programa de drenaje bronquial, reeducación respiratoria y maniobras terapéuticas especializadas diseñadas para recuperar y mejorar la capacidad funcional pulmonar del paciente.",
+    descLong: "Programa de drenaje bronquial, reeducación respiratoria y maniobras terapéuticas especializadas para optimizar la mecánica ventilatoria, mejorar la tolerancia al ejercicio y recuperar la capacidad funcional pulmonar.",
     Illus: IlluFisioterapia, imgSrc: fisioterapiaImg,
   },
   {
     title: "Manejo de Apnea del Sueño — CPAP & BPAP",
     desc: "Diagnóstico y control con equipos de última generación para el sueño reparador.",
-    descLong: "Evaluación, titulación y seguimiento con equipos CPAP y BPAP de última generación, con acompañamiento técnico y clínico para garantizar adherencia al tratamiento y un sueño verdaderamente reparador.",
+    descLong: "Evaluación y titulación con equipos CPAP y BPAP de última generación, con seguimiento técnico y clínico para garantizar la adherencia al tratamiento y lograr un sueño verdaderamente reparador.",
     Illus: IlluApnea, imgSrc: apneaImg,
   },
   {
     title: "Rehabilitación Cardio Pulmonar",
     desc: "Programas especializados de recuperación cardiovascular y respiratoria.",
-    descLong: "Diseño e implementación de programas individualizados para mejorar la capacidad cardiorrespiratoria, reducir síntomas, fortalecer el sistema cardiovascular y promover un estilo de vida saludable.",
+    descLong: "Diseño de programas individualizados para mejorar la capacidad cardiorrespiratoria, reducir síntomas, fortalecer el sistema cardiovascular y promover hábitos de vida saludables y sostenibles.",
     Illus: IlluRehabilitacion, imgSrc: rehabImg,
   },
   {
     title: "Inyectología",
     desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",
-    descLong: "Administración profesional de medicamentos por vía intramuscular, subcutánea o intravenosa con asepsia rigurosa, garantizando seguridad, comodidad y bienestar del paciente en cada procedimiento.",
+    descLong: "Administración profesional de medicamentos por vía intramuscular, subcutánea o intravenosa con asepsia rigurosa, garantizando seguridad, comodidad y bienestar del paciente en cada sesión.",
     Illus: IlluInyectologia, imgSrc: inyectologiaImg,
   },
 ];
@@ -489,7 +489,7 @@ export default function Topics() {
 
   return (
     <section id="topics" ref={sectionRef} className="relative" style={{ background: GREEN }} data-testid="section-topics">
-      <div className="container mx-auto px-6 md:px-12 pt-10 pb-20 md:pt-14 md:pb-28">
+      <div className="container mx-auto px-6 md:px-12 pt-10 pb-10 md:pt-14 md:pb-28">
 
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-14">
@@ -560,13 +560,12 @@ export default function Topics() {
         </div>
 
         {/* Mobile — text below dots */}
-        <div className="md:hidden flex flex-col items-center gap-3 mt-12">
+        <div className="md:hidden flex flex-col items-center gap-2 mt-6">
           <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '280px' }}>
             Servicios especializados en terapia respiratoria, manejo de equipos biomédicos y atención domiciliaria, orientados a la prevención y el bienestar integral de cada paciente.
           </p>
           <div className="h-[1.5px] w-10 rounded-full" style={{ background: 'rgba(255,255,255,0.35)' }} />
         </div>
-        <div className="md:hidden h-6" />
       </div>
 
       {/* Wave bottom */}
