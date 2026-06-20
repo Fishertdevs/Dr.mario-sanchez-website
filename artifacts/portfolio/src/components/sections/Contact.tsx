@@ -172,26 +172,26 @@ export default function Contact() {
         <div className="rounded-3xl overflow-hidden" style={{ background: DARK_GREEN }}>
 
           {/* ── Tab bar ── */}
-          <div className="flex justify-center pt-5 pb-1 px-6">
+          <div className="flex justify-start pt-4 pb-1 px-6">
             <div
-              className="relative flex rounded-full p-1 gap-0.5"
+              className="relative flex rounded-full p-0.5 gap-0.5"
               style={{ background: "rgba(255,255,255,0.1)" }}
             >
               {TABS.map((tab, i) => (
                 <button
                   key={tab}
                   onClick={() => switchTab(i)}
-                  className="relative z-10 font-serif tracking-[0.16em] uppercase transition-colors duration-300"
+                  className="relative z-10 font-serif tracking-[0.14em] uppercase transition-colors duration-300"
                   style={{
-                    fontSize: "clamp(0.55rem, 1.8vw, 0.7rem)",
-                    padding: "6px 20px",
-                    color: activeTab === i ? DARK_GREEN : "rgba(255,255,255,0.65)",
+                    fontSize: "0.6rem",
+                    padding: "5px 14px",
+                    color: activeTab === i ? DARK_GREEN : "rgba(255,255,255,0.6)",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
                     borderRadius: "9999px",
                     fontWeight: 600,
-                    minWidth: "110px",
+                    minWidth: "auto",
                   }}
                 >
                   {activeTab === i && (
