@@ -6,8 +6,11 @@ import consultaImg     from "@assets/image_1781918588839.png";
 import terapeuticoImg  from "@assets/image_1781919290751.png";
 import inhaladosImg    from "@assets/image_1781920459455.png";
 import fisioterapiaImg from "@assets/image_1781921271859.png";
-import apneaImg        from "@assets/image_1781925604226.png";
+import apneaImg        from "@assets/image_1781926041769.png";
 import rehabImg        from "@assets/image_1781925230634.png";
+import inyectologiaImg from "@assets/image_1781926059684.png";
+import consultaImg2    from "@assets/image_1781927114542.png";
+import terapeuticoImg2 from "@assets/image_1781926871196.png";
 
 const GREEN = "#2d5a27";
 const GREEN_LIGHT = "#dff0dc";
@@ -291,13 +294,13 @@ const IlluInyectologia = () => (
 ═══════════════════════════════════ */
 const specializations = [
   { title: "Medicina Alternativa",                    desc: "Terapias complementarias integradas al cuidado convencional para un bienestar integral.",   Illus: IlluAlternativa, imgSrc: medAltImg },
-  { title: "Consulta Domiciliaria",                   desc: "Atención médica profesional en la comodidad y seguridad de su hogar.",                       Illus: IlluDomiciliaria, imgSrc: consultaImg },
-  { title: "Proceso Terapéutico",                     desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",                   Illus: IlluTerapeutico, imgSrc: terapeuticoImg },
+  { title: "Consulta Domiciliaria",                   desc: "Atención médica profesional en la comodidad y seguridad de su hogar.",                       Illus: IlluDomiciliaria, imgSrc: consultaImg2 },
+  { title: "Proceso Terapéutico",                     desc: "Acompañamiento integral y personalizado en cada etapa de su tratamiento.",                   Illus: IlluTerapeutico, imgSrc: terapeuticoImg2 },
   { title: "Administración de Medicamentos Inhalados",desc: "Técnicas correctas y seguras para una terapia inhalatoria efectiva.",                        Illus: IlluInhalados, imgSrc: inhaladosImg },
   { title: "Fisioterapia Respiratoria",               desc: "Ejercicios y maniobras especializadas para optimizar la función pulmonar.",                  Illus: IlluFisioterapia, imgSrc: fisioterapiaImg },
   { title: "Manejo de Apnea del Sueño — CPAP & BPAP",desc: "Diagnóstico y control con equipos de última generación para el sueño reparador.",            Illus: IlluApnea, imgSrc: apneaImg },
   { title: "Rehabilitación Cardio Pulmonar",          desc: "Programas especializados de recuperación cardiovascular y respiratoria.",                    Illus: IlluRehabilitacion, imgSrc: rehabImg },
-  { title: "Inyectología",                            desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",       Illus: IlluInyectologia },
+  { title: "Inyectología",                            desc: "Aplicación segura y profesional de medicamentos inyectables en un entorno controlado.",       Illus: IlluInyectologia, imgSrc: inyectologiaImg },
 ];
 
 const CARD_INTERVAL = 6000; // ms between each card appearing
