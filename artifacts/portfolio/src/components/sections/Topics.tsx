@@ -412,7 +412,7 @@ export default function Topics() {
 
   return (
     <section id="topics" ref={sectionRef} className="relative" style={{ background: GREEN }} data-testid="section-topics">
-      <div className="container mx-auto px-6 md:px-12 py-20 md:py-28">
+      <div className="container mx-auto px-6 md:px-12 pt-10 pb-20 md:pt-14 md:pb-28">
 
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-14">
@@ -472,8 +472,14 @@ export default function Topics() {
           </div>
         </div>
 
-        {/* Mobile dots spacing */}
-        <div className="md:hidden h-10" />
+        {/* Mobile — text below dots */}
+        <div className="md:hidden flex flex-col items-center gap-3 mt-12">
+          <p className="font-serif text-center text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '260px' }}>
+            Deslice para explorar todas las especialidades disponibles
+          </p>
+          <div className="h-[1.5px] w-10 rounded-full" style={{ background: 'rgba(255,255,255,0.35)' }} />
+        </div>
+        <div className="md:hidden h-6" />
       </div>
 
       {/* Wave bottom */}
