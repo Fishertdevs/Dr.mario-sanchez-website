@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 
 const GREEN = "#2d5a27";
 const DARK_GREEN = "#1e3d1a";
@@ -351,21 +354,31 @@ export default function Contact() {
                               >
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Tipo de consulta</label>
-                                  <select value={form.tipo} onChange={set("tipo")} className={inputCls} style={inputStyle}>
-                                    <option>Presencial</option>
-                                    <option>Teleorientación</option>
-                                  </select>
+                                  <Select value={form.tipo} onValueChange={(v) => setForm(f => ({ ...f, tipo: v }))}>
+                                    <SelectTrigger className="w-full rounded-xl border text-xs font-serif" style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: "white", height: "36px" }}>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="Presencial">Presencial</SelectItem>
+                                      <SelectItem value="Teleorientación">Teleorientación</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Área de consulta</label>
-                                  <select value={form.area} onChange={set("area")} className={inputCls} style={inputStyle}>
-                                    <option>Terapia Respiratoria</option>
-                                    <option>CPAP / BPAP</option>
-                                    <option>Salud Pública</option>
-                                    <option>Inyectología</option>
-                                    <option>Vacunación</option>
-                                    <option>Otra</option>
-                                  </select>
+                                  <Select value={form.area} onValueChange={(v) => setForm(f => ({ ...f, area: v }))}>
+                                    <SelectTrigger className="w-full rounded-xl border text-xs font-serif" style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: "white", height: "36px" }}>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="Terapia Respiratoria">Terapia Respiratoria</SelectItem>
+                                      <SelectItem value="CPAP / BPAP">CPAP / BPAP</SelectItem>
+                                      <SelectItem value="Salud Pública">Salud Pública</SelectItem>
+                                      <SelectItem value="Inyectología">Inyectología</SelectItem>
+                                      <SelectItem value="Vacunación">Vacunación</SelectItem>
+                                      <SelectItem value="Otra">Otra</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                               </motion.div>
                             )}
@@ -387,11 +400,16 @@ export default function Contact() {
                                 </div>
                                 <div>
                                   <label className={labelCls} style={labelStyle}>Horario preferido</label>
-                                  <select value={form.hora} onChange={set("hora")} className={inputCls} style={inputStyle}>
-                                    <option>Mañana (8 am – 12 pm)</option>
-                                    <option>Tarde (12 pm – 6 pm)</option>
-                                    <option>Sábados (9 am – 1 pm)</option>
-                                  </select>
+                                  <Select value={form.hora} onValueChange={(v) => setForm(f => ({ ...f, hora: v }))}>
+                                    <SelectTrigger className="w-full rounded-xl border text-xs font-serif" style={{ background: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)", color: "white", height: "36px" }}>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="Mañana (8 am – 12 pm)">Mañana (8 am – 12 pm)</SelectItem>
+                                      <SelectItem value="Tarde (12 pm – 6 pm)">Tarde (12 pm – 6 pm)</SelectItem>
+                                      <SelectItem value="Sábados (9 am – 1 pm)">Sábados (9 am – 1 pm)</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                               </motion.div>
                             )}
@@ -460,14 +478,14 @@ export default function Contact() {
                           ) : (
                             <button
                               onClick={handleSubmit}
-                              className="flex-1 font-serif tracking-[0.14em] uppercase py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2"
-                              style={{ background: "#25D366", color: "white", fontSize: "0.68rem", border: "none", cursor: "pointer", fontWeight: 700 }}
+                              className="font-serif tracking-[0.14em] uppercase transition-all duration-200 hover:opacity-70 active:scale-[0.98] flex items-center gap-1.5"
+                              style={{ background: "none", color: "white", fontSize: "0.68rem", border: "none", borderBottom: "1px solid white", cursor: "pointer", fontWeight: 700, padding: "0 0 2px 0", marginLeft: "auto" }}
                             >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/>
                                 <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.182a8.182 8.182 0 01-4.177-1.144l-.3-.178-3.094.878.84-3.06-.194-.314A8.182 8.182 0 1112 20.182z" fill="white"/>
                               </svg>
-                              Enviar por WhatsApp
+                              Enviar
                             </button>
                           )}
                         </div>
