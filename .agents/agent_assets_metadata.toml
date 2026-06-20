@@ -1,5 +1,28 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "8ipSo2vmV1fuAtzgknQIK"
+uri = "file://artifacts/portfolio/src/assets/cover-prevencion.png"
+type = "image"
+title = "prevention health breathing nature"
+
+[[generated]]
+id = "RwM3mjXsaFnRrfpBN4gI0"
+uri = "file://artifacts/portfolio/src/assets/cover-epoc.png"
+type = "image"
+title = "COPD lungs airways medical illustration"
+
+[[generated]]
+id = "7BzOGJIFa2u91UZLeFCf7"
+uri = "file://artifacts/portfolio/src/assets/cover-estres.png"
+type = "image"
+title = "work stress wellness balance illustration"
+
+[[generated]]
+id = "e-adITA9J2sMDZzFHmb6Q"
+uri = "file://artifacts/portfolio/src/assets/cover-cpap.png"
+type = "image"
+title = "sleep CPAP restful bedroom illustration"
 
 [[outputs]]
 id = "xldEUGJgZq08WoLHRkZ8A"

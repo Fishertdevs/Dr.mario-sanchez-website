@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
-import coverPrevImg   from "@assets/image_1781921271859.png";
-import coverEpocImg   from "@assets/image_1781920459455.png";
-import coverEstresImg from "@assets/image_1781919290751.png";
-import coverCpapImg   from "@assets/image_1781926041769.png";
+import coverPrevImg   from "@assets/cover-prevencion.png";
+import coverEpocImg   from "@assets/cover-epoc.png";
+import coverEstresImg from "@assets/cover-estres.png";
+import coverCpapImg   from "@assets/cover-cpap.png";
 
 const GREEN = "#2d5a27";
 
@@ -203,20 +203,21 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
           }}>{post.date}</span>
         </div>
 
-        {/* Title — left on desktop, centered on mobile */}
-        <h1 className="text-center md:text-left" style={{
+        {/* Title — always left */}
+        <h1 style={{
           fontFamily: "serif", fontWeight: 700,
           fontSize: "clamp(1.25rem, 3vw, 1.85rem)",
           color: "white", lineHeight: 1.25, marginBottom: "22px",
+          textAlign: "left",
         }}>
           {post.title}
         </h1>
 
-        {/* Decorative line */}
-        <div className="mx-auto md:mx-0" style={{ height: "2px", width: "36px", background: GREEN, borderRadius: "9999px", marginBottom: "28px" }} />
+        {/* Decorative line — always left */}
+        <div style={{ height: "2px", width: "36px", background: GREEN, borderRadius: "9999px", marginBottom: "28px" }} />
 
-        {/* Body — small readable text, left-aligned, max-width for long-form readability */}
-        <div style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "18px" }}>
+        {/* Body — full width, left-aligned */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
           {post.body.map((para, i) => (
             <p key={i} style={{
               fontFamily: "serif", fontSize: "0.83rem",
@@ -229,7 +230,7 @@ function ArticlePage({ post, onClose }: { post: Post; onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div style={{ maxWidth: "720px", marginTop: "44px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+        <div style={{ marginTop: "44px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
           <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "rgba(255,255,255,0.25)", letterSpacing: "0.08em", margin: 0 }}>
             Dr. Mario Sánchez · Terapeuta Respiratorio &amp; Salubrista Público
           </p>
