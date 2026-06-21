@@ -47,10 +47,10 @@ const BG_MAP: Record<string, string> = {
 };
 
 const DEFAULT_SOCIALS: SocialIcon[] = [
-  { label: "YouTube",   href: "https://youtube.com/@drmariosanchez",        bg: "#ffffff",  iconKey: "youtube",   renderIcon: ICON_RENDERERS.youtube },
-  { label: "TikTok",    href: "https://tiktok.com/@dr..terapia",            bg: "#010101",  iconKey: "tiktok",    renderIcon: ICON_RENDERERS.tiktok },
+  { label: "YouTube",   href: "https://youtube.com/@drmariosanchez7124",    bg: "#ffffff",  iconKey: "youtube",   renderIcon: ICON_RENDERERS.youtube },
+  { label: "TikTok",    href: "https://tiktok.com/@dr.terapia",             bg: "#010101",  iconKey: "tiktok",    renderIcon: ICON_RENDERERS.tiktok },
   { label: "WhatsApp",  href: getWhatsAppUrl(),                             bg: "#25D366",  iconKey: "whatsapp",  renderIcon: ICON_RENDERERS.whatsapp },
-  { label: "Instagram", href: "https://instagram.com/drmariosanchez7124",   bg: "linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)", iconKey: "instagram", renderIcon: ICON_RENDERERS.instagram },
+  { label: "Instagram", href: "https://instagram.com/drterapia3",           bg: "linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)", iconKey: "instagram", renderIcon: ICON_RENDERERS.instagram },
 ];
 
 export default function Footer() {
