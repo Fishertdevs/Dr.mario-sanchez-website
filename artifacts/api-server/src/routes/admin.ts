@@ -108,6 +108,21 @@ router.post("/admin/logout", requireAdmin, async (_req, res) => {
   res.json({ ok: true });
 });
 
+router.get("/admin/verify", requireAdmin, async (_req, res) => {
+  const email = await getSetting("admin_email");
+  res.json({ ok: true, email });
+});
+
+router.put("/admin/change-email", requireAdmin, async (req, res) => {
+  const { new_email } = req.body ?? {};
+  if (!new_email || typeof new_email !== "string" || !new_email.includes("@")) {
+    res.status(400).json({ error: "Email inválido" });
+    return;
+  }
+  await setSetting("admin_email", new_email.toLowerCase().trim());
+  res.json({ ok: true });
+});
+
 router.get("/admin/settings", requireAdmin, async (_req, res) => {
   const rows = await db.select().from(settingsTable);
   const map: Record<string, string> = {};

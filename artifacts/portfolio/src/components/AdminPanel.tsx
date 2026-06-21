@@ -89,14 +89,17 @@ interface DashStats {
   lastUpdated: Date;
 }
 
-function DonutChart({ value, max, color, accent, label }: {
-  value: number; max: number; color: string; accent: string; label: string;
+function DonutChart({ value, max, color, accent, label, compact }: {
+  value: number; max: number; color: string; accent: string; label: string; compact?: boolean;
 }) {
   const [filled, setFilled] = useState(false);
-  const r = 26;
+  const size = compact ? 48 : 64;
+  const r = compact ? 19 : 26;
+  const sw = compact ? 6 : 8;
   const circ = 2 * Math.PI * r;
   const pct = max > 0 ? value / max : 0;
   const dash = filled ? pct * circ : 0;
+  const half = size / 2;
 
   useEffect(() => {
     setFilled(false);
@@ -106,23 +109,23 @@ function DonutChart({ value, max, color, accent, label }: {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-      <div style={{ position: "relative", width: 64, height: 64 }}>
-        <svg width="64" height="64" viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r={r} fill="none" stroke={accent} strokeWidth="8"/>
+      <div style={{ position: "relative", width: size, height: size }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <circle cx={half} cy={half} r={r} fill="none" stroke={accent} strokeWidth={sw}/>
           <circle
-            cx="32" cy="32" r={r} fill="none"
-            stroke={color} strokeWidth="8"
+            cx={half} cy={half} r={r} fill="none"
+            stroke={color} strokeWidth={sw}
             strokeDasharray={`${dash} ${circ - dash}`}
             strokeLinecap="round"
             style={{
-              transformOrigin: "32px 32px",
+              transformOrigin: `${half}px ${half}px`,
               transform: "rotate(-90deg)",
               transition: "stroke-dasharray 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: "serif", fontSize: "0.82rem", fontWeight: 700, color: "#000000" }}>{value}</span>
+          <span style={{ fontFamily: "serif", fontSize: compact ? "0.68rem" : "0.82rem", fontWeight: 700, color: "#000000" }}>{value}</span>
         </div>
       </div>
       <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#000000", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
@@ -241,6 +244,9 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
+  const [changingEmail, setChangingEmail] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [emailMsg, setEmailMsg] = useState("");
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -254,6 +260,23 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
       .then(r => r.json())
       .then(d => setNeedsSetup(d.needsSetup === true))
       .catch(() => setNeedsSetup(false));
+  }, [isOpen]);
+
+  // Verify stored session token on every open to ensure persistence
+  useEffect(() => {
+    if (!isOpen) return;
+    const stored = localStorage.getItem("admin_token");
+    if (!stored) return;
+    fetch("/api/admin/verify", { headers: { Authorization: `Bearer ${stored}` } })
+      .then(r => {
+        if (!r.ok) {
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_logged_email");
+          setToken(null);
+          setLoggedEmail("");
+        }
+      })
+      .catch(() => { /* network error — keep token */ });
   }, [isOpen]);
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -464,6 +487,24 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
       await loadSocialLinks();
     } finally {
       setSavingConfig(false);
+    }
+  };
+
+  const changeAdminEmail = async () => {
+    if (!newAdminEmail.includes("@")) { setEmailMsg("Email inválido"); return; }
+    setChangingEmail(true); setEmailMsg("");
+    try {
+      const r = await authFetch("/api/admin/change-email", {
+        method: "PUT",
+        body: JSON.stringify({ new_email: newAdminEmail }),
+      });
+      if (!r.ok) { const d = await r.json(); setEmailMsg(d.error ?? "Error al cambiar email"); return; }
+      setLoggedEmail(newAdminEmail.toLowerCase().trim());
+      localStorage.setItem("admin_logged_email", newAdminEmail.toLowerCase().trim());
+      setNewAdminEmail("");
+      setEmailMsg("✓ Email actualizado correctamente");
+    } finally {
+      setChangingEmail(false);
     }
   };
 
@@ -781,10 +822,10 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
 
                         {/* Cuenta Google autorizada */}
                         <div style={{ background: "#f8faf8", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "0.75rem", color: DARK, fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.75rem", color: DARK, fontWeight: 700, margin: "0 0 8px", textAlign: "center" }}>
                             Cuenta Google Autorizada
                           </h3>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center", marginBottom: "10px" }}>
                             <svg width="14" height="14" viewBox="0 0 24 24">
                               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -795,6 +836,33 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                               {loggedEmail || "—"}
                             </span>
                           </div>
+                          <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#000000", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 5px" }}>Cambiar correo autorizado</p>
+                          <div style={{ display: "flex", gap: "6px" }}>
+                            <input
+                              type="email"
+                              value={newAdminEmail}
+                              onChange={e => { setNewAdminEmail(e.target.value); setEmailMsg(""); }}
+                              placeholder="nuevo@correo.com"
+                              style={{ ...sectionInputStyle, flex: 1 }}
+                            />
+                            <button
+                              onClick={changeAdminEmail}
+                              disabled={changingEmail || !newAdminEmail}
+                              style={{
+                                background: GREEN, color: "white", border: "none", borderRadius: "7px",
+                                padding: "7px 10px", fontFamily: "serif", fontSize: "0.65rem",
+                                cursor: changingEmail || !newAdminEmail ? "not-allowed" : "pointer",
+                                fontWeight: 700, opacity: changingEmail || !newAdminEmail ? 0.5 : 1,
+                              }}
+                            >
+                              {changingEmail ? "..." : "Guardar"}
+                            </button>
+                          </div>
+                          {emailMsg && (
+                            <p style={{ fontFamily: "serif", fontSize: "0.62rem", color: emailMsg.startsWith("✓") ? GREEN : "#ef4444", margin: "5px 0 0" }}>
+                              {emailMsg}
+                            </p>
+                          )}
                         </div>
                       </>
                     )}
@@ -842,9 +910,9 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                           Distribución de Reseñas
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
-                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#2d5a27" accent="#e8f5e4" label="Aprobadas" />
-                          <DonutChart value={dashStats.pending} max={MAX_REVIEWS} color="#d97706" accent="#fef9e7" label="Pendientes" />
-                          <DonutChart value={dashStats.total} max={MAX_REVIEWS} color="#6b7280" accent="#f3f4f6" label="Total" />
+                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#2d5a27" accent="#e8f5e4" label="Aprobadas" compact={!isMobile} />
+                          <DonutChart value={dashStats.pending} max={MAX_REVIEWS} color="#d97706" accent="#fef9e7" label="Pendientes" compact={!isMobile} />
+                          <DonutChart value={dashStats.total} max={MAX_REVIEWS} color="#6b7280" accent="#f3f4f6" label="Total" compact={!isMobile} />
                         </div>
                       </div>
 
