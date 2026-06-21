@@ -56,9 +56,14 @@ interface FooterProps {
   onOpenAdmin?: () => void;
 }
 
-export default function Footer({ onOpenAdmin }: FooterProps) {
+export default function Footer({ onOpenAdmin: _onOpenAdmin }: FooterProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [socials, setSocials] = useState<SocialIcon[]>(DEFAULT_SOCIALS);
+
+  useEffect(() => {
+    setIsAdmin(!!localStorage.getItem("admin_token"));
+  }, []);
 
   useEffect(() => {
     fetch("/api/social-links")
@@ -137,23 +142,31 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
           <p className="font-serif" style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.62rem, 1.4vw, 0.72rem)' }}>
             © 2026 DrMarioSanchez
           </p>
-          {onOpenAdmin && (
-            <>
-              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.6rem' }}>·</span>
-              <button
-                onClick={onOpenAdmin}
-                style={{
-                  background: "none", border: "none", cursor: "pointer",
-                  fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.62rem)",
-                  color: "rgba(255,255,255,0.2)", letterSpacing: "0.08em",
-                  textTransform: "uppercase", transition: "color 0.2s", padding: 0,
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}
-              >
-                Admin
-              </button>
-            </>
+          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.6rem' }}>·</span>
+          {isAdmin ? (
+            <Link
+              href="/admin"
+              style={{
+                fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.65rem)",
+                color: "rgba(255,255,255,0.7)", letterSpacing: "0.08em",
+                textTransform: "uppercase", textDecoration: "none",
+                transition: "color 0.2s",
+              }}
+            >
+              Bienvenido Admin
+            </Link>
+          ) : (
+            <Link
+              href="/admin"
+              style={{
+                fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.62rem)",
+                color: "rgba(255,255,255,0.18)", letterSpacing: "0.08em",
+                textTransform: "uppercase", textDecoration: "none",
+                transition: "color 0.2s",
+              }}
+            >
+              Admin
+            </Link>
           )}
         </div>
       </div>
