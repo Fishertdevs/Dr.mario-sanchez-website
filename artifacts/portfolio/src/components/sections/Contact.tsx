@@ -214,7 +214,7 @@ export default function Contact() {
         transition={{ duration: 0.9 }}
         className="text-center pt-6 pb-8 px-6"
       >
-        <h2 className="font-serif italic font-bold leading-tight" style={{ color: '#0a0a0a', fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}>
+        <h2 className="font-serif italic font-bold leading-tight" style={{ color: '#0a0a0a', fontSize: 'min(calc((100vw - 64px) / 13.5), 3rem)', whiteSpace: 'nowrap' }}>
           Estamos para ayudarle.
         </h2>
         <div className="flex justify-center mt-5">
