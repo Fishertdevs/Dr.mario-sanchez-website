@@ -120,8 +120,8 @@ export default function About() {
         </motion.p>
 
         {/* Green wave — mobile transition to Reviews */}
-        <div className="w-full overflow-hidden" style={{ lineHeight: 0, marginTop: "32px" }}>
-          <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '70px' }}>
+        <div style={{ lineHeight: 0, marginTop: "32px", marginLeft: "-24px", marginRight: "-24px", width: "calc(100% + 48px)", overflow: "hidden" }}>
+          <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: '70px', display: 'block' }}>
             <path d="M0,30 C480,90 960,0 1440,60 L1440,90 L0,90 Z" fill={GREEN} />
           </svg>
         </div>
