@@ -519,31 +519,35 @@ export default function Reviews() {
               </div>
             )}
 
-            {/* ── Mobile carousel ── */}
-            <div className="md:hidden" style={{ position: "relative", overflow: "hidden", marginBottom: "28px" }}>
+            {/* ── Mobile carousel — swipe only, no dots ── */}
+            <div
+              className="md:hidden"
+              style={{ overflow: "hidden", marginBottom: "28px", userSelect: "none" }}
+              onPointerDown={e => { dragStartX.current = e.clientX; setIsDragging(true); }}
+              onPointerUp={e => {
+                setIsDragging(false);
+                const dx = e.clientX - dragStartX.current;
+                if (Math.abs(dx) < 40) return;
+                if (dx < 0) goMobile(mobileIdx + 1);
+                else goMobile(mobileIdx - 1);
+              }}
+              onPointerLeave={() => setIsDragging(false)}
+            >
               <div
                 style={{
                   display: "flex",
-                  transform: `translateX(calc(-${mobileIdx * 100}% - ${mobileIdx * 16}px))`,
+                  transform: `translateX(-${mobileIdx * 100}%)`,
                   transition: isDragging ? "none" : "transform 0.42s cubic-bezier(0.16,1,0.3,1)",
-                  padding: "0 20px", gap: "16px",
-                }}
-                onPointerDown={e => { dragStartX.current = e.clientX; setIsDragging(true); }}
-                onPointerMove={() => {}}
-                onPointerUp={e => {
-                  setIsDragging(false);
-                  const dx = e.clientX - dragStartX.current;
-                  if (Math.abs(dx) < 40) return;
-                  if (dx < 0) goMobile(mobileIdx + 1);
-                  else goMobile(mobileIdx - 1);
+                  willChange: "transform",
                 }}
               >
                 {reviews.map((r) => (
-                  <div key={r.id} style={{ minWidth: "calc(100vw - 40px)", height: `${MOBILE_CARD_H}px`, flexShrink: 0 }}>
+                  <div key={r.id} style={{ width: "100%", flexShrink: 0, flexBasis: "100%", boxSizing: "border-box", padding: "0 20px" }}>
                     <div style={{
                       background: BLACK, borderRadius: "16px",
-                      padding: "24px 20px 20px", height: "100%",
-                      display: "flex", flexDirection: "column", boxSizing: "border-box",
+                      padding: "24px 20px 20px",
+                      display: "flex", flexDirection: "column",
+                      minHeight: `${MOBILE_CARD_H}px`, boxSizing: "border-box",
                     }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
                         <div style={{ display: "flex", gap: "3px" }}>
@@ -569,17 +573,6 @@ export default function Reviews() {
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Mobile dots */}
-              <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "20px" }}>
-                {reviews.map((_, i) => (
-                  <button key={i} onClick={() => goMobile(i)} style={{
-                    width: i === mobileIdx ? "22px" : "7px", height: "7px", borderRadius: "9999px",
-                    background: i === mobileIdx ? "white" : "rgba(255,255,255,0.3)",
-                    border: "none", cursor: "pointer", padding: 0, transition: "all 0.35s ease",
-                  }} />
                 ))}
               </div>
             </div>
