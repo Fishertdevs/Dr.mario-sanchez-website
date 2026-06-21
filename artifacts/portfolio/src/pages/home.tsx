@@ -21,12 +21,12 @@ export default function Home({ openAdmin }: { openAdmin?: boolean }) {
 
   const handleClose = () => {
     setAdminOpen(false);
-    navigate("/");
+    if (openAdmin) navigate("/");
   };
 
   return (
     <div className="bg-white min-h-screen text-black">
-      <Navbar />
+      <Navbar onOpenAdmin={() => setAdminOpen(true)} />
       <main>
         <Hero />
         <Topics />

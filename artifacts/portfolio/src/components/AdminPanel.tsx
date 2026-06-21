@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const GREEN = "#2d5a27";
 const DARK = "#1a2e17";
+const MAX_REVIEWS = 50;
 
 const FIXED_NETWORKS = [
   { platform: "youtube",   label: "YouTube",   iconKey: "youtube",   placeholder: "https://youtube.com/@..." },
@@ -44,6 +45,13 @@ interface SocialLink {
   sortOrder: number;
 }
 
+interface DashStats {
+  total: number;
+  approved: number;
+  pending: number;
+  lastUpdated: Date;
+}
+
 function Stars({ rating }: { rating: number }) {
   return (
     <span>
@@ -77,7 +85,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("admin_token"));
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
-  const [tab, setTab] = useState<"reviews" | "social">("reviews");
+  const [tab, setTab] = useState<"reviews" | "configuracion" | "dashboard">("reviews");
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
@@ -88,6 +96,10 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [editingNetKey, setEditingNetKey] = useState<string | null>(null);
   const [editingUrl, setEditingUrl] = useState("");
   const [savingNet, setSavingNet] = useState(false);
+
+  const [dashStats, setDashStats] = useState<DashStats | null>(null);
+  const [dashLoading, setDashLoading] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const isLoggedIn = !!token;
   const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
@@ -110,6 +122,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
       const { token: t } = await r.json();
       localStorage.setItem("admin_token", t);
       setToken(t);
+      window.dispatchEvent(new CustomEvent("admin-auth-changed"));
     } finally {
       setLoginLoading(false);
     }
@@ -119,6 +132,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     localStorage.removeItem("admin_token");
     setToken(null);
     setEmail("");
+    window.dispatchEvent(new CustomEvent("admin-auth-changed"));
     onClose();
   };
 
@@ -142,11 +156,33 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     }
   };
 
+  const loadDashboard = async () => {
+    setDashLoading(true);
+    try {
+      const r = await fetch("/api/admin/reviews", { headers });
+      const data: Review[] = await r.json();
+      setDashStats({
+        total: data.length,
+        approved: data.filter(rv => rv.isApproved).length,
+        pending: data.filter(rv => !rv.isApproved).length,
+        lastUpdated: new Date(),
+      });
+    } finally {
+      setDashLoading(false);
+    }
+  };
+
   useEffect(() => {
+    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
     if (isLoggedIn && isOpen) {
       if (tab === "reviews") loadReviews();
-      else loadSocialLinks();
+      else if (tab === "configuracion") loadSocialLinks();
+      else if (tab === "dashboard") {
+        loadDashboard();
+        pollRef.current = setInterval(loadDashboard, 30000);
+      }
     }
+    return () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; } };
   }, [isLoggedIn, isOpen, tab]);
 
   const approveReview = async (id: number) => {
@@ -207,303 +243,368 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
   if (!isOpen) return null;
 
+  const usedPct = dashStats ? Math.min(100, Math.round((dashStats.approved / MAX_REVIEWS) * 100)) : 0;
+
   return (
-    /* Backdrop */
     <div
       onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, zIndex: 9999,
-        background: "rgba(0,0,0,0.45)",
-        display: "flex", justifyContent: "flex-end",
-      }}
+      style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.45)", display: "flex", justifyContent: "flex-end" }}
     >
-      {/* Drawer panel — stops click propagation so it doesn't close */}
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: "min(620px, 100%)",
-          height: "100%",
-          background: "#ffffff",
+          width: "min(620px, 100%)", height: "100%", background: "#ffffff",
           display: "flex", flexDirection: "column",
-          overflowY: "auto",
           boxShadow: "-8px 0 40px rgba(0,0,0,0.18)",
           borderLeft: "1px solid #e2eae1",
           borderRadius: "32px 0 0 32px",
           overflow: "hidden",
         }}
       >
-      {/* Header */}
-      <div style={{
-        background: "white", borderBottom: "1px solid #e2eae1",
-        padding: "0 32px", height: "64px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexShrink: 0, position: "sticky", top: 0, zIndex: 10,
-        boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: GREEN }} />
-          <span style={{ fontFamily: "serif", fontSize: "0.78rem", letterSpacing: "0.18em", textTransform: "uppercase", color: DARK, fontWeight: 700 }}>
-            Panel Admin
-          </span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          {isLoggedIn && (
-            <button onClick={logout} style={{
-              fontFamily: "serif", fontSize: "0.62rem", letterSpacing: "0.1em",
-              color: "#9ca3af", background: "none", border: "none",
-              cursor: "pointer", textTransform: "uppercase",
+        {/* Header */}
+        <div style={{
+          background: "white", borderBottom: "1px solid #e2eae1",
+          padding: "0 28px", height: "64px",
+          display: "flex", alignItems: "center", justifyContent: "flex-end",
+          flexShrink: 0,
+          boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            {isLoggedIn && (
+              <button onClick={logout} style={{
+                fontFamily: "serif", fontSize: "0.62rem", letterSpacing: "0.1em",
+                color: "#9ca3af", background: "none", border: "none",
+                cursor: "pointer", textTransform: "uppercase",
+              }}>
+                Cerrar sesión
+              </button>
+            )}
+            <button onClick={onClose} style={{
+              background: "#f3f4f6", border: "none", cursor: "pointer",
+              width: "32px", height: "32px", borderRadius: "50%",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "#6b7280", fontSize: "0.9rem",
             }}>
-              Cerrar sesión
+              ✕
             </button>
-          )}
-          <button onClick={onClose} style={{
-            background: "#f3f4f6", border: "none", cursor: "pointer",
-            width: "32px", height: "32px", borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#6b7280", fontSize: "0.9rem",
-          }}>
-            ✕
-          </button>
+          </div>
         </div>
-      </div>
 
-      {/* Body */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px 60px" }}>
-        <div style={{ width: "100%", maxWidth: "640px" }}>
-          {!isLoggedIn ? (
-            /* ── Login ── */
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
-              <h1 style={{ fontFamily: "serif", fontSize: "1.6rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
-                Panel de Administración
-              </h1>
-              <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.82rem", marginBottom: "36px", textAlign: "center" }}>
-                Ingresa con tu correo de administrador
-              </p>
-
-              <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "32px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
-                <label style={labelStyle}>Correo electrónico</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => { setEmail(e.target.value); setLoginError(""); }}
-                  onKeyDown={e => { if (e.key === "Enter") login(); }}
-                  placeholder="correo@ejemplo.com"
-                  style={{ ...inputStyle, marginBottom: "16px", fontSize: "0.9rem" }}
-                  autoFocus
-                />
-                {loginError && (
-                  <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", marginBottom: "12px", textAlign: "center" }}>
-                    {loginError}
-                  </p>
-                )}
-                <button
-                  onClick={login}
-                  disabled={loginLoading || !email.trim()}
-                  style={{
-                    width: "100%", padding: "12px",
-                    background: !email.trim() ? "#e2eae1" : GREEN,
-                    border: "none", borderRadius: "10px",
-                    color: !email.trim() ? "#9ca3af" : "white",
-                    fontFamily: "serif", fontSize: "0.8rem",
-                    cursor: loginLoading || !email.trim() ? "not-allowed" : "pointer",
-                    letterSpacing: "0.1em", textTransform: "uppercase",
-                    transition: "all 0.25s", fontWeight: 600,
-                  }}
-                >
-                  {loginLoading ? "Verificando..." : email.trim() ? "Bienvenido Admin" : "Ingresar"}
-                </button>
-              </div>
-            </div>
-          ) : (
-            /* ── Admin content ── */
-            <>
-              {/* Greeting */}
-              <div style={{ marginBottom: "32px" }}>
-                <p style={{ fontFamily: "serif", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "4px" }}>
-                  {getGreeting()}
-                </p>
-                <h1 style={{ fontFamily: "serif", fontSize: "1.8rem", color: DARK, fontWeight: 700, margin: 0 }}>
-                  Bienvenido, Admin
+        {/* Body */}
+        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px 60px" }}>
+          <div style={{ width: "100%", maxWidth: "560px" }}>
+            {!isLoggedIn ? (
+              /* ── Login ── */
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
+                <h1 style={{ fontFamily: "serif", fontSize: "1.6rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
+                  Panel de Administración
                 </h1>
-              </div>
-
-              {/* Tabs */}
-              <div style={{ display: "flex", gap: "0", marginBottom: "28px", background: "white", borderRadius: "12px", padding: "4px", border: "1px solid #e2eae1", boxShadow: "0 1px 4px rgba(45,90,39,0.04)" }}>
-                {(["reviews", "social"] as const).map(t => (
+                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.82rem", marginBottom: "36px", textAlign: "center" }}>
+                  Ingresa con tu correo de administrador
+                </p>
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "32px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
+                  <label style={labelStyle}>Correo electrónico</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); setLoginError(""); }}
+                    onKeyDown={e => { if (e.key === "Enter") login(); }}
+                    placeholder="correo@ejemplo.com"
+                    style={{ ...inputStyle, marginBottom: "16px", fontSize: "0.9rem" }}
+                    autoFocus
+                  />
+                  {loginError && (
+                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", marginBottom: "12px", textAlign: "center" }}>
+                      {loginError}
+                    </p>
+                  )}
                   <button
-                    key={t}
-                    onClick={() => setTab(t)}
+                    onClick={login}
+                    disabled={loginLoading || !email.trim()}
                     style={{
-                      flex: 1, padding: "10px", border: "none", cursor: "pointer",
-                      borderRadius: "9px", fontFamily: "serif", fontSize: "0.72rem",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      background: tab === t ? GREEN : "transparent",
-                      color: tab === t ? "white" : "#6b7c69",
-                      transition: "all 0.2s", fontWeight: tab === t ? 700 : 400,
+                      width: "100%", padding: "12px",
+                      background: !email.trim() ? "#e2eae1" : GREEN,
+                      border: "none", borderRadius: "10px",
+                      color: !email.trim() ? "#9ca3af" : "white",
+                      fontFamily: "serif", fontSize: "0.8rem",
+                      cursor: loginLoading || !email.trim() ? "not-allowed" : "pointer",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      transition: "all 0.25s", fontWeight: 600,
                     }}
                   >
-                    {t === "reviews" ? "Reseñas" : "Redes Sociales"}
+                    {loginLoading ? "Verificando..." : "Ingresar"}
                   </button>
-                ))}
+                </div>
               </div>
+            ) : (
+              /* ── Admin content ── */
+              <>
+                {/* Greeting */}
+                <div style={{ marginBottom: "28px" }}>
+                  <p style={{ fontFamily: "serif", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "4px" }}>
+                    {getGreeting()}
+                  </p>
+                  <h1 style={{ fontFamily: "serif", fontSize: "1.8rem", color: DARK, fontWeight: 700, margin: 0 }}>
+                    Bienvenido, Admin
+                  </h1>
+                </div>
 
-              {/* ── Reviews tab ── */}
-              {tab === "reviews" && (
-                reviewsLoading ? (
-                  <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
-                ) : reviews.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "60px 20px", background: "white", borderRadius: "16px", border: "1px solid #e2eae1" }}>
-                    <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.85rem", fontStyle: "italic" }}>
-                      No hay reseñas todavía.
-                    </p>
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {reviews.map(r => (
-                      <div key={r.id}>
-                        {editingReview?.id === r.id ? (
-                          <div style={{ background: "white", borderRadius: "12px", padding: "20px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(45,90,39,0.06)" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
-                              <div>
-                                <label style={labelStyle}>Nombre</label>
-                                <input style={inputStyle} value={editingReview.authorName}
-                                  onChange={e => setEditingReview(v => v && ({ ...v, authorName: e.target.value }))} />
-                              </div>
-                              <div>
-                                <label style={labelStyle}>Rol</label>
-                                <input style={inputStyle} value={editingReview.authorRole ?? ""}
-                                  onChange={e => setEditingReview(v => v && ({ ...v, authorRole: e.target.value }))} />
-                              </div>
-                            </div>
-                            <div style={{ marginBottom: "10px" }}>
-                              <label style={labelStyle}>Calificación</label>
-                              <div style={{ display: "flex", gap: "6px" }}>
-                                {[1, 2, 3, 4, 5].map(s => (
-                                  <button key={s} onClick={() => setEditingReview(v => v && ({ ...v, rating: s }))}
-                                    style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.3rem", color: s <= editingReview.rating ? "#f59e0b" : "#d1d5db", padding: 0 }}>★</button>
-                                ))}
-                              </div>
-                            </div>
-                            <div style={{ marginBottom: "14px" }}>
-                              <label style={labelStyle}>Contenido</label>
-                              <textarea rows={3} style={{ ...inputStyle, resize: "vertical" }} value={editingReview.content}
-                                onChange={e => setEditingReview(v => v && ({ ...v, content: e.target.value }))} />
-                            </div>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                              <button onClick={() => setEditingReview(null)} style={{ flex: 1, padding: "9px", background: "#f3f4f6", border: "none", borderRadius: "8px", color: "#6b7280", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer" }}>
-                                Cancelar
-                              </button>
-                              <button onClick={saveReview} style={{ flex: 2, padding: "9px", background: GREEN, border: "none", borderRadius: "8px", color: "white", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer", fontWeight: 600 }}>
-                                Guardar
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{ background: "white", borderRadius: "12px", padding: "16px 20px", border: `1px solid ${r.isApproved ? "#b8d5b4" : "#fde68a"}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-                            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "10px" }}>
-                              <div>
-                                <p style={{ fontFamily: "serif", fontSize: "0.85rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{r.authorName}</p>
-                                {r.authorRole && <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", margin: 0 }}>{r.authorRole}</p>}
-                              </div>
-                              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-                                <Stars rating={r.rating} />
-                                <span style={{
-                                  fontFamily: "serif", fontSize: "0.55rem", letterSpacing: "0.1em",
-                                  padding: "3px 10px", borderRadius: "9999px",
-                                  background: r.isApproved ? "#dcfce7" : "#fef9c3",
-                                  color: r.isApproved ? "#15803d" : "#ca8a04",
-                                  textTransform: "uppercase", fontWeight: 700,
-                                }}>
-                                  {r.isApproved ? "Aprobada" : "Pendiente"}
-                                </span>
-                              </div>
-                            </div>
-                            <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#4b5563", fontStyle: "italic", margin: "0 0 14px", lineHeight: 1.7 }}>
-                              "{r.content.length > 120 ? r.content.slice(0, 120) + "…" : r.content}"
-                            </p>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                              {!r.isApproved && (
-                                <button onClick={() => approveReview(r.id)} style={{ padding: "7px 16px", background: GREEN, border: "none", borderRadius: "7px", color: "white", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600 }}>
-                                  ✓ Aprobar
-                                </button>
-                              )}
-                              <button onClick={() => setEditingReview(r)} style={{ padding: "7px 16px", background: "#f3f4f6", border: "none", borderRadius: "7px", color: "#374151", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
-                                Editar
-                              </button>
-                              <button onClick={() => deleteReview(r.id)} style={{ padding: "7px 16px", background: "#fef2f2", border: "none", borderRadius: "7px", color: "#dc2626", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
-                                Eliminar
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )
-              )}
+                {/* Tabs */}
+                <div style={{ display: "flex", gap: "0", marginBottom: "28px", background: "#f0f5ef", borderRadius: "12px", padding: "4px", border: "1px solid #e2eae1" }}>
+                  {(["reviews", "configuracion", "dashboard"] as const).map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setTab(t)}
+                      style={{
+                        flex: 1, padding: "9px 6px", border: "none", cursor: "pointer",
+                        borderRadius: "9px", fontFamily: "serif", fontSize: "0.68rem",
+                        letterSpacing: "0.06em", textTransform: "uppercase",
+                        background: tab === t ? GREEN : "transparent",
+                        color: tab === t ? "white" : "#6b7c69",
+                        transition: "all 0.2s", fontWeight: tab === t ? 700 : 400,
+                      }}
+                    >
+                      {t === "reviews" ? "Reseñas" : t === "configuracion" ? "Configuración" : "Dashboard"}
+                    </button>
+                  ))}
+                </div>
 
-              {/* ── Social links tab ── */}
-              {tab === "social" && (
-                <div>
-                  {socialLoading ? (
+                {/* ── Reseñas ── */}
+                {tab === "reviews" && (
+                  reviewsLoading ? (
                     <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
+                  ) : reviews.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "60px 20px", background: "white", borderRadius: "16px", border: "1px solid #e2eae1" }}>
+                      <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.85rem", fontStyle: "italic" }}>
+                        No hay reseñas todavía.
+                      </p>
+                    </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                      <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#6b7c69", marginBottom: "4px" }}>
-                        Edita la URL de redirección para cada red social del sitio.
-                      </p>
-                      {FIXED_NETWORKS.map(net => {
-                        const existing = socialLinks.find(l => l.iconKey === net.iconKey);
-                        const isEditing = editingNetKey === net.iconKey;
-                        return (
-                          <div key={net.iconKey} style={{ background: "white", borderRadius: "12px", padding: "16px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: isEditing ? "14px" : "0" }}>
-                              <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                {NET_ICONS[net.iconKey]}
+                      {reviews.map(r => (
+                        <div key={r.id}>
+                          {editingReview?.id === r.id ? (
+                            <div style={{ background: "white", borderRadius: "12px", padding: "20px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(45,90,39,0.06)" }}>
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
+                                <div>
+                                  <label style={labelStyle}>Nombre</label>
+                                  <input style={inputStyle} value={editingReview.authorName}
+                                    onChange={e => setEditingReview(v => v && ({ ...v, authorName: e.target.value }))} />
+                                </div>
+                                <div>
+                                  <label style={labelStyle}>Rol</label>
+                                  <input style={inputStyle} value={editingReview.authorRole ?? ""}
+                                    onChange={e => setEditingReview(v => v && ({ ...v, authorRole: e.target.value }))} />
+                                </div>
                               </div>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontFamily: "serif", fontSize: "0.85rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{net.label}</p>
-                                <p style={{ fontFamily: "serif", fontSize: "0.62rem", color: "#9ca3af", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                  {existing?.url || <span style={{ fontStyle: "italic" }}>Sin URL configurada</span>}
-                                </p>
+                              <div style={{ marginBottom: "10px" }}>
+                                <label style={labelStyle}>Calificación</label>
+                                <div style={{ display: "flex", gap: "6px" }}>
+                                  {[1, 2, 3, 4, 5].map(s => (
+                                    <button key={s} onClick={() => setEditingReview(v => v && ({ ...v, rating: s }))}
+                                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.3rem", color: s <= editingReview.rating ? "#f59e0b" : "#d1d5db", padding: 0 }}>★</button>
+                                  ))}
+                                </div>
                               </div>
-                              {!isEditing && (
-                                <button onClick={() => startEditNet(net.iconKey)} style={{ padding: "7px 16px", background: "#f0f5ef", border: "none", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600, flexShrink: 0 }}>
-                                  Editar URL
+                              <div style={{ marginBottom: "14px" }}>
+                                <label style={labelStyle}>Contenido</label>
+                                <textarea rows={3} style={{ ...inputStyle, resize: "vertical" }} value={editingReview.content}
+                                  onChange={e => setEditingReview(v => v && ({ ...v, content: e.target.value }))} />
+                              </div>
+                              <div style={{ display: "flex", gap: "8px" }}>
+                                <button onClick={() => setEditingReview(null)} style={{ flex: 1, padding: "9px", background: "#f3f4f6", border: "none", borderRadius: "8px", color: "#6b7280", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer" }}>
+                                  Cancelar
                                 </button>
+                                <button onClick={saveReview} style={{ flex: 2, padding: "9px", background: GREEN, border: "none", borderRadius: "8px", color: "white", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer", fontWeight: 600 }}>
+                                  Guardar
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ background: "white", borderRadius: "12px", padding: "16px 20px", border: `1px solid ${r.isApproved ? "#b8d5b4" : "#fde68a"}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+                              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "10px" }}>
+                                <div>
+                                  <p style={{ fontFamily: "serif", fontSize: "0.85rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{r.authorName}</p>
+                                  {r.authorRole && <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", margin: 0 }}>{r.authorRole}</p>}
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                                  <Stars rating={r.rating} />
+                                  <span style={{
+                                    fontFamily: "serif", fontSize: "0.55rem", letterSpacing: "0.1em",
+                                    padding: "3px 10px", borderRadius: "9999px",
+                                    background: r.isApproved ? "#dcfce7" : "#fef9c3",
+                                    color: r.isApproved ? "#15803d" : "#ca8a04",
+                                    textTransform: "uppercase", fontWeight: 700,
+                                  }}>
+                                    {r.isApproved ? "Aprobada" : "Pendiente"}
+                                  </span>
+                                </div>
+                              </div>
+                              <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#4b5563", fontStyle: "italic", margin: "0 0 14px", lineHeight: 1.7 }}>
+                                "{r.content.length > 120 ? r.content.slice(0, 120) + "…" : r.content}"
+                              </p>
+                              <div style={{ display: "flex", gap: "8px" }}>
+                                {!r.isApproved && (
+                                  <button onClick={() => approveReview(r.id)} style={{ padding: "7px 16px", background: GREEN, border: "none", borderRadius: "7px", color: "white", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600 }}>
+                                    ✓ Aprobar
+                                  </button>
+                                )}
+                                <button onClick={() => setEditingReview(r)} style={{ padding: "7px 16px", background: "#f3f4f6", border: "none", borderRadius: "7px", color: "#374151", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
+                                  Editar
+                                </button>
+                                <button onClick={() => deleteReview(r.id)} style={{ padding: "7px 16px", background: "#fef2f2", border: "none", borderRadius: "7px", color: "#dc2626", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
+                                  Eliminar
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+
+                {/* ── Configuración ── */}
+                {tab === "configuracion" && (
+                  <div>
+                    {socialLoading ? (
+                      <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#6b7c69", marginBottom: "4px" }}>
+                          Edita la URL de redirección para cada red social del sitio.
+                        </p>
+                        {FIXED_NETWORKS.map(net => {
+                          const existing = socialLinks.find(l => l.iconKey === net.iconKey);
+                          const isEditing = editingNetKey === net.iconKey;
+                          return (
+                            <div key={net.iconKey} style={{ background: "white", borderRadius: "12px", padding: "16px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: isEditing ? "14px" : "0" }}>
+                                <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                  {NET_ICONS[net.iconKey]}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <p style={{ fontFamily: "serif", fontSize: "0.85rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{net.label}</p>
+                                  <p style={{ fontFamily: "serif", fontSize: "0.62rem", color: "#9ca3af", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                    {existing?.url || <span style={{ fontStyle: "italic" }}>Sin URL configurada</span>}
+                                  </p>
+                                </div>
+                                {!isEditing && (
+                                  <button onClick={() => startEditNet(net.iconKey)} style={{ padding: "7px 16px", background: "#f0f5ef", border: "none", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600, flexShrink: 0 }}>
+                                    Editar URL
+                                  </button>
+                                )}
+                              </div>
+                              {isEditing && (
+                                <>
+                                  <input
+                                    type="url"
+                                    value={editingUrl}
+                                    onChange={e => setEditingUrl(e.target.value)}
+                                    placeholder={net.placeholder}
+                                    style={{ ...inputStyle, marginBottom: "12px" }}
+                                    autoFocus
+                                  />
+                                  <div style={{ display: "flex", gap: "8px" }}>
+                                    <button onClick={() => setEditingNetKey(null)} style={{ flex: 1, padding: "9px", background: "#f3f4f6", border: "none", borderRadius: "8px", color: "#6b7280", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer" }}>
+                                      Cancelar
+                                    </button>
+                                    <button onClick={() => saveNet(net.iconKey)} disabled={savingNet} style={{ flex: 2, padding: "9px", background: GREEN, border: "none", borderRadius: "8px", color: "white", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer", fontWeight: 600 }}>
+                                      {savingNet ? "Guardando..." : "Guardar"}
+                                    </button>
+                                  </div>
+                                </>
                               )}
                             </div>
-                            {isEditing && (
-                              <>
-                                <input
-                                  type="url"
-                                  value={editingUrl}
-                                  onChange={e => setEditingUrl(e.target.value)}
-                                  placeholder={net.placeholder}
-                                  style={{ ...inputStyle, marginBottom: "12px" }}
-                                  autoFocus
-                                />
-                                <div style={{ display: "flex", gap: "8px" }}>
-                                  <button onClick={() => setEditingNetKey(null)} style={{ flex: 1, padding: "9px", background: "#f3f4f6", border: "none", borderRadius: "8px", color: "#6b7280", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer" }}>
-                                    Cancelar
-                                  </button>
-                                  <button onClick={() => saveNet(net.iconKey)} disabled={savingNet} style={{ flex: 2, padding: "9px", background: GREEN, border: "none", borderRadius: "8px", color: "white", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer", fontWeight: 600 }}>
-                                    {savingNet ? "Guardando..." : "Guardar"}
-                                  </button>
-                                </div>
-                              </>
-                            )}
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ── Dashboard ── */}
+                {tab === "dashboard" && (
+                  dashLoading && !dashStats ? (
+                    <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
+                  ) : dashStats ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                      {/* Review space card */}
+                      <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px" }}>
+                          <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                              <ellipse cx="12" cy="5" rx="9" ry="3" stroke={GREEN} strokeWidth="1.8"/>
+                              <path d="M3 5v14c0 1.657 4.03 3 9 3s9-1.343 9-3V5" stroke={GREEN} strokeWidth="1.8"/>
+                              <path d="M3 12c0 1.657 4.03 3 9 3s9-1.343 9-3" stroke={GREEN} strokeWidth="1.8"/>
+                            </svg>
                           </div>
-                        );
-                      })}
+                          <div>
+                            <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>Almacenamiento</p>
+                            <p style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, margin: 0, fontWeight: 700 }}>Espacio de Reseñas</p>
+                          </div>
+                          <span style={{ marginLeft: "auto", fontFamily: "serif", fontSize: "1.1rem", fontWeight: 700, color: GREEN }}>{usedPct}%</span>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                          <span style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69" }}>{dashStats.approved} de {MAX_REVIEWS} reseñas aprobadas</span>
+                        </div>
+                        <div style={{ background: "#e8f0e7", borderRadius: "9999px", height: "10px", overflow: "hidden", marginBottom: "8px" }}>
+                          <div style={{
+                            height: "100%",
+                            width: `${usedPct}%`,
+                            background: `linear-gradient(90deg, ${GREEN}, #4a8f42)`,
+                            borderRadius: "9999px",
+                            transition: "width 0.8s ease",
+                          }} />
+                        </div>
+                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#9ca3af", margin: 0 }}>
+                          {MAX_REVIEWS - dashStats.approved} espacios disponibles
+                        </p>
+                      </div>
+
+                      {/* Stats row */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                        {[
+                          { label: "Total", value: dashStats.total, color: DARK, bg: "#f0f5ef" },
+                          { label: "Aprobadas", value: dashStats.approved, color: "#15803d", bg: "#dcfce7" },
+                          { label: "Pendientes", value: dashStats.pending, color: "#ca8a04", bg: "#fef9c3" },
+                        ].map(stat => (
+                          <div key={stat.label} style={{ background: "white", borderRadius: "14px", padding: "18px 14px", border: "1px solid #e2eae1", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+                            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: stat.bg, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke={stat.color} strokeWidth="2" fill="none"/></svg>
+                            </div>
+                            <p style={{ fontFamily: "serif", fontSize: "1.6rem", fontWeight: 700, color: stat.color, margin: "0 0 4px" }}>{stat.value}</p>
+                            <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>{stat.label}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Real-time indicator */}
+                      <div style={{ background: "#f0f5ef", borderRadius: "12px", padding: "14px 18px", border: "1px solid #d1dbd0", display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e", flexShrink: 0, boxShadow: "0 0 0 3px rgba(34,197,94,0.25)" }} />
+                        <div>
+                          <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: GREEN, margin: 0, fontWeight: 600 }}>
+                            Actualización en tiempo real
+                          </p>
+                          <p style={{ fontFamily: "serif", fontSize: "0.62rem", color: "#9ca3af", margin: 0 }}>
+                            Última actualización: {dashStats.lastUpdated.toLocaleTimeString("es-CO")} · cada 30 seg
+                          </p>
+                        </div>
+                        <button
+                          onClick={loadDashboard}
+                          disabled={dashLoading}
+                          style={{ marginLeft: "auto", padding: "6px 14px", background: "white", border: "1px solid #d1dbd0", borderRadius: "8px", color: GREEN, fontFamily: "serif", fontSize: "0.62rem", cursor: "pointer", flexShrink: 0 }}
+                        >
+                          {dashLoading ? "..." : "↻ Actualizar"}
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
+                  ) : null
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

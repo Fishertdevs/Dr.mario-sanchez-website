@@ -2,10 +2,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 
-export default function Navbar() {
+interface NavbarProps {
+  onOpenAdmin?: () => void;
+}
+
+export default function Navbar({ onOpenAdmin }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [location, navigate] = useLocation();
+  const [isAdmin, setIsAdmin] = useState(() => !!localStorage.getItem("admin_token"));
 
   const isHome = location === "/";
 
@@ -14,6 +19,12 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkAuth = () => setIsAdmin(!!localStorage.getItem("admin_token"));
+    window.addEventListener("admin-auth-changed", checkAuth);
+    return () => window.removeEventListener("admin-auth-changed", checkAuth);
   }, []);
 
   const links = [
@@ -64,7 +75,7 @@ export default function Navbar() {
         </button>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex gap-10" data-testid="nav-desktop">
+        <nav className="hidden md:flex gap-10 items-center" data-testid="nav-desktop">
           {links.map((link) => (
             <button
               key={link.name}
@@ -76,6 +87,31 @@ export default function Navbar() {
               {link.name}
             </button>
           ))}
+
+          {isAdmin && onOpenAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              style={{
+                display: "flex", alignItems: "center", gap: "7px",
+                padding: "8px 18px",
+                background: "#2d5a27",
+                border: "none", borderRadius: "9999px",
+                color: "white",
+                fontFamily: "serif", fontSize: "0.72rem",
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                cursor: "pointer", fontWeight: 700,
+                boxShadow: "0 2px 10px rgba(45,90,39,0.25)",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#1a3a17")}
+              onMouseLeave={e => (e.currentTarget.style.background = "#2d5a27")}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" strokeWidth="2" strokeLinejoin="round" fill="none"/>
+              </svg>
+              Bienvenido Admin
+            </button>
+          )}
         </nav>
 
         {/* Mobile hamburger */}
@@ -110,6 +146,24 @@ export default function Navbar() {
               {link.name}
             </button>
           ))}
+          {isAdmin && onOpenAdmin && (
+            <button
+              onClick={() => { setMenuOpen(false); onOpenAdmin(); }}
+              style={{
+                display: "flex", alignItems: "center", gap: "7px",
+                padding: "10px 18px", background: "#2d5a27",
+                border: "none", borderRadius: "9999px", color: "white",
+                fontFamily: "serif", fontSize: "0.72rem",
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                cursor: "pointer", fontWeight: 700, alignSelf: "flex-start",
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" strokeWidth="2" strokeLinejoin="round" fill="none"/>
+              </svg>
+              Bienvenido Admin
+            </button>
+          )}
         </motion.div>
       )}
     </motion.header>
