@@ -910,9 +910,9 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                           Distribución de Reseñas
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
-                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#2d5a27" accent="#e8f5e4" label="Aprobadas" compact={!isMobile} />
-                          <DonutChart value={dashStats.pending} max={MAX_REVIEWS} color="#d97706" accent="#fef9e7" label="Pendientes" compact={!isMobile} />
-                          <DonutChart value={dashStats.total} max={MAX_REVIEWS} color="#6b7280" accent="#f3f4f6" label="Total" compact={!isMobile} />
+                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#2d5a27" accent="#e8f5e4" label="Aprobadas" />
+                          <DonutChart value={dashStats.pending} max={MAX_REVIEWS} color="#d97706" accent="#fef9e7" label="Pendientes" />
+                          <DonutChart value={dashStats.total} max={MAX_REVIEWS} color="#6b7280" accent="#f3f4f6" label="Total" />
                         </div>
                       </div>
 
