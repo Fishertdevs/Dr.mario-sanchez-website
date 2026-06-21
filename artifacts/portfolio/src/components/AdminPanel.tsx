@@ -223,10 +223,11 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         style={{
           width: "min(620px, 100%)",
           height: "100%",
-          background: "#f5f7f5",
+          background: "#ffffff",
           display: "flex", flexDirection: "column",
           overflowY: "auto",
           boxShadow: "-8px 0 40px rgba(0,0,0,0.18)",
+          borderLeft: "1px solid #e2eae1",
         }}
       >
       {/* Header */}
