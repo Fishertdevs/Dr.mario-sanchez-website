@@ -122,13 +122,13 @@ function DonutChart({ value, max, color, accent, label }: {
           />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: "serif", fontSize: "0.82rem", fontWeight: 700, color }}>{value}</span>
+          <span style={{ fontFamily: "serif", fontSize: "0.82rem", fontWeight: 700, color: "#000000" }}>{value}</span>
         </div>
       </div>
-      <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#9ca3af", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
+      <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#000000", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
         {label}
       </span>
-      <span style={{ fontFamily: "serif", fontSize: "0.6rem", fontWeight: 700, color }}>
+      <span style={{ fontFamily: "serif", fontSize: "0.6rem", fontWeight: 700, color: "#000000" }}>
         {Math.round(pct * 100)}%
       </span>
     </div>
@@ -848,24 +848,6 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                         </div>
                       </div>
 
-                      <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
-                        <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 12px", textAlign: "center" }}>
-                          Estado del Sistema
-                        </p>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                          {[
-                            { label: "API", status: "online", color: GREEN },
-                            { label: "Base de datos", status: "online", color: GREEN },
-                            { label: "Autenticación", status: "Google", color: "#4285F4" },
-                            { label: "Actualizado", status: dashStats.lastUpdated.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }), color: "#6b7280" },
-                          ].map(item => (
-                            <div key={item.label} style={{ background: "#f8faf8", borderRadius: "8px", padding: "8px 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
-                              <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase" }}>{item.label}</span>
-                              <span style={{ fontFamily: "serif", fontSize: "0.72rem", color: item.color, fontWeight: 700 }}>{item.status}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                   ) : null
                 )}
