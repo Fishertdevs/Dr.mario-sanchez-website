@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
 
 const GREEN = "#2d5a27";
 const DARK = "#1a2e17";
@@ -74,7 +73,6 @@ interface Props {
 }
 
 export default function AdminPanel({ isOpen, onClose }: Props) {
-  const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("admin_token"));
   const [loginError, setLoginError] = useState("");
@@ -121,7 +119,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     localStorage.removeItem("admin_token");
     setToken(null);
     setEmail("");
-    navigate("/");
+    onClose();
   };
 
   const loadReviews = async () => {

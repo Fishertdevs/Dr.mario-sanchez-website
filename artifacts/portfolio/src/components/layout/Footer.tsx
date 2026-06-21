@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
+
 const GREEN = "#2d5a27";
 
 interface SocialLink {
@@ -56,7 +57,7 @@ interface FooterProps {
   onOpenAdmin?: () => void;
 }
 
-export default function Footer({ onOpenAdmin: _onOpenAdmin }: FooterProps) {
+export default function Footer({ onOpenAdmin }: FooterProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [socials, setSocials] = useState<SocialIcon[]>(DEFAULT_SOCIALS);
@@ -144,29 +145,29 @@ export default function Footer({ onOpenAdmin: _onOpenAdmin }: FooterProps) {
           </p>
           <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.6rem' }}>·</span>
           {isAdmin ? (
-            <Link
-              href="/admin"
+            <button
+              onClick={onOpenAdmin}
               style={{
                 fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.65rem)",
                 color: "rgba(255,255,255,0.7)", letterSpacing: "0.08em",
-                textTransform: "uppercase", textDecoration: "none",
-                transition: "color 0.2s",
+                textTransform: "uppercase", background: "none", border: "none",
+                padding: 0, cursor: "pointer", transition: "color 0.2s",
               }}
             >
               Bienvenido Admin
-            </Link>
+            </button>
           ) : (
-            <Link
-              href="/admin"
+            <button
+              onClick={onOpenAdmin}
               style={{
                 fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.62rem)",
                 color: "rgba(255,255,255,0.18)", letterSpacing: "0.08em",
-                textTransform: "uppercase", textDecoration: "none",
-                transition: "color 0.2s",
+                textTransform: "uppercase", background: "none", border: "none",
+                padding: 0, cursor: "pointer", transition: "color 0.2s",
               }}
             >
               Admin
-            </Link>
+            </button>
           )}
         </div>
       </div>
