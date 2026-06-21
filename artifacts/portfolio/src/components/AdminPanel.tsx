@@ -179,11 +179,24 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [tab, setTab] = useState<"reviews" | "configuracion" | "dashboard">("reviews");
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
+  const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
+  const [setupEmail, setSetupEmail] = useState("");
+  const [setupError, setSetupError] = useState("");
+  const [setupLoading, setSetupLoading] = useState(false);
+
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetch("/api/admin/status")
+      .then(r => r.json())
+      .then(d => setNeedsSetup(d.needsSetup === true))
+      .catch(() => setNeedsSetup(false));
+  }, [isOpen]);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
@@ -208,6 +221,37 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const isLoggedIn = !!token;
   const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
 
+  const applyToken = (t: string, emailUsed: string) => {
+    localStorage.setItem("admin_token", t);
+    localStorage.setItem("admin_logged_email", emailUsed);
+    setToken(t);
+    setLoggedEmail(emailUsed);
+    window.dispatchEvent(new CustomEvent("admin-auth-changed"));
+  };
+
+  const setup = async () => {
+    if (!setupEmail.trim()) return;
+    setSetupLoading(true);
+    setSetupError("");
+    try {
+      const r = await fetch("/api/admin/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: setupEmail.trim() }),
+      });
+      if (!r.ok) {
+        const d = await r.json();
+        setSetupError(d.error ?? "Error al configurar");
+        return;
+      }
+      const { token: t } = await r.json();
+      setNeedsSetup(false);
+      applyToken(t, setupEmail.trim());
+    } finally {
+      setSetupLoading(false);
+    }
+  };
+
   const login = async () => {
     if (!email.trim()) return;
     setLoginLoading(true);
@@ -224,17 +268,21 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         return;
       }
       const { token: t } = await r.json();
-      localStorage.setItem("admin_token", t);
-      localStorage.setItem("admin_logged_email", email.trim());
-      setToken(t);
-      setLoggedEmail(email.trim());
-      window.dispatchEvent(new CustomEvent("admin-auth-changed"));
+      applyToken(t, email.trim());
     } finally {
       setLoginLoading(false);
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      if (token) {
+        await fetch("/api/admin/logout", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch {}
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_logged_email");
     setToken(null);
@@ -483,7 +531,63 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         {/* Body */}
         <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 12px 40px" }}>
           <div style={{ width: "100%", maxWidth: "560px" }}>
-            {!isLoggedIn ? (
+            {needsSetup === null ? (
+              /* ── Cargando status ── */
+              <div style={{ display: "flex", justifyContent: "center", paddingTop: "60px" }}>
+                <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.82rem" }}>Cargando...</p>
+              </div>
+            ) : needsSetup ? (
+              /* ── Primera Configuración ── */
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2a5 5 0 110 10A5 5 0 0112 2zM12 14c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z" fill={GREEN}/>
+                  </svg>
+                </div>
+                <h1 style={{ fontFamily: "serif", fontSize: "1.4rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
+                  Configurar Acceso
+                </h1>
+                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.78rem", marginBottom: "8px", textAlign: "center", maxWidth: "300px" }}>
+                  Primera vez aquí. Define el correo con el que accederás al panel de administrador.
+                </p>
+                <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.66rem", marginBottom: "28px", textAlign: "center" }}>
+                  Este correo se guardará en la base de datos.
+                </p>
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "28px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
+                  <label style={{ ...labelStyle, display: "block", textAlign: "center" }}>Tu correo de administrador</label>
+                  <input
+                    type="email"
+                    value={setupEmail}
+                    onChange={e => { setSetupEmail(e.target.value); setSetupError(""); }}
+                    onKeyDown={e => { if (e.key === "Enter") setup(); }}
+                    placeholder="correo@ejemplo.com"
+                    style={{ ...inputStyle, marginBottom: "16px", fontSize: "0.9rem" }}
+                    autoFocus
+                  />
+                  {setupError && (
+                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", marginBottom: "12px", textAlign: "center" }}>
+                      {setupError}
+                    </p>
+                  )}
+                  <button
+                    onClick={setup}
+                    disabled={setupLoading || !setupEmail.trim()}
+                    style={{
+                      width: "100%", padding: "12px",
+                      background: !setupEmail.trim() ? "#e2eae1" : GREEN,
+                      border: "none", borderRadius: "10px",
+                      color: !setupEmail.trim() ? "#9ca3af" : "white",
+                      fontFamily: "serif", fontSize: "0.8rem",
+                      cursor: setupLoading || !setupEmail.trim() ? "not-allowed" : "pointer",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      transition: "all 0.25s", fontWeight: 600,
+                    }}
+                  >
+                    {setupLoading ? "Configurando..." : "Activar Panel"}
+                  </button>
+                </div>
+              </div>
+            ) : !isLoggedIn ? (
               /* ── Login ── */
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
                 <h1 style={{ fontFamily: "serif", fontSize: "1.6rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>

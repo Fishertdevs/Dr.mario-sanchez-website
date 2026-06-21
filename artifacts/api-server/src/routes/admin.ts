@@ -6,8 +6,6 @@ import crypto from "node:crypto";
 
 const router = Router();
 
-const SESSION_TOKEN = crypto.randomBytes(32).toString("hex");
-
 const DEFAULT_SOCIAL_LINKS = [
   { platform: "youtube",   label: "YouTube",   url: "https://youtube.com/@drmariosanchez",      iconKey: "youtube",   isActive: true, sortOrder: 0 },
   { platform: "tiktok",    label: "TikTok",    url: "https://tiktok.com/@dr..terapia",          iconKey: "tiktok",    isActive: true, sortOrder: 1 },
@@ -24,44 +22,89 @@ async function seedSocialLinks() {
 
 seedSocialLinks().catch(() => {});
 
-async function getAdminEmail(): Promise<string> {
+async function getSetting(key: string): Promise<string> {
   try {
-    const [row] = await db.select().from(settingsTable).where(eq(settingsTable.key, "admin_email"));
-    if (row?.value) return row.value;
-  } catch {}
-  return process.env["ADMIN_EMAIL"] ?? "";
+    const [row] = await db.select().from(settingsTable).where(eq(settingsTable.key, key));
+    return row?.value ?? "";
+  } catch {
+    return "";
+  }
 }
 
-function requireAdmin(req: any, res: any, next: any) {
+async function setSetting(key: string, value: string): Promise<void> {
+  const existing = await db.select().from(settingsTable).where(eq(settingsTable.key, key));
+  if (existing.length > 0) {
+    await db.update(settingsTable).set({ value, updatedAt: new Date() }).where(eq(settingsTable.key, key));
+  } else {
+    await db.insert(settingsTable).values({ key, value });
+  }
+}
+
+async function requireAdmin(req: any, res: any, next: any) {
   const auth = req.headers["authorization"] ?? "";
-  const token = auth.replace("Bearer ", "");
-  if (token !== SESSION_TOKEN) {
+  const token = auth.replace("Bearer ", "").trim();
+  if (!token) {
+    res.status(401).json({ error: "No autorizado" });
+    return;
+  }
+  const stored = await getSetting("session_token");
+  if (!stored || token !== stored) {
     res.status(401).json({ error: "No autorizado" });
     return;
   }
   next();
 }
 
+router.get("/admin/status", async (_req, res) => {
+  const adminEmail = await getSetting("admin_email");
+  res.json({ needsSetup: !adminEmail });
+});
+
+router.post("/admin/setup", async (req, res) => {
+  const adminEmail = await getSetting("admin_email");
+  if (adminEmail) {
+    res.status(403).json({ error: "El administrador ya está configurado" });
+    return;
+  }
+  const { email } = req.body ?? {};
+  if (!email || typeof email !== "string" || !email.includes("@")) {
+    res.status(400).json({ error: "Correo inválido" });
+    return;
+  }
+  const newToken = crypto.randomBytes(32).toString("hex");
+  await setSetting("admin_email", email.trim().toLowerCase());
+  await setSetting("session_token", newToken);
+  res.json({ token: newToken });
+});
+
 router.post("/admin/login", async (req, res) => {
   const { email } = req.body ?? {};
-  const adminEmail = await getAdminEmail();
+  const adminEmail = await getSetting("admin_email");
   if (!adminEmail) {
-    res.status(500).json({ error: "ADMIN_EMAIL no configurado en el servidor" });
+    res.status(500).json({ error: "El panel no está configurado aún" });
     return;
   }
   if (!email || email.toLowerCase().trim() !== adminEmail.toLowerCase().trim()) {
     res.status(401).json({ error: "Correo no autorizado" });
     return;
   }
-  res.json({ token: SESSION_TOKEN });
+  const newToken = crypto.randomBytes(32).toString("hex");
+  await setSetting("session_token", newToken);
+  res.json({ token: newToken });
+});
+
+router.post("/admin/logout", requireAdmin, async (_req, res) => {
+  await setSetting("session_token", "");
+  res.json({ ok: true });
 });
 
 router.get("/admin/settings", requireAdmin, async (_req, res) => {
   const rows = await db.select().from(settingsTable);
   const map: Record<string, string> = {};
   for (const r of rows) map[r.key] = r.value;
-  const adminEmail = await getAdminEmail();
-  res.json({ ...map, admin_email: adminEmail });
+  map["admin_email"] = map["admin_email"] ?? "";
+  delete map["session_token"];
+  res.json(map);
 });
 
 router.put("/admin/settings", requireAdmin, async (req, res) => {
@@ -70,12 +113,11 @@ router.put("/admin/settings", requireAdmin, async (req, res) => {
     res.status(400).json({ error: "key y value son requeridos" });
     return;
   }
-  const existing = await db.select().from(settingsTable).where(eq(settingsTable.key, key));
-  if (existing.length > 0) {
-    await db.update(settingsTable).set({ value, updatedAt: new Date() }).where(eq(settingsTable.key, key));
-  } else {
-    await db.insert(settingsTable).values({ key, value });
+  if (key === "session_token") {
+    res.status(403).json({ error: "Clave reservada" });
+    return;
   }
+  await setSetting(key, value);
   res.json({ ok: true });
 });
 
