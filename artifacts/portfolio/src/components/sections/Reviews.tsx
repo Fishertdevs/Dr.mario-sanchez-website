@@ -309,7 +309,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   className="font-serif"
                   style={{
                     flex: 2, padding: "10px",
-                    background: (step === 1 && !canNext1) ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.16)",
+                    background: "none",
                     border: "none",
                     borderRadius: "10px",
                     color: (step === 1 && !canNext1) ? "rgba(255,255,255,0.3)" : "white",
@@ -327,7 +327,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   className="font-serif"
                   style={{
                     flex: 2, padding: "10px",
-                    background: (!canSubmit) ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.16)",
+                    background: "none",
                     border: "none",
                     borderRadius: "10px",
                     color: (!canSubmit) ? "rgba(255,255,255,0.3)" : "white",
