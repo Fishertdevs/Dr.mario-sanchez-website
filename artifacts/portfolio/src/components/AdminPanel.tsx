@@ -817,7 +817,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                             </svg>
                           </div>
                           <div style={{ minWidth: 0 }}>
-                            <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>Almacenamiento</p>
+                            <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#000000", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>Almacenamiento</p>
                             <p style={{ fontFamily: "serif", fontSize: "0.82rem", color: DARK, margin: 0, fontWeight: 700 }}>Espacio de Reseñas</p>
                           </div>
                           <span style={{ marginLeft: "auto", fontFamily: "serif", fontSize: "0.9rem", fontWeight: 700, color: GREEN, flexShrink: 0 }}>{usedPct}%</span>
@@ -832,13 +832,13 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                             borderRadius: "9999px", transition: "width 0.8s ease",
                           }} />
                         </div>
-                        <p style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", margin: 0 }}>
+                        <p style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#000000", margin: 0 }}>
                           {MAX_REVIEWS - dashStats.approved} espacios disponibles
                         </p>
                       </div>
 
                       <div style={{ background: "white", borderRadius: "12px", padding: "16px 14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
-                        <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 16px", textAlign: "center" }}>
+                        <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#000000", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 16px", textAlign: "center" }}>
                           Distribución de Reseñas
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
