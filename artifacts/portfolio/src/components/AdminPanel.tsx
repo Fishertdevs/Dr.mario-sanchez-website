@@ -228,7 +228,8 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
           overflowY: "auto",
           boxShadow: "-8px 0 40px rgba(0,0,0,0.18)",
           borderLeft: "1px solid #e2eae1",
-          borderRadius: "16px 0 0 16px",
+          borderRadius: "32px 0 0 32px",
+          overflow: "hidden",
         }}
       >
       {/* Header */}
