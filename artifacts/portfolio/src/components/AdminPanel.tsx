@@ -255,11 +255,16 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         fetch("/api/admin/social-links", { headers }),
         fetch("/api/admin/settings", { headers }),
       ]);
-      setSocialLinks(await linksRes.json());
-      const settings = await settingsRes.json();
-      setContactPhone(settings.contact_phone ?? "");
-      setCurrentAdminEmail(settings.admin_email ?? "");
-      setNewAdminEmail(settings.admin_email ?? "");
+      if (linksRes.ok) {
+        const data = await linksRes.json();
+        setSocialLinks(Array.isArray(data) ? data : []);
+      }
+      if (settingsRes.ok) {
+        const settings = await settingsRes.json();
+        setContactPhone(settings.contact_phone ?? "");
+        setCurrentAdminEmail(settings.admin_email ?? "");
+        setNewAdminEmail(settings.admin_email ?? "");
+      }
     } finally {
       setSocialLoading(false);
     }
@@ -269,7 +274,9 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     setDashLoading(true);
     try {
       const r = await fetch("/api/admin/reviews", { headers });
-      const data: Review[] = await r.json();
+      if (!r.ok) return;
+      const raw = await r.json();
+      const data: Review[] = Array.isArray(raw) ? raw : [];
       setDashStats({
         total: data.length,
         approved: data.filter(rv => rv.isApproved).length,
