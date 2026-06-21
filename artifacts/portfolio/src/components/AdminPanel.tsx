@@ -5,17 +5,51 @@ const DARK = "#1a2e17";
 const MAX_REVIEWS = 50;
 
 const FIXED_NETWORKS = [
-  { platform: "youtube",   label: "YouTube",   iconKey: "youtube",   placeholder: "https://youtube.com/@..." },
-  { platform: "tiktok",    label: "TikTok",    iconKey: "tiktok",    placeholder: "https://tiktok.com/@..." },
-  { platform: "instagram", label: "Instagram", iconKey: "instagram", placeholder: "https://instagram.com/..." },
+  { platform: "facebook",  label: "Facebook",  iconKey: "facebook",  placeholder: "https://www.facebook.com/..." },
+  { platform: "instagram", label: "Instagram", iconKey: "instagram", placeholder: "https://www.instagram.com/..." },
+  { platform: "tiktok",    label: "TikTok",    iconKey: "tiktok",    placeholder: "https://www.tiktok.com/@..." },
+  { platform: "youtube",   label: "YouTube",   iconKey: "youtube",   placeholder: "https://www.youtube.com/@..." },
   { platform: "whatsapp",  label: "WhatsApp",  iconKey: "whatsapp",  placeholder: "https://wa.me/57..." },
 ];
 
 const NET_ICONS: Record<string, React.ReactNode> = {
-  youtube:   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z" stroke={GREEN} strokeWidth="1.8" fill="none"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={GREEN}/></svg>,
-  tiktok:    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" stroke={GREEN} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-  instagram: <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke={GREEN} strokeWidth="1.8"/><circle cx="12" cy="12" r="4" stroke={GREEN} strokeWidth="1.8"/><circle cx="17.5" cy="6.5" r="1" fill={GREEN}/></svg>,
-  whatsapp:  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill={GREEN}/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke={GREEN} strokeWidth="1.8" fill="none"/></svg>,
+  facebook: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+    </svg>
+  ),
+  instagram: (
+    <svg width="18" height="18" viewBox="0 0 24 24">
+      <defs>
+        <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#FFDC80"/>
+          <stop offset="30%" stopColor="#FCAF45"/>
+          <stop offset="55%" stopColor="#F77737"/>
+          <stop offset="75%" stopColor="#C13584"/>
+          <stop offset="100%" stopColor="#833AB4"/>
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig-grad)"/>
+      <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
+      <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+    </svg>
+  ),
+  tiktok: (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="#010101">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.14 8.14 0 004.77 1.52V6.78a4.85 4.85 0 01-1-.09z"/>
+    </svg>
+  ),
+  youtube: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000">
+      <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  ),
+  whatsapp: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/>
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke="#25D366" strokeWidth="1.8" fill="none"/>
+    </svg>
+  ),
 };
 
 function getGreeting() {
@@ -140,9 +174,8 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [socialLoading, setSocialLoading] = useState(false);
-  const [editingNetKey, setEditingNetKey] = useState<string | null>(null);
-  const [editingUrl, setEditingUrl] = useState("");
-  const [savingNet, setSavingNet] = useState(false);
+  const [netUrls, setNetUrls] = useState<Record<string, string>>({});
+  const [savingConfig, setSavingConfig] = useState(false);
 
   const [dashStats, setDashStats] = useState<DashStats | null>(null);
   const [dashLoading, setDashLoading] = useState(false);
@@ -259,32 +292,36 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     await loadReviews();
   };
 
-  const startEditNet = (iconKey: string) => {
-    const existing = socialLinks.find(l => l.iconKey === iconKey);
-    setEditingNetKey(iconKey);
-    setEditingUrl(existing?.url ?? "");
-  };
+  useEffect(() => {
+    const urls: Record<string, string> = {};
+    FIXED_NETWORKS.forEach(net => {
+      const existing = socialLinks.find(l => l.iconKey === net.iconKey);
+      urls[net.iconKey] = existing?.url ?? "";
+    });
+    setNetUrls(urls);
+  }, [socialLinks]);
 
-  const saveNet = async (iconKey: string) => {
-    setSavingNet(true);
+  const saveAllConfig = async () => {
+    setSavingConfig(true);
     try {
-      const network = FIXED_NETWORKS.find(n => n.iconKey === iconKey)!;
-      const existing = socialLinks.find(l => l.iconKey === iconKey);
-      if (existing) {
-        await fetch(`/api/admin/social-links/${existing.id}`, {
-          method: "PUT", headers,
-          body: JSON.stringify({ ...existing, url: editingUrl }),
-        });
-      } else {
-        await fetch("/api/admin/social-links", {
-          method: "POST", headers,
-          body: JSON.stringify({ platform: network.platform, label: network.label, url: editingUrl, iconKey, sortOrder: 0, isActive: true }),
-        });
+      for (const net of FIXED_NETWORKS) {
+        const url = netUrls[net.iconKey] ?? "";
+        const existing = socialLinks.find(l => l.iconKey === net.iconKey);
+        if (existing) {
+          await fetch(`/api/admin/social-links/${existing.id}`, {
+            method: "PUT", headers,
+            body: JSON.stringify({ ...existing, url }),
+          });
+        } else if (url.trim()) {
+          await fetch("/api/admin/social-links", {
+            method: "POST", headers,
+            body: JSON.stringify({ platform: net.platform, label: net.label, url, iconKey: net.iconKey, sortOrder: 0, isActive: true }),
+          });
+        }
       }
-      setEditingNetKey(null);
       await loadSocialLinks();
     } finally {
-      setSavingNet(false);
+      setSavingConfig(false);
     }
   };
 
@@ -513,59 +550,66 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
                 {/* ── Configuración ── */}
                 {tab === "configuracion" && (
-                  <div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                     {socialLoading ? (
                       <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
                     ) : (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#6b7c69", marginBottom: "4px" }}>
-                          Edita la URL de redirección para cada red social del sitio.
-                        </p>
-                        {FIXED_NETWORKS.map(net => {
-                          const existing = socialLinks.find(l => l.iconKey === net.iconKey);
-                          const isEditing = editingNetKey === net.iconKey;
-                          return (
-                            <div key={net.iconKey} style={{ background: "white", borderRadius: "12px", padding: "16px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: isEditing ? "14px" : "0" }}>
-                                <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <>
+                        <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "1.1rem", color: DARK, fontWeight: 700, margin: "0 0 20px" }}>
+                            Redes Sociales
+                          </h3>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                            {FIXED_NETWORKS.map(net => (
+                              <div key={net.iconKey}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
                                   {NET_ICONS[net.iconKey]}
+                                  <span style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, fontWeight: 600 }}>
+                                    {net.label}
+                                  </span>
                                 </div>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                  <p style={{ fontFamily: "serif", fontSize: "0.85rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{net.label}</p>
-                                  <p style={{ fontFamily: "serif", fontSize: "0.62rem", color: "#9ca3af", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                    {existing?.url || <span style={{ fontStyle: "italic" }}>Sin URL configurada</span>}
-                                  </p>
-                                </div>
-                                {!isEditing && (
-                                  <button onClick={() => startEditNet(net.iconKey)} style={{ padding: "7px 16px", background: "#f0f5ef", border: "none", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600, flexShrink: 0 }}>
-                                    Editar URL
-                                  </button>
-                                )}
+                                <input
+                                  type="url"
+                                  value={netUrls[net.iconKey] ?? ""}
+                                  onChange={e => setNetUrls(v => ({ ...v, [net.iconKey]: e.target.value }))}
+                                  placeholder={net.placeholder}
+                                  style={{
+                                    width: "100%", boxSizing: "border-box",
+                                    padding: "10px 14px",
+                                    background: "#f9fafb",
+                                    border: "1px solid #e2e8f0",
+                                    borderRadius: "8px",
+                                    fontFamily: "sans-serif", fontSize: "0.82rem",
+                                    color: "#374151", outline: "none",
+                                    transition: "border-color 0.2s",
+                                  }}
+                                />
                               </div>
-                              {isEditing && (
-                                <>
-                                  <input
-                                    type="url"
-                                    value={editingUrl}
-                                    onChange={e => setEditingUrl(e.target.value)}
-                                    placeholder={net.placeholder}
-                                    style={{ ...inputStyle, marginBottom: "12px" }}
-                                    autoFocus
-                                  />
-                                  <div style={{ display: "flex", gap: "8px" }}>
-                                    <button onClick={() => setEditingNetKey(null)} style={{ flex: 1, padding: "9px", background: "#f3f4f6", border: "none", borderRadius: "8px", color: "#6b7280", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer" }}>
-                                      Cancelar
-                                    </button>
-                                    <button onClick={() => saveNet(net.iconKey)} disabled={savingNet} style={{ flex: 2, padding: "9px", background: GREEN, border: "none", borderRadius: "8px", color: "white", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer", fontWeight: 600 }}>
-                                      {savingNet ? "Guardando..." : "Guardar"}
-                                    </button>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={saveAllConfig}
+                          disabled={savingConfig}
+                          style={{
+                            width: "100%", padding: "15px",
+                            background: savingConfig
+                              ? "#e2eae1"
+                              : "linear-gradient(90deg, #e53e3e 0%, #dd6b20 100%)",
+                            border: "none", borderRadius: "12px",
+                            color: savingConfig ? "#9ca3af" : "white",
+                            fontFamily: "serif", fontSize: "0.82rem",
+                            cursor: savingConfig ? "not-allowed" : "pointer",
+                            letterSpacing: "0.08em", textTransform: "uppercase",
+                            fontWeight: 700,
+                            boxShadow: savingConfig ? "none" : "0 4px 14px rgba(229,62,62,0.3)",
+                            transition: "all 0.2s",
+                          }}
+                        >
+                          {savingConfig ? "Guardando..." : "Guardar Configuración"}
+                        </button>
+                      </>
                     )}
                   </div>
                 )}
