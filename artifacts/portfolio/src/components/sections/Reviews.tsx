@@ -61,11 +61,24 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
   );
 }
 
-/* ── Review submission modal — aesthetic matches Contact/Agendar Cita ── */
+/* ── Step-by-step review modal ── */
+const STEPS = [
+  { id: 0, subtitle: "Paso 1 de 3", hint: "¿Cómo calificarías tu experiencia?" },
+  { id: 1, subtitle: "Paso 2 de 3", hint: "Cuéntanos quién eres" },
+  { id: 2, subtitle: "Paso 3 de 3", hint: "Tu experiencia con el Dr. Sánchez" },
+];
+
 function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+  const [step, setStep] = useState(0);
+  const [stepDir, setStepDir] = useState(1);
   const [form, setForm] = useState({ authorName: "", authorRole: "", rating: 5, content: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+
+  const goStep = (next: number) => {
+    setStepDir(next > step ? 1 : -1);
+    setStep(next);
+  };
 
   const submit = async () => {
     if (!form.authorName.trim() || !form.content.trim()) return;
@@ -83,18 +96,35 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
     }
   };
 
+  const canNext1 = form.authorName.trim().length > 0;
+  const canSubmit = form.content.trim().length > 0;
+
+  const stepVariants = {
+    enter: (d: number) => ({ x: d > 0 ? 60 : -60, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0 }),
+  };
+
   const inputStyle: React.CSSProperties = {
     width: "100%",
     background: "rgba(255,255,255,0.08)",
     border: "1px solid rgba(255,255,255,0.18)",
-    borderRadius: "12px",
-    padding: "10px 14px",
+    borderRadius: "10px",
+    padding: "9px 13px",
     color: "white",
-    fontSize: "0.82rem",
+    fontSize: "0.8rem",
     outline: "none",
     boxSizing: "border-box",
     fontFamily: "inherit",
-    transition: "border-color 0.2s",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: "0.52rem",
+    letterSpacing: "0.18em",
+    textTransform: "uppercase",
+    color: "rgba(255,255,255,0.45)",
+    marginBottom: "7px",
+    display: "block",
   };
 
   return (
@@ -111,168 +141,202 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div
-        initial={{ scale: 0.93, y: 24, opacity: 0 }}
+        initial={{ scale: 0.94, y: 20, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.93, y: 24, opacity: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        exit={{ scale: 0.94, y: 20, opacity: 0 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="rounded-3xl overflow-hidden"
         style={{
           background: DARK_GREEN,
-          width: "100%", maxWidth: "520px",
-          maxHeight: "90dvh",
-          overflowY: "auto",
+          width: "100%", maxWidth: "400px",
           boxShadow: "0 32px 64px rgba(0,0,0,0.5)",
         }}
       >
-        {/* Header bar */}
-        <div style={{ padding: "28px 28px 0" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
-            <div>
-              <p className="font-serif" style={{ fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: "4px" }}>
-                TESTIMONIOS
-              </p>
-              <h3 className="font-serif font-bold" style={{ color: "white", fontSize: "1.05rem", margin: 0, lineHeight: 1.2 }}>
-                {sent ? "¡Reseña enviada!" : "Dejar una reseña"}
-              </h3>
-            </div>
-            <button
-              onClick={onClose}
-              style={{
-                background: "rgba(255,255,255,0.08)", border: "none", borderRadius: "50%",
-                width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", color: "rgba(255,255,255,0.6)", fontSize: "1rem", flexShrink: 0,
-              }}
-            >
-              ✕
-            </button>
-          </div>
-          <div style={{ height: "1px", background: "rgba(255,255,255,0.1)", marginBottom: "24px" }} />
-        </div>
-
         {sent ? (
-          <div style={{ textAlign: "center", padding: "20px 28px 40px" }}>
+          /* ── Éxito ── */
+          <div style={{ padding: "40px 28px", textAlign: "center" }}>
             <div style={{
-              width: "56px", height: "56px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.12)", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              margin: "0 auto 16px", fontSize: "1.5rem",
-            }}>
-              ✓
-            </div>
-            <p className="font-serif" style={{ color: "white", fontSize: "0.95rem", marginBottom: "8px" }}>
-              ¡Gracias por compartir tu experiencia!
+              width: "48px", height: "48px", borderRadius: "50%",
+              background: "rgba(255,255,255,0.12)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              margin: "0 auto 16px", fontSize: "1.3rem", color: "white",
+            }}>✓</div>
+            <p className="font-serif font-bold" style={{ color: "white", fontSize: "0.95rem", marginBottom: "6px" }}>
+              ¡Gracias por tu reseña!
             </p>
-            <p className="font-serif" style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.75rem" }}>
-              Tu reseña será revisada antes de publicarse.
+            <p className="font-serif" style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.72rem" }}>
+              Será revisada antes de publicarse.
             </p>
           </div>
         ) : (
-          <div style={{ padding: "0 28px 28px" }}>
-
-            {/* Rating */}
-            <div style={{ marginBottom: "20px" }}>
-              <p className="font-serif" style={{ fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: "10px" }}>
-                Calificación
-              </p>
-              <div style={{ display: "flex", gap: "6px" }}>
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setForm(f => ({ ...f, rating: s }))}
+          <>
+            {/* Header */}
+            <div style={{ padding: "22px 24px 0", textAlign: "center" }}>
+              {/* Progress bar */}
+              <div style={{ display: "flex", gap: "4px", marginBottom: "18px", justifyContent: "center" }}>
+                {STEPS.map((s) => (
+                  <div
+                    key={s.id}
                     style={{
-                      background: "none", border: "none", cursor: "pointer",
-                      fontSize: "1.6rem", padding: 0,
-                      color: s <= form.rating ? "#ffd700" : "rgba(255,255,255,0.18)",
-                      transition: "color 0.15s, transform 0.1s",
-                      transform: s === form.rating ? "scale(1.15)" : "scale(1)",
+                      height: "2px", flex: 1, maxWidth: "48px", borderRadius: "9999px",
+                      background: s.id <= step ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)",
+                      transition: "background 0.3s",
                     }}
-                  >
-                    ★
-                  </button>
+                  />
                 ))}
               </div>
-            </div>
 
-            {/* Nombre */}
-            <div style={{ marginBottom: "16px" }}>
-              <p className="font-serif" style={{ fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: "8px" }}>
-                Nombre *
+              <p className="font-serif" style={{ fontSize: "0.5rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "5px" }}>
+                {STEPS[step].subtitle}
               </p>
-              <input
-                value={form.authorName}
-                onChange={e => setForm(f => ({ ...f, authorName: e.target.value }))}
-                placeholder="Tu nombre completo"
-                className="font-serif"
-                style={inputStyle}
-              />
-            </div>
-
-            {/* Rol */}
-            <div style={{ marginBottom: "16px" }}>
-              <p className="font-serif" style={{ fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: "8px" }}>
-                Profesión / Rol <span style={{ opacity: 0.5, fontSize: "0.5rem" }}>(opcional)</span>
+              <p className="font-serif font-bold" style={{ color: "white", fontSize: "0.9rem", marginBottom: "20px", lineHeight: 1.3 }}>
+                {STEPS[step].hint}
               </p>
-              <input
-                value={form.authorRole}
-                onChange={e => setForm(f => ({ ...f, authorRole: e.target.value }))}
-                placeholder="Ej: Paciente, Médico, Familiar..."
-                className="font-serif"
-                style={inputStyle}
-              />
+              <div style={{ height: "1px", background: "rgba(255,255,255,0.1)", marginBottom: "0" }} />
             </div>
 
-            {/* Experiencia */}
-            <div style={{ marginBottom: "28px" }}>
-              <p className="font-serif" style={{ fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: "8px" }}>
-                Tu experiencia *
-              </p>
-              <textarea
-                value={form.content}
-                onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-                placeholder="Cuéntanos cómo fue tu experiencia con el Dr. Sánchez..."
-                rows={4}
-                className="font-serif"
-                style={{ ...inputStyle, resize: "vertical", minHeight: "100px" }}
-              />
+            {/* Step content */}
+            <div style={{ overflow: "hidden", position: "relative" }}>
+              <AnimatePresence custom={stepDir} mode="wait">
+                <motion.div
+                  key={step}
+                  custom={stepDir}
+                  variants={stepVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ padding: "20px 24px" }}
+                >
+                  {/* Step 0 — Rating */}
+                  {step === 0 && (
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginBottom: "8px" }}>
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => setForm(f => ({ ...f, rating: s }))}
+                            style={{
+                              background: "none", border: "none", cursor: "pointer",
+                              fontSize: "2rem", padding: 0,
+                              color: s <= form.rating ? "#ffd700" : "rgba(255,255,255,0.2)",
+                              transition: "color 0.15s, transform 0.12s",
+                              transform: s === form.rating ? "scale(1.2)" : "scale(1)",
+                            }}
+                          >★</button>
+                        ))}
+                      </div>
+                      <p className="font-serif" style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.65rem", marginTop: "4px" }}>
+                        {["", "Muy malo", "Malo", "Regular", "Bueno", "Excelente"][form.rating]}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Step 1 — Name & Role */}
+                  {step === 1 && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div>
+                        <p className="font-serif" style={labelStyle}>Nombre *</p>
+                        <input
+                          value={form.authorName}
+                          onChange={e => setForm(f => ({ ...f, authorName: e.target.value }))}
+                          placeholder="Tu nombre completo"
+                          className="font-serif"
+                          style={inputStyle}
+                          autoFocus
+                        />
+                      </div>
+                      <div>
+                        <p className="font-serif" style={labelStyle}>
+                          Profesión / Rol <span style={{ opacity: 0.5 }}>(opcional)</span>
+                        </p>
+                        <input
+                          value={form.authorRole}
+                          onChange={e => setForm(f => ({ ...f, authorRole: e.target.value }))}
+                          placeholder="Paciente, Médico, Familiar..."
+                          className="font-serif"
+                          style={inputStyle}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 2 — Content */}
+                  {step === 2 && (
+                    <div>
+                      <p className="font-serif" style={labelStyle}>Tu experiencia *</p>
+                      <textarea
+                        value={form.content}
+                        onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
+                        placeholder="Cuéntanos cómo fue tu experiencia..."
+                        rows={4}
+                        className="font-serif"
+                        style={{ ...inputStyle, resize: "none" }}
+                        autoFocus
+                      />
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            {/* Actions */}
-            <div style={{ display: "flex", gap: "12px" }}>
+            {/* Footer actions */}
+            <div style={{ padding: "0 24px 22px", display: "flex", gap: "10px" }}>
               <button
-                onClick={onClose}
+                onClick={step === 0 ? onClose : () => goStep(step - 1)}
                 className="font-serif"
                 style={{
-                  flex: 1, padding: "11px 16px",
+                  flex: 1, padding: "10px",
                   background: "rgba(255,255,255,0.07)",
-                  border: "1px solid rgba(255,255,255,0.14)",
-                  borderRadius: "12px",
-                  color: "rgba(255,255,255,0.55)", fontSize: "0.75rem",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: "10px",
+                  color: "rgba(255,255,255,0.5)", fontSize: "0.68rem",
                   letterSpacing: "0.1em", textTransform: "uppercase",
-                  cursor: "pointer", transition: "all 0.2s",
+                  cursor: "pointer",
                 }}
               >
-                Cancelar
+                {step === 0 ? "Cancelar" : "Atrás"}
               </button>
-              <button
-                onClick={submit}
-                disabled={sending || !form.authorName.trim() || !form.content.trim()}
-                className="font-serif"
-                style={{
-                  flex: 2, padding: "11px 16px",
-                  background: (!form.authorName.trim() || !form.content.trim()) ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.18)",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  borderRadius: "12px",
-                  color: (!form.authorName.trim() || !form.content.trim()) ? "rgba(255,255,255,0.35)" : "white",
-                  fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase",
-                  cursor: (sending || !form.authorName.trim() || !form.content.trim()) ? "not-allowed" : "pointer",
-                  transition: "all 0.2s",
-                  fontWeight: 600,
-                }}
-              >
-                {sending ? "Enviando..." : "Enviar reseña"}
-              </button>
+
+              {step < 2 ? (
+                <button
+                  onClick={() => goStep(step + 1)}
+                  disabled={step === 1 && !canNext1}
+                  className="font-serif"
+                  style={{
+                    flex: 2, padding: "10px",
+                    background: (step === 1 && !canNext1) ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.16)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    borderRadius: "10px",
+                    color: (step === 1 && !canNext1) ? "rgba(255,255,255,0.3)" : "white",
+                    fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase",
+                    cursor: (step === 1 && !canNext1) ? "not-allowed" : "pointer",
+                    fontWeight: 600,
+                  }}
+                >
+                  Continuar
+                </button>
+              ) : (
+                <button
+                  onClick={submit}
+                  disabled={sending || !canSubmit}
+                  className="font-serif"
+                  style={{
+                    flex: 2, padding: "10px",
+                    background: (!canSubmit) ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.16)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    borderRadius: "10px",
+                    color: (!canSubmit) ? "rgba(255,255,255,0.3)" : "white",
+                    fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase",
+                    cursor: (sending || !canSubmit) ? "not-allowed" : "pointer",
+                    fontWeight: 600,
+                  }}
+                >
+                  {sending ? "Enviando..." : "Enviar reseña"}
+                </button>
+              )}
             </div>
-          </div>
+          </>
         )}
       </motion.div>
     </motion.div>
@@ -322,18 +386,11 @@ export default function Reviews() {
   return (
     <section id="resenas" style={{ background: GREEN, position: "relative" }}>
 
-      {/* ── Wave top — transitions from About's white content ── */}
-      <div className="w-full overflow-hidden" style={{ lineHeight: 0, marginBottom: "-1px" }}>
-        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: "70px" }}>
-          <path d="M0,0 L1440,0 L1440,60 C1080,0 360,90 0,30 Z" fill="white" />
-        </svg>
-      </div>
-
       {/* ── Content ── */}
-      <div style={{ padding: "clamp(48px, 8vw, 88px) 0 clamp(56px, 9vw, 96px)" }}>
+      <div style={{ padding: "clamp(52px, 8vw, 88px) 0 clamp(56px, 9vw, 96px)" }}>
 
         {/* Header */}
-        <div ref={headerRef} style={{ textAlign: "center", marginBottom: "clamp(36px, 6vw, 60px)", padding: "0 clamp(20px, 5vw, 60px)" }}>
+        <div ref={headerRef} style={{ textAlign: "center", marginBottom: "clamp(36px, 6vw, 60px)", padding: "0 clamp(16px, 5vw, 60px)" }}>
           <motion.p
             className="font-serif"
             initial={{ opacity: 0, y: 16 }}
@@ -353,10 +410,11 @@ export default function Reviews() {
             animate={headerInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 }}
             style={{
-              fontSize: "min(calc((100vw - 64px) / 13.5), 3rem)",
+              fontSize: "min(calc((100vw - 32px) / 18.5), 3rem)",
               color: "white",
               lineHeight: 1.2,
               marginBottom: "18px",
+              whiteSpace: "nowrap",
             }}
           >
             Lo que dicen nuestros pacientes
@@ -473,7 +531,7 @@ export default function Reviews() {
           </>
         )}
 
-        {/* CTA — text button with underline, no border */}
+        {/* CTA — text with underline */}
         <div style={{ textAlign: "center", padding: "0 20px", marginTop: reviews.length > 0 ? "12px" : "0" }}>
           <button
             onClick={() => setShowModal(true)}
@@ -485,16 +543,10 @@ export default function Reviews() {
               textTransform: "uppercase",
               borderBottom: "1px solid rgba(255,255,255,0.6)",
               paddingBottom: "3px",
-              transition: "color 0.2s, border-color 0.2s",
+              transition: "opacity 0.2s",
             }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.7)";
-              (e.currentTarget as HTMLButtonElement).style.borderBottomColor = "rgba(255,255,255,0.3)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = "white";
-              (e.currentTarget as HTMLButtonElement).style.borderBottomColor = "rgba(255,255,255,0.6)";
-            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
           >
             Dejar una reseña
           </button>
