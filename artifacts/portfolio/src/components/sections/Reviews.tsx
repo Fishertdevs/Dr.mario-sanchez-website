@@ -387,7 +387,7 @@ export default function Reviews() {
     <section id="resenas" style={{ background: GREEN, position: "relative" }}>
 
       {/* ── Content ── */}
-      <div style={{ padding: "clamp(52px, 8vw, 88px) 0 clamp(56px, 9vw, 96px)" }}>
+      <div style={{ padding: "clamp(28px, 4vw, 48px) 0 clamp(56px, 9vw, 96px)" }}>
 
         {/* Header */}
         <div ref={headerRef} style={{ textAlign: "center", marginBottom: "clamp(36px, 6vw, 60px)", padding: "0 clamp(16px, 5vw, 60px)" }}>
@@ -397,7 +397,7 @@ export default function Reviews() {
             animate={headerInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
             style={{
-              fontSize: "0.58rem", letterSpacing: "0.22em",
+              fontSize: "clamp(0.6rem, 2.2vw, 0.75rem)", letterSpacing: "0.22em",
               textTransform: "uppercase", color: "rgba(255,255,255,0.55)", marginBottom: "14px",
             }}
           >
