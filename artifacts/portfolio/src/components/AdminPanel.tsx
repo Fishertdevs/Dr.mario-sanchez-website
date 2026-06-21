@@ -498,14 +498,14 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
             ) : (
               /* ── Admin content ── */
               <>
-                {/* Greeting — small, one line */}
-                <div style={{ marginBottom: "24px", display: "flex", alignItems: "baseline", gap: "6px" }}>
-                  <span style={{ fontFamily: "serif", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#9ca3af" }}>
-                    {getGreeting()},
-                  </span>
-                  <span style={{ fontFamily: "serif", fontSize: "0.9rem", color: DARK, fontWeight: 700 }}>
-                    Admin
-                  </span>
+                {/* Greeting */}
+                <div style={{ marginBottom: "28px", textAlign: "center" }}>
+                  <p style={{ fontFamily: "serif", fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 6px" }}>
+                    {getGreeting()}
+                  </p>
+                  <h2 style={{ fontFamily: "serif", fontSize: "1.75rem", color: DARK, fontWeight: 700, margin: 0 }}>
+                    Bienvenido, Admin
+                  </h2>
                 </div>
 
                 {/* Tabs */}
