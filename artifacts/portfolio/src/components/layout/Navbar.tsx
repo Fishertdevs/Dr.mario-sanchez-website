@@ -20,7 +20,7 @@ export default function Navbar() {
     { name: "Inicio", id: "hero" },
     { name: "Especializaciones", id: "topics" },
     { name: "Perfil", id: "about" },
-    { name: "Blog", id: "blog" },
+    { name: "Reseñas", id: "resenas" },
     { name: "Contacto", id: "contact" },
   ];
 
