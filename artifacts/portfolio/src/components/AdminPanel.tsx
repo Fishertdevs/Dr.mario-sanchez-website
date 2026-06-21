@@ -208,12 +208,27 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 9999,
-      background: "#f5f7f5",
-      display: "flex", flexDirection: "column",
-      overflowY: "auto",
-    }}>
+    /* Backdrop */
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(0,0,0,0.45)",
+        display: "flex", justifyContent: "flex-end",
+      }}
+    >
+      {/* Drawer panel — stops click propagation so it doesn't close */}
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: "min(620px, 100%)",
+          height: "100%",
+          background: "#f5f7f5",
+          display: "flex", flexDirection: "column",
+          overflowY: "auto",
+          boxShadow: "-8px 0 40px rgba(0,0,0,0.18)",
+        }}
+      >
       {/* Header */}
       <div style={{
         background: "white", borderBottom: "1px solid #e2eae1",
@@ -485,6 +500,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
             </>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
