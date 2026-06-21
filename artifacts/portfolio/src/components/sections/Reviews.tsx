@@ -286,12 +286,12 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             </div>
 
             {/* Footer actions */}
-            <div style={{ padding: "0 24px 22px", display: "flex", gap: "10px" }}>
+            <div style={{ padding: "0 24px 22px", display: "flex", gap: "6px", justifyContent: "center" }}>
               <button
                 onClick={step === 0 ? onClose : () => goStep(step - 1)}
                 className="font-serif"
                 style={{
-                  flex: 1, padding: "10px",
+                  padding: "10px 20px",
                   background: "none",
                   border: "none",
                   color: "rgba(255,255,255,0.5)", fontSize: "0.68rem",
@@ -308,10 +308,9 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   disabled={step === 1 && !canNext1}
                   className="font-serif"
                   style={{
-                    flex: 2, padding: "10px",
+                    padding: "10px 20px",
                     background: "none",
                     border: "none",
-                    borderRadius: "10px",
                     color: (step === 1 && !canNext1) ? "rgba(255,255,255,0.3)" : "white",
                     fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase",
                     cursor: (step === 1 && !canNext1) ? "not-allowed" : "pointer",
@@ -326,10 +325,9 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   disabled={sending || !canSubmit}
                   className="font-serif"
                   style={{
-                    flex: 2, padding: "10px",
+                    padding: "10px 20px",
                     background: "none",
                     border: "none",
-                    borderRadius: "10px",
                     color: (!canSubmit) ? "rgba(255,255,255,0.3)" : "white",
                     fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase",
                     cursor: (sending || !canSubmit) ? "not-allowed" : "pointer",
