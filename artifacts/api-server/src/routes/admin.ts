@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { reviewsTable, socialLinksTable } from "@workspace/db";
+import { reviewsTable, socialLinksTable, settingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import crypto from "node:crypto";
 
@@ -9,9 +9,9 @@ const router = Router();
 const SESSION_TOKEN = crypto.randomBytes(32).toString("hex");
 
 const DEFAULT_SOCIAL_LINKS = [
-  { platform: "youtube", label: "YouTube", url: "https://youtube.com/@drmariosanchez", iconKey: "youtube", isActive: true, sortOrder: 0 },
-  { platform: "tiktok", label: "TikTok", url: "https://tiktok.com/@dr..terapia", iconKey: "tiktok", isActive: true, sortOrder: 1 },
-  { platform: "whatsapp", label: "WhatsApp", url: "https://wa.me/573143127513", iconKey: "whatsapp", isActive: true, sortOrder: 2 },
+  { platform: "youtube",   label: "YouTube",   url: "https://youtube.com/@drmariosanchez",      iconKey: "youtube",   isActive: true, sortOrder: 0 },
+  { platform: "tiktok",    label: "TikTok",    url: "https://tiktok.com/@dr..terapia",          iconKey: "tiktok",    isActive: true, sortOrder: 1 },
+  { platform: "whatsapp",  label: "WhatsApp",  url: "https://wa.me/573143127513",               iconKey: "whatsapp",  isActive: true, sortOrder: 2 },
   { platform: "instagram", label: "Instagram", url: "https://instagram.com/drmariosanchez7124", iconKey: "instagram", isActive: true, sortOrder: 3 },
 ];
 
@@ -24,6 +24,14 @@ async function seedSocialLinks() {
 
 seedSocialLinks().catch(() => {});
 
+async function getAdminEmail(): Promise<string> {
+  try {
+    const [row] = await db.select().from(settingsTable).where(eq(settingsTable.key, "admin_email"));
+    if (row?.value) return row.value;
+  } catch {}
+  return process.env["ADMIN_EMAIL"] ?? "";
+}
+
 function requireAdmin(req: any, res: any, next: any) {
   const auth = req.headers["authorization"] ?? "";
   const token = auth.replace("Bearer ", "");
@@ -34,9 +42,9 @@ function requireAdmin(req: any, res: any, next: any) {
   next();
 }
 
-router.post("/admin/login", (req, res) => {
+router.post("/admin/login", async (req, res) => {
   const { email } = req.body ?? {};
-  const adminEmail = process.env["ADMIN_EMAIL"];
+  const adminEmail = await getAdminEmail();
   if (!adminEmail) {
     res.status(500).json({ error: "ADMIN_EMAIL no configurado en el servidor" });
     return;
@@ -46,6 +54,29 @@ router.post("/admin/login", (req, res) => {
     return;
   }
   res.json({ token: SESSION_TOKEN });
+});
+
+router.get("/admin/settings", requireAdmin, async (_req, res) => {
+  const rows = await db.select().from(settingsTable);
+  const map: Record<string, string> = {};
+  for (const r of rows) map[r.key] = r.value;
+  const adminEmail = await getAdminEmail();
+  res.json({ ...map, admin_email: adminEmail });
+});
+
+router.put("/admin/settings", requireAdmin, async (req, res) => {
+  const { key, value } = req.body ?? {};
+  if (!key || value === undefined) {
+    res.status(400).json({ error: "key y value son requeridos" });
+    return;
+  }
+  const existing = await db.select().from(settingsTable).where(eq(settingsTable.key, key));
+  if (existing.length > 0) {
+    await db.update(settingsTable).set({ value, updatedAt: new Date() }).where(eq(settingsTable.key, key));
+  } else {
+    await db.insert(settingsTable).values({ key, value });
+  }
+  res.json({ ok: true });
 });
 
 router.get("/admin/reviews", requireAdmin, async (_req, res) => {

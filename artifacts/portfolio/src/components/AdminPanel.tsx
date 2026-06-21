@@ -86,49 +86,48 @@ interface DashStats {
   lastUpdated: Date;
 }
 
-function BarChart({ approved, pending, max }: { approved: number; pending: number; max: number }) {
-  const available = Math.max(0, max - approved - pending);
-  const bars = [
-    { label: "Aprobadas", value: approved, color: "#2d5a27", accent: "#e8f5e4" },
-    { label: "Pendientes", value: pending,  color: "#f59e0b", accent: "#fef9e7" },
-    { label: "Disponibles", value: available, color: "#b0c4ac", accent: "#f4f7f3" },
-  ];
-  const chartH = 96;
+function DonutChart({ value, max, color, accent, label }: {
+  value: number; max: number; color: string; accent: string; label: string;
+}) {
+  const [filled, setFilled] = useState(false);
+  const r = 36;
+  const circ = 2 * Math.PI * r;
+  const pct = max > 0 ? value / max : 0;
+  const dash = filled ? pct * circ : 0;
+
+  useEffect(() => {
+    setFilled(false);
+    const t = setTimeout(() => setFilled(true), 120);
+    return () => clearTimeout(t);
+  }, [value, max]);
 
   return (
-    <div style={{ display: "flex", gap: "10px", alignItems: "flex-end" }}>
-      {bars.map(bar => {
-        const pct = max > 0 ? bar.value / max : 0;
-        const fillH = Math.max(pct > 0 ? 4 : 0, Math.round(pct * chartH));
-        return (
-          <div key={bar.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-            <span style={{ fontFamily: "serif", fontSize: "0.88rem", fontWeight: 700, color: bar.color, lineHeight: 1 }}>
-              {bar.value}
-            </span>
-            <div style={{
-              width: "100%", height: chartH,
-              background: bar.accent, borderRadius: "8px",
-              display: "flex", alignItems: "flex-end", overflow: "hidden",
-              position: "relative",
-            }}>
-              <div style={{
-                width: "100%",
-                height: `${fillH}px`,
-                background: bar.color,
-                borderRadius: "6px 6px 0 0",
-                transition: "height 0.85s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                opacity: 0.9,
-              }} />
-            </div>
-            <span style={{
-              fontFamily: "serif", fontSize: "0.55rem", color: "#9ca3af",
-              letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center",
-            }}>
-              {bar.label}
-            </span>
-          </div>
-        );
-      })}
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+      <div style={{ position: "relative", width: 88, height: 88 }}>
+        <svg width="88" height="88" viewBox="0 0 88 88">
+          <circle cx="44" cy="44" r={r} fill="none" stroke={accent} strokeWidth="10"/>
+          <circle
+            cx="44" cy="44" r={r} fill="none"
+            stroke={color} strokeWidth="10"
+            strokeDasharray={`${dash} ${circ - dash}`}
+            strokeLinecap="round"
+            style={{
+              transformOrigin: "44px 44px",
+              transform: "rotate(-90deg)",
+              transition: "stroke-dasharray 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            }}
+          />
+        </svg>
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ fontFamily: "serif", fontSize: "1.05rem", fontWeight: 700, color }}>{value}</span>
+        </div>
+      </div>
+      <span style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
+        {label}
+      </span>
+      <span style={{ fontFamily: "serif", fontSize: "0.72rem", fontWeight: 700, color }}>
+        {Math.round(pct * 100)}%
+      </span>
     </div>
   );
 }
@@ -156,6 +155,16 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "5px",
 };
 
+const sectionInputStyle: React.CSSProperties = {
+  width: "100%", boxSizing: "border-box",
+  padding: "10px 14px",
+  background: "#f9fafb",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  fontFamily: "sans-serif", fontSize: "0.82rem",
+  color: "#374151", outline: "none",
+};
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -164,6 +173,7 @@ interface Props {
 export default function AdminPanel({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState("");
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("admin_token"));
+  const [loggedEmail, setLoggedEmail] = useState(() => localStorage.getItem("admin_logged_email") ?? "");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [tab, setTab] = useState<"reviews" | "configuracion" | "dashboard">("reviews");
@@ -175,7 +185,13 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [socialLoading, setSocialLoading] = useState(false);
   const [netUrls, setNetUrls] = useState<Record<string, string>>({});
+  const [contactPhone, setContactPhone] = useState("");
   const [savingConfig, setSavingConfig] = useState(false);
+
+  const [currentAdminEmail, setCurrentAdminEmail] = useState("");
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [savingAdminEmail, setSavingAdminEmail] = useState(false);
+  const [adminEmailMsg, setAdminEmailMsg] = useState("");
 
   const [dashStats, setDashStats] = useState<DashStats | null>(null);
   const [dashLoading, setDashLoading] = useState(false);
@@ -201,7 +217,9 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
       }
       const { token: t } = await r.json();
       localStorage.setItem("admin_token", t);
+      localStorage.setItem("admin_logged_email", email.trim());
       setToken(t);
+      setLoggedEmail(email.trim());
       window.dispatchEvent(new CustomEvent("admin-auth-changed"));
     } finally {
       setLoginLoading(false);
@@ -210,8 +228,10 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
   const logout = () => {
     localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_logged_email");
     setToken(null);
     setEmail("");
+    setLoggedEmail("");
     window.dispatchEvent(new CustomEvent("admin-auth-changed"));
     onClose();
   };
@@ -229,8 +249,15 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const loadSocialLinks = async () => {
     setSocialLoading(true);
     try {
-      const r = await fetch("/api/admin/social-links", { headers });
-      setSocialLinks(await r.json());
+      const [linksRes, settingsRes] = await Promise.all([
+        fetch("/api/admin/social-links", { headers }),
+        fetch("/api/admin/settings", { headers }),
+      ]);
+      setSocialLinks(await linksRes.json());
+      const settings = await settingsRes.json();
+      setContactPhone(settings.contact_phone ?? "");
+      setCurrentAdminEmail(settings.admin_email ?? "");
+      setNewAdminEmail(settings.admin_email ?? "");
     } finally {
       setSocialLoading(false);
     }
@@ -319,15 +346,39 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
           });
         }
       }
+      await fetch("/api/admin/settings", {
+        method: "PUT", headers,
+        body: JSON.stringify({ key: "contact_phone", value: contactPhone }),
+      });
       await loadSocialLinks();
     } finally {
       setSavingConfig(false);
     }
   };
 
+  const saveAdminEmail = async () => {
+    if (!newAdminEmail.trim()) return;
+    setSavingAdminEmail(true);
+    setAdminEmailMsg("");
+    try {
+      await fetch("/api/admin/settings", {
+        method: "PUT", headers,
+        body: JSON.stringify({ key: "admin_email", value: newAdminEmail.trim() }),
+      });
+      setCurrentAdminEmail(newAdminEmail.trim());
+      localStorage.setItem("admin_logged_email", newAdminEmail.trim());
+      setLoggedEmail(newAdminEmail.trim());
+      setAdminEmailMsg("Correo actualizado correctamente");
+      setTimeout(() => setAdminEmailMsg(""), 3000);
+    } finally {
+      setSavingAdminEmail(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   const usedPct = dashStats ? Math.min(100, Math.round((dashStats.approved / MAX_REVIEWS) * 100)) : 0;
+  const available = dashStats ? Math.max(0, MAX_REVIEWS - dashStats.approved - dashStats.pending) : 0;
 
   return (
     <div
@@ -348,15 +399,30 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         {/* Header */}
         <div style={{
           background: "white", borderBottom: "1px solid #e2eae1",
-          padding: "0 28px", height: "64px",
-          display: "flex", alignItems: "center", justifyContent: "flex-end",
+          padding: "0 24px", height: "56px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
           flexShrink: 0,
           boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
+            {isLoggedIn && loggedEmail && (
+              <>
+                <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="4" stroke={GREEN} strokeWidth="1.8"/>
+                    <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke={GREEN} strokeWidth="1.8" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <span style={{ fontFamily: "serif", fontSize: "0.68rem", color: "#6b7c69", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
+                  {loggedEmail}
+                </span>
+              </>
+            )}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
             {isLoggedIn && (
               <button onClick={logout} style={{
-                fontFamily: "serif", fontSize: "0.62rem", letterSpacing: "0.1em",
+                fontFamily: "serif", fontSize: "0.6rem", letterSpacing: "0.1em",
                 color: "#9ca3af", background: "none", border: "none",
                 cursor: "pointer", textTransform: "uppercase",
               }}>
@@ -365,9 +431,9 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
             )}
             <button onClick={onClose} style={{
               background: "#f3f4f6", border: "none", cursor: "pointer",
-              width: "32px", height: "32px", borderRadius: "50%",
+              width: "30px", height: "30px", borderRadius: "50%",
               display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#6b7280", fontSize: "0.9rem",
+              color: "#6b7280", fontSize: "0.85rem",
             }}>
               ✕
             </button>
@@ -375,7 +441,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         </div>
 
         {/* Body */}
-        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px 60px" }}>
+        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "32px 24px 60px" }}>
           <div style={{ width: "100%", maxWidth: "560px" }}>
             {!isLoggedIn ? (
               /* ── Login ── */
@@ -423,14 +489,14 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
             ) : (
               /* ── Admin content ── */
               <>
-                {/* Greeting */}
-                <div style={{ marginBottom: "28px" }}>
-                  <p style={{ fontFamily: "serif", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "4px" }}>
-                    {getGreeting()}
-                  </p>
-                  <h1 style={{ fontFamily: "serif", fontSize: "1.8rem", color: DARK, fontWeight: 700, margin: 0 }}>
-                    Bienvenido, Admin
-                  </h1>
+                {/* Greeting — small, one line */}
+                <div style={{ marginBottom: "24px", display: "flex", alignItems: "baseline", gap: "6px" }}>
+                  <span style={{ fontFamily: "serif", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#9ca3af" }}>
+                    {getGreeting()},
+                  </span>
+                  <span style={{ fontFamily: "serif", fontSize: "0.9rem", color: DARK, fontWeight: 700 }}>
+                    Admin
+                  </span>
                 </div>
 
                 {/* Tabs */}
@@ -505,35 +571,29 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                               </div>
                             </div>
                           ) : (
-                            <div style={{ background: "white", borderRadius: "12px", padding: "16px 20px", border: `1px solid ${r.isApproved ? "#b8d5b4" : "#fde68a"}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-                              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "10px" }}>
+                            <div style={{ background: "white", borderRadius: "12px", padding: "16px 18px", border: "1px solid #e2eae1", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
+                              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "6px" }}>
                                 <div>
-                                  <p style={{ fontFamily: "serif", fontSize: "0.85rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{r.authorName}</p>
-                                  {r.authorRole && <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", margin: 0 }}>{r.authorRole}</p>}
+                                  <p style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{r.authorName}</p>
+                                  {r.authorRole && <p style={{ fontFamily: "serif", fontSize: "0.68rem", color: "#9ca3af", margin: 0 }}>{r.authorRole}</p>}
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                   <Stars rating={r.rating} />
-                                  <span style={{
-                                    fontFamily: "serif", fontSize: "0.55rem", letterSpacing: "0.1em",
-                                    padding: "3px 10px", borderRadius: "9999px",
-                                    background: r.isApproved ? "#dcfce7" : "#fef9c3",
-                                    color: r.isApproved ? "#15803d" : "#ca8a04",
-                                    textTransform: "uppercase", fontWeight: 700,
-                                  }}>
-                                    {r.isApproved ? "Aprobada" : "Pendiente"}
-                                  </span>
+                                  {r.isApproved ? (
+                                    <span style={{ padding: "2px 8px", background: "#f0f5ef", borderRadius: "999px", fontFamily: "serif", fontSize: "0.55rem", color: GREEN, letterSpacing: "0.06em" }}>Aprobada</span>
+                                  ) : (
+                                    <span style={{ padding: "2px 8px", background: "#fef9e7", borderRadius: "999px", fontFamily: "serif", fontSize: "0.55rem", color: "#d97706", letterSpacing: "0.06em" }}>Pendiente</span>
+                                  )}
                                 </div>
                               </div>
-                              <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#4b5563", fontStyle: "italic", margin: "0 0 14px", lineHeight: 1.7 }}>
-                                "{r.content.length > 120 ? r.content.slice(0, 120) + "…" : r.content}"
-                              </p>
-                              <div style={{ display: "flex", gap: "8px" }}>
+                              <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#4b5563", margin: "0 0 12px", lineHeight: 1.5 }}>{r.content}</p>
+                              <div style={{ display: "flex", gap: "6px" }}>
                                 {!r.isApproved && (
-                                  <button onClick={() => approveReview(r.id)} style={{ padding: "7px 16px", background: GREEN, border: "none", borderRadius: "7px", color: "white", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600 }}>
-                                    ✓ Aprobar
+                                  <button onClick={() => approveReview(r.id)} style={{ padding: "7px 16px", background: "#f0f5ef", border: "none", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600 }}>
+                                    Aprobar
                                   </button>
                                 )}
-                                <button onClick={() => setEditingReview(r)} style={{ padding: "7px 16px", background: "#f3f4f6", border: "none", borderRadius: "7px", color: "#374151", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
+                                <button onClick={() => setEditingReview(r)} style={{ padding: "7px 16px", background: "#f8f8f8", border: "none", borderRadius: "7px", color: "#6b7280", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
                                   Editar
                                 </button>
                                 <button onClick={() => deleteReview(r.id)} style={{ padding: "7px 16px", background: "#fef2f2", border: "none", borderRadius: "7px", color: "#dc2626", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
@@ -555,8 +615,31 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                       <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
                     ) : (
                       <>
+                        {/* Contacto */}
                         <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "1.1rem", color: DARK, fontWeight: 700, margin: "0 0 20px" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: "0 0 16px" }}>
+                            Contacto
+                          </h3>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#6b7c69"/>
+                            </svg>
+                            <span style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, fontWeight: 600 }}>
+                              Teléfono de contacto
+                            </span>
+                          </div>
+                          <input
+                            type="tel"
+                            value={contactPhone}
+                            onChange={e => setContactPhone(e.target.value)}
+                            placeholder="+57 314 312 7513"
+                            style={sectionInputStyle}
+                          />
+                        </div>
+
+                        {/* Redes Sociales */}
+                        <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: "0 0 20px" }}>
                             Redes Sociales
                           </h3>
                           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
@@ -573,42 +656,75 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                                   value={netUrls[net.iconKey] ?? ""}
                                   onChange={e => setNetUrls(v => ({ ...v, [net.iconKey]: e.target.value }))}
                                   placeholder={net.placeholder}
-                                  style={{
-                                    width: "100%", boxSizing: "border-box",
-                                    padding: "10px 14px",
-                                    background: "#f9fafb",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "8px",
-                                    fontFamily: "sans-serif", fontSize: "0.82rem",
-                                    color: "#374151", outline: "none",
-                                    transition: "border-color 0.2s",
-                                  }}
+                                  style={sectionInputStyle}
                                 />
                               </div>
                             ))}
                           </div>
                         </div>
 
+                        {/* Guardar Configuración — borderless green text */}
                         <button
                           onClick={saveAllConfig}
                           disabled={savingConfig}
                           style={{
-                            width: "100%", padding: "15px",
-                            background: savingConfig
-                              ? "#e2eae1"
-                              : "linear-gradient(90deg, #e53e3e 0%, #dd6b20 100%)",
-                            border: "none", borderRadius: "12px",
-                            color: savingConfig ? "#9ca3af" : "white",
-                            fontFamily: "serif", fontSize: "0.82rem",
+                            background: "none",
+                            border: "none",
+                            color: savingConfig ? "#9ca3af" : GREEN,
+                            fontFamily: "serif",
+                            fontSize: "0.82rem",
                             cursor: savingConfig ? "not-allowed" : "pointer",
-                            letterSpacing: "0.08em", textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
                             fontWeight: 700,
-                            boxShadow: savingConfig ? "none" : "0 4px 14px rgba(229,62,62,0.3)",
-                            transition: "all 0.2s",
+                            padding: "10px 0",
+                            width: "100%",
                           }}
                         >
                           {savingConfig ? "Guardando..." : "Guardar Configuración"}
                         </button>
+
+                        {/* Acceso Admin */}
+                        <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: "0 0 6px" }}>
+                            Acceso Administrador
+                          </h3>
+                          <p style={{ fontFamily: "serif", fontSize: "0.7rem", color: "#9ca3af", margin: "0 0 16px" }}>
+                            Cambia el correo de acceso al panel. Tendrás que usarlo en el próximo ingreso.
+                          </p>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#6b7c69"/>
+                            </svg>
+                            <span style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, fontWeight: 600 }}>
+                              Correo de acceso
+                            </span>
+                          </div>
+                          <input
+                            type="email"
+                            value={newAdminEmail}
+                            onChange={e => setNewAdminEmail(e.target.value)}
+                            placeholder={currentAdminEmail || "correo@ejemplo.com"}
+                            style={{ ...sectionInputStyle, marginBottom: "12px" }}
+                          />
+                          {adminEmailMsg && (
+                            <p style={{ fontFamily: "serif", fontSize: "0.7rem", color: GREEN, margin: "0 0 10px" }}>{adminEmailMsg}</p>
+                          )}
+                          <button
+                            onClick={saveAdminEmail}
+                            disabled={savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail}
+                            style={{
+                              background: "none", border: "none",
+                              color: (savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail) ? "#9ca3af" : GREEN,
+                              fontFamily: "serif", fontSize: "0.75rem",
+                              cursor: (savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail) ? "not-allowed" : "pointer",
+                              letterSpacing: "0.08em", textTransform: "uppercase",
+                              fontWeight: 700, padding: 0,
+                            }}
+                          >
+                            {savingAdminEmail ? "Actualizando..." : "Actualizar correo"}
+                          </button>
+                        </div>
                       </>
                     )}
                   </div>
@@ -653,13 +769,34 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </p>
                       </div>
 
-                      {/* Donut chart */}
+                      {/* 3 Animated donut charts */}
                       <div style={{ background: "white", borderRadius: "16px", padding: "28px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
-                        <BarChart
-                          approved={dashStats.approved}
-                          pending={dashStats.pending}
-                          max={MAX_REVIEWS}
-                        />
+                        <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 24px", textAlign: "center" }}>
+                          Distribución de Reseñas
+                        </p>
+                        <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-start" }}>
+                          <DonutChart
+                            value={dashStats.approved}
+                            max={MAX_REVIEWS}
+                            color="#2d5a27"
+                            accent="#e8f5e4"
+                            label="Aprobadas"
+                          />
+                          <DonutChart
+                            value={dashStats.pending}
+                            max={MAX_REVIEWS}
+                            color="#f59e0b"
+                            accent="#fef9e7"
+                            label="Pendientes"
+                          />
+                          <DonutChart
+                            value={available}
+                            max={MAX_REVIEWS}
+                            color="#3b82f6"
+                            accent="#eff6ff"
+                            label="Disponibles"
+                          />
+                        </div>
                       </div>
 
                       {/* Real-time indicator */}
