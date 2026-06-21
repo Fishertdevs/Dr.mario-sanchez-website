@@ -72,6 +72,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
   const [step, setStep] = useState(0);
   const [stepDir, setStepDir] = useState(1);
   const [form, setForm] = useState({ authorName: "", authorRole: "", rating: 5, content: "" });
+  const [hoverRating, setHoverRating] = useState(0);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -211,17 +212,21 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   {/* Step 0 — Rating */}
                   {step === 0 && (
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginBottom: "8px" }}>
+                      <div
+                        style={{ display: "flex", gap: "10px", justifyContent: "center", marginBottom: "8px" }}
+                        onMouseLeave={() => setHoverRating(0)}
+                      >
                         {[1, 2, 3, 4, 5].map((s) => (
                           <button
                             key={s}
                             onClick={() => setForm(f => ({ ...f, rating: s }))}
+                            onMouseEnter={() => setHoverRating(s)}
                             style={{
                               background: "none", border: "none", cursor: "pointer",
                               fontSize: "2rem", padding: 0,
-                              color: s <= form.rating ? "#ffd700" : "rgba(255,255,255,0.2)",
-                              transition: "color 0.15s, transform 0.12s",
-                              transform: s === form.rating ? "scale(1.2)" : "scale(1)",
+                              color: s <= (hoverRating || form.rating) ? "#ffd700" : "rgba(255,255,255,0.2)",
+                              transition: "color 0.12s, transform 0.12s",
+                              transform: s === (hoverRating || form.rating) ? "scale(1.25)" : "scale(1)",
                             }}
                           >★</button>
                         ))}
@@ -236,7 +241,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   {step === 1 && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                       <div>
-                        <p className="font-serif" style={labelStyle}>Nombre *</p>
+                        <p className="font-serif" style={labelStyle}>Nombre *:</p>
                         <input
                           value={form.authorName}
                           onChange={e => setForm(f => ({ ...f, authorName: e.target.value }))}
@@ -264,7 +269,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   {/* Step 2 — Content */}
                   {step === 2 && (
                     <div>
-                      <p className="font-serif" style={labelStyle}>Tu experiencia *</p>
+                      <p className="font-serif" style={labelStyle}>Tu experiencia *:</p>
                       <textarea
                         value={form.content}
                         onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
@@ -287,9 +292,8 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                 className="font-serif"
                 style={{
                   flex: 1, padding: "10px",
-                  background: "rgba(255,255,255,0.07)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "10px",
+                  background: "none",
+                  border: "none",
                   color: "rgba(255,255,255,0.5)", fontSize: "0.68rem",
                   letterSpacing: "0.1em", textTransform: "uppercase",
                   cursor: "pointer",
