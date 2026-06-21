@@ -181,6 +181,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [reviewsCollapsed, setReviewsCollapsed] = useState(false);
 
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [socialLoading, setSocialLoading] = useState(false);
@@ -545,7 +546,25 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {reviews.map(r => (
+                      {/* Collapsible header */}
+                      <button
+                        onClick={() => setReviewsCollapsed(v => !v)}
+                        style={{
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                          background: "white", border: "1px solid #e2eae1", borderRadius: "10px",
+                          padding: "9px 14px", cursor: "pointer", width: "100%",
+                        }}
+                      >
+                        <span style={{ fontFamily: "serif", fontSize: "0.72rem", color: DARK, fontWeight: 700 }}>
+                          {reviews.length} reseña{reviews.length !== 1 ? "s" : ""}
+                        </span>
+                        <span style={{ fontSize: "0.7rem", color: "#9ca3af", transition: "transform 0.25s", display: "inline-block", transform: reviewsCollapsed ? "rotate(-90deg)" : "rotate(0deg)" }}>
+                          ▾
+                        </span>
+                      </button>
+
+                      {/* List */}
+                      {!reviewsCollapsed && reviews.map(r => (
                         <div key={r.id}>
                           {editingReview?.id === r.id ? (
                             <div style={{ background: "white", borderRadius: "12px", padding: "16px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(45,90,39,0.06)" }}>
