@@ -61,17 +61,19 @@ router.get("/admin/status", async (_req, res) => {
 });
 
 router.post("/admin/auth/google", async (req, res) => {
-  const { credential } = req.body ?? {};
-  if (!credential || typeof credential !== "string") {
+  const { access_token } = req.body ?? {};
+  if (!access_token || typeof access_token !== "string") {
     res.status(400).json({ error: "Token de Google requerido" });
     return;
   }
 
   let email: string;
   try {
-    const r = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+    const r = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
     const payload = await r.json() as Record<string, string>;
-    if (payload["error"] || !payload["email"]) {
+    if (!r.ok || !payload["email"]) {
       res.status(401).json({ error: "Token de Google inválido" });
       return;
     }

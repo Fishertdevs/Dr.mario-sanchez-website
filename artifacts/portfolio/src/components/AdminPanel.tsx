@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
 const GREEN = "#2d5a27";
 const DARK = "#1a2e17";
@@ -173,6 +173,65 @@ interface Props {
   onClose: () => void;
 }
 
+function GoogleButtonBlock({ loading, error, notConfigured, onLogin }: {
+  loading: boolean; error: string; notConfigured: boolean; onLogin: () => void;
+}) {
+  if (notConfigured) {
+    return (
+      <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center", margin: 0 }}>
+        VITE_GOOGLE_CLIENT_ID no está configurado.
+      </p>
+    );
+  }
+  if (loading) {
+    return (
+      <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69", textAlign: "center", margin: 0 }}>
+        Verificando con Google...
+      </p>
+    );
+  }
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: "12px" }}>
+      {/* Divider */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ flex: 1, height: "1px", background: "#e2eae1" }} />
+        <span style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+          O continúa con
+        </span>
+        <div style={{ flex: 1, height: "1px", background: "#e2eae1" }} />
+      </div>
+      {/* Google Button */}
+      <button
+        onClick={onLogin}
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
+          width: "100%", padding: "11px 16px",
+          background: "white", border: "1px solid #dadce0", borderRadius: "8px",
+          cursor: "pointer", fontFamily: "sans-serif", fontSize: "0.88rem",
+          color: "#3c4043", fontWeight: 500,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+          transition: "box-shadow 0.2s, background 0.2s",
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 2px 8px rgba(0,0,0,0.14)"; (e.currentTarget as HTMLButtonElement).style.background = "#f8f9fa"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)"; (e.currentTarget as HTMLButtonElement).style.background = "white"; }}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continuar con Google
+      </button>
+      {error && (
+        <p style={{ fontFamily: "serif", fontSize: "0.7rem", color: "#ef4444", textAlign: "center", margin: 0 }}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function AdminPanelInner({ isOpen, onClose }: Props) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("admin_token"));
   const [loggedEmail, setLoggedEmail] = useState(() => localStorage.getItem("admin_logged_email") ?? "");
@@ -213,7 +272,6 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const isLoggedIn = !!token;
-  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
 
   const applyToken = (t: string, emailUsed: string) => {
     localStorage.setItem("admin_token", t);
@@ -223,15 +281,14 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
     window.dispatchEvent(new CustomEvent("admin-auth-changed"));
   };
 
-  const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
-    if (!credentialResponse.credential) return;
+  const handleGoogleSuccess = async (access_token: string) => {
     setLoginLoading(true);
     setLoginError("");
     try {
       const r = await fetch("/api/admin/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credential: credentialResponse.credential }),
+        body: JSON.stringify({ access_token }),
       });
       if (!r.ok) {
         const d = await r.json();
@@ -245,6 +302,11 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
       setLoginLoading(false);
     }
   };
+
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: (res) => handleGoogleSuccess(res.access_token),
+    onError: () => setLoginError("Error al conectar con Google"),
+  });
 
   const logout = async () => {
     try {
@@ -485,81 +547,41 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
               </div>
             ) : needsSetup ? (
               /* ── Primera Configuración con Google ── */
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
-                <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2a5 5 0 110 10A5 5 0 0112 2zM12 14c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z" fill={GREEN}/>
-                  </svg>
-                </div>
-                <h1 style={{ fontFamily: "serif", fontSize: "1.4rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: isMobile ? "12px" : "32px" }}>
+                <h1 style={{ fontFamily: "serif", fontSize: isMobile ? "1.1rem" : "1.4rem", color: DARK, fontWeight: 700, marginBottom: "4px", textAlign: "center" }}>
                   Configurar Acceso
                 </h1>
-                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.78rem", marginBottom: "6px", textAlign: "center", maxWidth: "300px" }}>
-                  Primera vez aquí. Inicia sesión con tu cuenta de Google para activar el panel.
+                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.72rem", marginBottom: "4px", textAlign: "center", maxWidth: "280px" }}>
+                  Primera vez aquí. Inicia sesión con Google para activar el panel.
                 </p>
-                <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.64rem", marginBottom: "32px", textAlign: "center" }}>
-                  Esa cuenta quedará registrada como la única con acceso.
+                <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.6rem", marginBottom: isMobile ? "16px" : "24px", textAlign: "center" }}>
+                  Esa cuenta quedará como la única con acceso.
                 </p>
-
-                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "32px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-                  {googleNotConfigured ? (
-                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center" }}>
-                      VITE_GOOGLE_CLIENT_ID no está configurado.
-                    </p>
-                  ) : loginLoading ? (
-                    <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69" }}>Verificando con Google...</p>
-                  ) : (
-                    <>
-                      <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={() => setLoginError("Error al conectar con Google")}
-                        text="signin_with"
-                        shape="rectangular"
-                        logo_alignment="left"
-                        size="large"
-                      />
-                      {loginError && (
-                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center", margin: 0 }}>
-                          {loginError}
-                        </p>
-                      )}
-                    </>
-                  )}
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "24px 24px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
+                  <GoogleButtonBlock
+                    loading={loginLoading}
+                    error={loginError}
+                    notConfigured={googleNotConfigured}
+                    onLogin={() => loginWithGoogle()}
+                  />
                 </div>
               </div>
             ) : !isLoggedIn ? (
               /* ── Login con Google ── */
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
-                <h1 style={{ fontFamily: "serif", fontSize: "1.6rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: isMobile ? "12px" : "32px" }}>
+                <h1 style={{ fontFamily: "serif", fontSize: isMobile ? "1.2rem" : "1.6rem", color: DARK, fontWeight: 700, marginBottom: "4px", textAlign: "center" }}>
                   Panel de Administración
                 </h1>
-                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.82rem", marginBottom: "36px", textAlign: "center" }}>
+                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.75rem", marginBottom: isMobile ? "16px" : "28px", textAlign: "center" }}>
                   Ingresa con tu cuenta de Google autorizada
                 </p>
-                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "36px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-                  {googleNotConfigured ? (
-                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center" }}>
-                      VITE_GOOGLE_CLIENT_ID no está configurado.
-                    </p>
-                  ) : loginLoading ? (
-                    <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69" }}>Verificando con Google...</p>
-                  ) : (
-                    <>
-                      <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={() => setLoginError("Error al conectar con Google")}
-                        text="signin_with"
-                        shape="rectangular"
-                        logo_alignment="left"
-                        size="large"
-                      />
-                      {loginError && (
-                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center", margin: 0 }}>
-                          {loginError}
-                        </p>
-                      )}
-                    </>
-                  )}
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "24px 24px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
+                  <GoogleButtonBlock
+                    loading={loginLoading}
+                    error={loginError}
+                    notConfigured={googleNotConfigured}
+                    onLogin={() => loginWithGoogle()}
+                  />
                 </div>
               </div>
             ) : (
@@ -858,7 +880,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
 
 export default function AdminPanel({ isOpen, onClose }: Props) {
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID || "placeholder.apps.googleusercontent.com"}>
       <AdminPanelInner isOpen={isOpen} onClose={onClose} />
     </GoogleOAuthProvider>
   );
