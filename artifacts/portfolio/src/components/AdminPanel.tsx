@@ -93,9 +93,9 @@ function DonutChart({ value, max, color, accent, label, compact }: {
   value: number; max: number; color: string; accent: string; label: string; compact?: boolean;
 }) {
   const [filled, setFilled] = useState(false);
-  const size = compact ? 48 : 64;
-  const r = compact ? 19 : 26;
-  const sw = compact ? 6 : 8;
+  const size = compact ? 64 : 120;
+  const r = compact ? 26 : 50;
+  const sw = compact ? 8 : 12;
   const circ = 2 * Math.PI * r;
   const pct = max > 0 ? value / max : 0;
   const dash = filled ? pct * circ : 0;
@@ -125,13 +125,13 @@ function DonutChart({ value, max, color, accent, label, compact }: {
           />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: "serif", fontSize: compact ? "0.68rem" : "0.82rem", fontWeight: 700, color: "#000000" }}>{value}</span>
+          <span style={{ fontFamily: "serif", fontSize: compact ? "0.82rem" : "1.5rem", fontWeight: 700, color: "#000000" }}>{value}</span>
         </div>
       </div>
-      <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#000000", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
+      <span style={{ fontFamily: "serif", fontSize: compact ? "0.5rem" : "0.75rem", color: "#000000", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
         {label}
       </span>
-      <span style={{ fontFamily: "serif", fontSize: "0.6rem", fontWeight: 700, color: "#000000" }}>
+      <span style={{ fontFamily: "serif", fontSize: compact ? "0.6rem" : "0.9rem", fontWeight: 700, color: "#000000" }}>
         {Math.round(pct * 100)}%
       </span>
     </div>
