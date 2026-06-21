@@ -310,7 +310,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   style={{
                     flex: 2, padding: "10px",
                     background: (step === 1 && !canNext1) ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.16)",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    border: "none",
                     borderRadius: "10px",
                     color: (step === 1 && !canNext1) ? "rgba(255,255,255,0.3)" : "white",
                     fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase",
@@ -328,7 +328,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   style={{
                     flex: 2, padding: "10px",
                     background: (!canSubmit) ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.16)",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    border: "none",
                     borderRadius: "10px",
                     color: (!canSubmit) ? "rgba(255,255,255,0.3)" : "white",
                     fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase",
