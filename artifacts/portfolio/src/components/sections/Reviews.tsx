@@ -6,9 +6,9 @@ const DARK_GREEN = "#1e3d1a";
 const BLACK = "#0a0a0a";
 
 const BATCH = 3;
-const CARD_DELAY = 1800;
-const READ_PAUSE = 9000;
-const FADE_DURATION = 700;
+const CARD_DELAY = 4000;
+const READ_PAUSE = 4000;
+const FADE_DURATION = 600;
 
 interface Review {
   id: number;
