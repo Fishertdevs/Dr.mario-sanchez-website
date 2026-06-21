@@ -52,75 +52,49 @@ interface DashStats {
   lastUpdated: Date;
 }
 
-function DonutChart({ approved, pending, max }: { approved: number; pending: number; max: number }) {
-  const r = 64;
-  const cx = 90;
-  const cy = 90;
-  const strokeWidth = 22;
-  const circumference = 2 * Math.PI * r;
+function BarChart({ approved, pending, max }: { approved: number; pending: number; max: number }) {
   const available = Math.max(0, max - approved - pending);
-
-  const segments = [
-    { value: approved, color: "#2d5a27", label: "Aprobadas" },
-    { value: pending,  color: "#f59e0b", label: "Pendientes" },
-    { value: available, color: "#e2eae1", label: "Disponibles" },
+  const bars = [
+    { label: "Aprobadas", value: approved, color: "#2d5a27", accent: "#e8f5e4" },
+    { label: "Pendientes", value: pending,  color: "#f59e0b", accent: "#fef9e7" },
+    { label: "Disponibles", value: available, color: "#b0c4ac", accent: "#f4f7f3" },
   ];
-
-  let cumulative = 0;
-  const arcs = segments.map(seg => {
-    const length = max > 0 ? (seg.value / max) * circumference : 0;
-    const dashOffset = circumference / 4 - cumulative;
-    cumulative += length;
-    return { ...seg, length, dashOffset };
-  });
+  const chartH = 96;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-      <div style={{ position: "relative", width: 180, height: 180 }}>
-        <svg width="180" height="180" viewBox="0 0 180 180">
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e8f0e7" strokeWidth={strokeWidth} />
-          {arcs.map((arc, i) =>
-            arc.length > 0.5 ? (
-              <circle
-                key={i}
-                cx={cx} cy={cy} r={r}
-                fill="none"
-                stroke={arc.color}
-                strokeWidth={strokeWidth}
-                strokeLinecap="butt"
-                strokeDasharray={`${arc.length} ${circumference - arc.length}`}
-                strokeDashoffset={arc.dashOffset}
-                style={{ transition: "stroke-dasharray 0.9s ease, stroke-dashoffset 0.9s ease" }}
-              />
-            ) : null
-          )}
-        </svg>
-        <div style={{
-          position: "absolute", inset: 0,
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        }}>
-          <span style={{ fontFamily: "serif", fontSize: "2rem", fontWeight: 700, color: DARK, lineHeight: 1 }}>
-            {approved + pending}
-          </span>
-          <span style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "3px" }}>
-            Reseñas
-          </span>
-        </div>
-      </div>
-
-      <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
-        {[
-          { color: "#2d5a27", label: "Aprobadas", value: approved },
-          { color: "#f59e0b", label: "Pendientes", value: pending },
-          { color: "#c8d8c6", label: "Disponibles", value: available },
-        ].map(item => (
-          <div key={item.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", minWidth: "72px" }}>
-            <div style={{ width: "10px", height: "10px", borderRadius: "3px", background: item.color }} />
-            <span style={{ fontFamily: "serif", fontSize: "1.2rem", fontWeight: 700, color: DARK, lineHeight: 1 }}>{item.value}</span>
-            <span style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase" }}>{item.label}</span>
+    <div style={{ display: "flex", gap: "10px", alignItems: "flex-end" }}>
+      {bars.map(bar => {
+        const pct = max > 0 ? bar.value / max : 0;
+        const fillH = Math.max(pct > 0 ? 4 : 0, Math.round(pct * chartH));
+        return (
+          <div key={bar.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontFamily: "serif", fontSize: "0.88rem", fontWeight: 700, color: bar.color, lineHeight: 1 }}>
+              {bar.value}
+            </span>
+            <div style={{
+              width: "100%", height: chartH,
+              background: bar.accent, borderRadius: "8px",
+              display: "flex", alignItems: "flex-end", overflow: "hidden",
+              position: "relative",
+            }}>
+              <div style={{
+                width: "100%",
+                height: `${fillH}px`,
+                background: bar.color,
+                borderRadius: "6px 6px 0 0",
+                transition: "height 0.85s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                opacity: 0.9,
+              }} />
+            </div>
+            <span style={{
+              fontFamily: "serif", fontSize: "0.55rem", color: "#9ca3af",
+              letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center",
+            }}>
+              {bar.label}
+            </span>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }
@@ -637,7 +611,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
                       {/* Donut chart */}
                       <div style={{ background: "white", borderRadius: "16px", padding: "28px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
-                        <DonutChart
+                        <BarChart
                           approved={dashStats.approved}
                           pending={dashStats.pending}
                           max={MAX_REVIEWS}
