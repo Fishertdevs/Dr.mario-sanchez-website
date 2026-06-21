@@ -477,13 +477,13 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                   Ingresa con tu correo de administrador
                 </p>
                 <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "32px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
-                  <label style={labelStyle}>Correo electrónico</label>
+                  <label style={{ ...labelStyle, display: "block", textAlign: "center" }}>Correo electrónico</label>
                   <input
                     type="email"
                     value={email}
                     onChange={e => { setEmail(e.target.value); setLoginError(""); }}
                     onKeyDown={e => { if (e.key === "Enter") login(); }}
-                    placeholder="correo@ejemplo.com"
+                    placeholder="ingresa tu correo"
                     style={{ ...inputStyle, marginBottom: "16px", fontSize: "0.9rem" }}
                     autoFocus
                   />
