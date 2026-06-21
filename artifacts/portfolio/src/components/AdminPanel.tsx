@@ -665,7 +665,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                       <>
                         {/* Contacto */}
                         <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 10px" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 10px", textAlign: "center" }}>
                             Contacto
                           </h3>
                           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
@@ -687,7 +687,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
                         {/* Redes Sociales */}
                         <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 12px" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 12px", textAlign: "center" }}>
                             Redes Sociales
                           </h3>
                           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -734,10 +734,10 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
 
                         {/* Acceso Admin */}
                         <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 4px" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 4px", textAlign: "center" }}>
                             Acceso Administrador
                           </h3>
-                          <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: "0 0 10px" }}>
+                          <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: "0 0 10px", textAlign: "center" }}>
                             Cambia el correo de acceso al panel. Tendrás que usarlo en el próximo ingreso.
                           </p>
                           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
@@ -767,7 +767,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                               fontFamily: "serif", fontSize: "0.75rem",
                               cursor: (savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail) ? "not-allowed" : "pointer",
                               letterSpacing: "0.08em", textTransform: "uppercase",
-                              fontWeight: 700, padding: 0,
+                              fontWeight: 700, padding: 0, width: "100%", textAlign: "center",
                             }}
                           >
                             {savingAdminEmail ? "Actualizando..." : "Actualizar correo"}
@@ -795,8 +795,8 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                             </svg>
                           </div>
                           <div style={{ minWidth: 0 }}>
-                            <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>Almacenamiento</p>
-                            <p style={{ fontFamily: "serif", fontSize: "0.82rem", color: DARK, margin: 0, fontWeight: 700 }}>Espacio de Reseñas</p>
+                            <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase", textAlign: "center" }}>Almacenamiento</p>
+                            <p style={{ fontFamily: "serif", fontSize: "0.82rem", color: DARK, margin: 0, fontWeight: 700, textAlign: "center" }}>Espacio de Reseñas</p>
                           </div>
                           <span style={{ marginLeft: "auto", fontFamily: "serif", fontSize: "0.9rem", fontWeight: 700, color: GREEN, flexShrink: 0 }}>{usedPct}%</span>
                         </div>
