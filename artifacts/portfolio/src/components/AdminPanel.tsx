@@ -425,40 +425,40 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         {/* Header */}
         <div style={{
           background: "white", borderBottom: "1px solid #e2eae1",
-          padding: "0 24px", height: "72px",
+          padding: "0 14px", minHeight: "60px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          flexShrink: 0,
+          gap: "8px", flexShrink: 0,
           boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
         }}>
           {/* Left: greeting + email */}
-          <div style={{ minWidth: 0 }}>
+          <div style={{ minWidth: 0, flex: 1, overflow: "hidden" }}>
             {isLoggedIn ? (
               <>
-                <p style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: 0, whiteSpace: "nowrap" }}>
+                <p style={{ fontFamily: "serif", fontSize: "0.9rem", color: DARK, fontWeight: 700, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   Bienvenido, Admin
                 </p>
-                <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: "2px 0 0", letterSpacing: "0.08em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "280px" }}>
+                <p style={{ fontFamily: "serif", fontSize: "0.56rem", color: "#9ca3af", margin: "2px 0 0", letterSpacing: "0.06em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {getGreeting()}{loggedEmail ? ` · ${loggedEmail}` : ""}
                 </p>
               </>
             ) : null}
           </div>
           {/* Right: logout + close */}
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
             {isLoggedIn && (
               <button onClick={logout} style={{
-                fontFamily: "serif", fontSize: "0.6rem", letterSpacing: "0.1em",
+                fontFamily: "serif", fontSize: "0.55rem", letterSpacing: "0.08em",
                 color: "#9ca3af", background: "none", border: "none",
-                cursor: "pointer", textTransform: "uppercase",
+                cursor: "pointer", textTransform: "uppercase", whiteSpace: "nowrap",
               }}>
                 Cerrar sesión
               </button>
             )}
             <button onClick={onClose} style={{
               background: "#f3f4f6", border: "none", cursor: "pointer",
-              width: "30px", height: "30px", borderRadius: "50%",
+              width: "28px", height: "28px", borderRadius: "50%",
               display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#6b7280", fontSize: "0.85rem",
+              color: "#6b7280", fontSize: "0.8rem", flexShrink: 0,
             }}>
               ✕
             </button>
@@ -521,15 +521,16 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                       key={t}
                       onClick={() => setTab(t)}
                       style={{
-                        flex: 1, padding: "9px 6px", border: "none", cursor: "pointer",
-                        borderRadius: "9px", fontFamily: "serif", fontSize: "0.68rem",
-                        letterSpacing: "0.06em", textTransform: "uppercase",
+                        flex: 1, padding: "8px 4px", border: "none", cursor: "pointer",
+                        borderRadius: "9px", fontFamily: "serif", fontSize: "0.58rem",
+                        letterSpacing: "0.04em", textTransform: "uppercase",
                         background: tab === t ? GREEN : "transparent",
                         color: tab === t ? "white" : "#6b7c69",
                         transition: "all 0.2s", fontWeight: tab === t ? 700 : 400,
+                        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                       }}
                     >
-                      {t === "reviews" ? "Reseñas" : t === "configuracion" ? "Configuración" : "Dashboard"}
+                      {t === "reviews" ? "Reseñas" : t === "configuracion" ? "Config." : "Dashboard"}
                     </button>
                   ))}
                 </div>
@@ -806,7 +807,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 24px", textAlign: "center" }}>
                           Distribución de Reseñas
                         </p>
-                        <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-start" }}>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
                           <DonutChart
                             value={dashStats.approved}
                             max={MAX_REVIEWS}
