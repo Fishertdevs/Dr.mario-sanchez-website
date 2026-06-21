@@ -506,18 +506,6 @@ export default function Reviews() {
               </AnimatePresence>
             </div>
 
-            {/* Batch dots — desktop only */}
-            {reviews.length > BATCH && (
-              <div className="hidden md:flex" style={{ justifyContent: "center", gap: "8px", marginBottom: "12px" }}>
-                {Array.from({ length: Math.ceil(reviews.length / BATCH) }).map((_, i) => (
-                  <div key={i} style={{
-                    width: i === batchIdx ? "22px" : "7px", height: "7px", borderRadius: "9999px",
-                    background: i === batchIdx ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.25)",
-                    transition: "all 0.35s ease",
-                  }} />
-                ))}
-              </div>
-            )}
 
             {/* ── Mobile carousel — swipe only, no dots ── */}
             <div
