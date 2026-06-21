@@ -8,7 +8,7 @@ const app: Express = express();
 
 app.use(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  pinoHttp({
+  (pinoHttp as any)({
     logger,
     serializers: {
       req(req: any) {
@@ -24,7 +24,7 @@ app.use(
         };
       },
     },
-  }) as any,
+  }),
 );
 app.use(cors());
 app.use(express.json());
