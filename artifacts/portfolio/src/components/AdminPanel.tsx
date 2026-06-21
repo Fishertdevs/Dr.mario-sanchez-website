@@ -189,7 +189,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [savingConfig, setSavingConfig] = useState(false);
 
   const [currentAdminEmail, setCurrentAdminEmail] = useState("");
-  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [newAdminEmail, setNewAdminEmail] = useState(() => localStorage.getItem("admin_logged_email") ?? "");
   const [savingAdminEmail, setSavingAdminEmail] = useState(false);
   const [adminEmailMsg, setAdminEmailMsg] = useState("");
 
@@ -236,10 +236,26 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     onClose();
   };
 
+  const authFetch = async (url: string, opts: RequestInit = {}): Promise<Response> => {
+    const res = await fetch(url, {
+      ...opts,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...(opts.headers as Record<string, string> ?? {}) },
+    });
+    if (res.status === 401) {
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("admin_logged_email");
+      setToken(null);
+      setEmail("");
+      setLoggedEmail("");
+      window.dispatchEvent(new CustomEvent("admin-auth-changed"));
+    }
+    return res;
+  };
+
   const loadReviews = async () => {
     setReviewsLoading(true);
     try {
-      const r = await fetch("/api/admin/reviews", { headers });
+      const r = await authFetch("/api/admin/reviews");
       if (!r.ok) return;
       const data = await r.json();
       setReviews(Array.isArray(data) ? data : []);
@@ -252,8 +268,8 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     setSocialLoading(true);
     try {
       const [linksRes, settingsRes] = await Promise.all([
-        fetch("/api/admin/social-links", { headers }),
-        fetch("/api/admin/settings", { headers }),
+        authFetch("/api/admin/social-links"),
+        authFetch("/api/admin/settings"),
       ]);
       if (linksRes.ok) {
         const data = await linksRes.json();
@@ -273,7 +289,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const loadDashboard = async () => {
     setDashLoading(true);
     try {
-      const r = await fetch("/api/admin/reviews", { headers });
+      const r = await authFetch("/api/admin/reviews");
       if (!r.ok) return;
       const raw = await r.json();
       const data: Review[] = Array.isArray(raw) ? raw : [];
@@ -302,20 +318,20 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   }, [isLoggedIn, isOpen, tab]);
 
   const approveReview = async (id: number) => {
-    await fetch(`/api/admin/reviews/${id}/approve`, { method: "POST", headers });
+    await authFetch(`/api/admin/reviews/${id}/approve`, { method: "POST" });
     await loadReviews();
   };
 
   const deleteReview = async (id: number) => {
     if (!confirm("¿Eliminar esta reseña?")) return;
-    await fetch(`/api/admin/reviews/${id}`, { method: "DELETE", headers });
+    await authFetch(`/api/admin/reviews/${id}`, { method: "DELETE" });
     await loadReviews();
   };
 
   const saveReview = async () => {
     if (!editingReview) return;
-    await fetch(`/api/admin/reviews/${editingReview.id}`, {
-      method: "PUT", headers,
+    await authFetch(`/api/admin/reviews/${editingReview.id}`, {
+      method: "PUT",
       body: JSON.stringify({
         authorName: editingReview.authorName,
         authorRole: editingReview.authorRole,
@@ -331,7 +347,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   useEffect(() => {
     const urls: Record<string, string> = {};
     FIXED_NETWORKS.forEach(net => {
-      const existing = socialLinks.find(l => l.iconKey === net.iconKey);
+      const existing = Array.isArray(socialLinks) ? socialLinks.find(l => l.iconKey === net.iconKey) : undefined;
       urls[net.iconKey] = existing?.url ?? "";
     });
     setNetUrls(urls);
@@ -342,21 +358,21 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     try {
       for (const net of FIXED_NETWORKS) {
         const url = netUrls[net.iconKey] ?? "";
-        const existing = socialLinks.find(l => l.iconKey === net.iconKey);
+        const existing = Array.isArray(socialLinks) ? socialLinks.find(l => l.iconKey === net.iconKey) : undefined;
         if (existing) {
-          await fetch(`/api/admin/social-links/${existing.id}`, {
-            method: "PUT", headers,
+          await authFetch(`/api/admin/social-links/${existing.id}`, {
+            method: "PUT",
             body: JSON.stringify({ ...existing, url }),
           });
         } else if (url.trim()) {
-          await fetch("/api/admin/social-links", {
-            method: "POST", headers,
+          await authFetch("/api/admin/social-links", {
+            method: "POST",
             body: JSON.stringify({ platform: net.platform, label: net.label, url, iconKey: net.iconKey, sortOrder: 0, isActive: true }),
           });
         }
       }
-      await fetch("/api/admin/settings", {
-        method: "PUT", headers,
+      await authFetch("/api/admin/settings", {
+        method: "PUT",
         body: JSON.stringify({ key: "contact_phone", value: contactPhone }),
       });
       await loadSocialLinks();
@@ -370,8 +386,8 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     setSavingAdminEmail(true);
     setAdminEmailMsg("");
     try {
-      await fetch("/api/admin/settings", {
-        method: "PUT", headers,
+      await authFetch("/api/admin/settings", {
+        method: "PUT",
         body: JSON.stringify({ key: "admin_email", value: newAdminEmail.trim() }),
       });
       setCurrentAdminEmail(newAdminEmail.trim());
@@ -408,26 +424,25 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         {/* Header */}
         <div style={{
           background: "white", borderBottom: "1px solid #e2eae1",
-          padding: "0 24px", height: "56px",
+          padding: "0 24px", height: "72px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           flexShrink: 0,
           boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-            {isLoggedIn && loggedEmail && (
+          {/* Left: greeting + email */}
+          <div style={{ minWidth: 0 }}>
+            {isLoggedIn ? (
               <>
-                <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="4" stroke={GREEN} strokeWidth="1.8"/>
-                    <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke={GREEN} strokeWidth="1.8" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <span style={{ fontFamily: "serif", fontSize: "0.68rem", color: "#6b7c69", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
-                  {loggedEmail}
-                </span>
+                <p style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: 0, whiteSpace: "nowrap" }}>
+                  Bienvenido, Admin
+                </p>
+                <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: "2px 0 0", letterSpacing: "0.08em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "280px" }}>
+                  {getGreeting()}{loggedEmail ? ` · ${loggedEmail}` : ""}
+                </p>
               </>
-            )}
+            ) : null}
           </div>
+          {/* Right: logout + close */}
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
             {isLoggedIn && (
               <button onClick={logout} style={{
@@ -498,16 +513,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
             ) : (
               /* ── Admin content ── */
               <>
-                {/* Greeting */}
-                <div style={{ marginBottom: "28px", textAlign: "center" }}>
-                  <p style={{ fontFamily: "serif", fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 6px" }}>
-                    {getGreeting()}
-                  </p>
-                  <h2 style={{ fontFamily: "serif", fontSize: "1.75rem", color: DARK, fontWeight: 700, margin: 0 }}>
-                    Bienvenido, Admin
-                  </h2>
-                </div>
-
                 {/* Tabs */}
                 <div style={{ display: "flex", gap: "0", marginBottom: "28px", background: "#f0f5ef", borderRadius: "12px", padding: "4px", border: "1px solid #e2eae1" }}>
                   {(["reviews", "configuracion", "dashboard"] as const).map(t => (
