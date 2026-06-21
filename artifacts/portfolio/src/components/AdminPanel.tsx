@@ -240,7 +240,9 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     setReviewsLoading(true);
     try {
       const r = await fetch("/api/admin/reviews", { headers });
-      setReviews(await r.json());
+      if (!r.ok) return;
+      const data = await r.json();
+      setReviews(Array.isArray(data) ? data : []);
     } finally {
       setReviewsLoading(false);
     }
