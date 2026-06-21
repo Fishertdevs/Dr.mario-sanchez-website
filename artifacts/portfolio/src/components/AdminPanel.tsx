@@ -177,6 +177,13 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [tab, setTab] = useState<"reviews" | "configuracion" | "dashboard">("reviews");
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
@@ -409,16 +416,24 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   return (
     <div
       onClick={onClose}
-      style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.45)", display: "flex", justifyContent: "flex-end" }}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.45)",
+        display: "flex",
+        justifyContent: isMobile ? "stretch" : "flex-end",
+        alignItems: isMobile ? "flex-end" : "stretch",
+      }}
     >
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: "min(620px, 55vw)", height: "100%", background: "#ffffff",
+          width: isMobile ? "100%" : "min(620px, 100%)",
+          height: isMobile ? "50vh" : "100%",
+          background: "#ffffff",
           display: "flex", flexDirection: "column",
-          boxShadow: "-8px 0 40px rgba(0,0,0,0.18)",
-          borderLeft: "1px solid #e2eae1",
-          borderRadius: "32px 0 0 32px",
+          boxShadow: isMobile ? "0 -8px 40px rgba(0,0,0,0.18)" : "-8px 0 40px rgba(0,0,0,0.18)",
+          borderLeft: isMobile ? "none" : "1px solid #e2eae1",
+          borderTop: isMobile ? "1px solid #e2eae1" : "none",
+          borderRadius: isMobile ? 0 : "32px 0 0 32px",
           overflow: "hidden",
         }}
       >
