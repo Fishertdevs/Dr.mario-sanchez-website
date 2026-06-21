@@ -53,18 +53,9 @@ const DEFAULT_SOCIALS: SocialIcon[] = [
   { label: "Instagram", href: "https://instagram.com/drmariosanchez7124",   bg: "linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)", iconKey: "instagram", renderIcon: ICON_RENDERERS.instagram },
 ];
 
-interface FooterProps {
-  onOpenAdmin?: () => void;
-}
-
-export default function Footer({ onOpenAdmin }: FooterProps) {
+export default function Footer() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [socials, setSocials] = useState<SocialIcon[]>(DEFAULT_SOCIALS);
-
-  useEffect(() => {
-    setIsAdmin(!!localStorage.getItem("admin_token"));
-  }, []);
 
   useEffect(() => {
     fetch("/api/social-links")
@@ -138,38 +129,10 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
           </Link>
         </div>
 
-        {/* Copyright + Admin trigger */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <p className="font-serif" style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.62rem, 1.4vw, 0.72rem)' }}>
-            © 2026 DrMarioSanchez
-          </p>
-          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.6rem' }}>·</span>
-          {isAdmin ? (
-            <button
-              onClick={onOpenAdmin}
-              style={{
-                fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.65rem)",
-                color: "rgba(255,255,255,0.7)", letterSpacing: "0.08em",
-                textTransform: "uppercase", background: "none", border: "none",
-                padding: 0, cursor: "pointer", transition: "color 0.2s",
-              }}
-            >
-              Bienvenido Admin
-            </button>
-          ) : (
-            <button
-              onClick={onOpenAdmin}
-              style={{
-                fontFamily: "serif", fontSize: "clamp(0.55rem, 1.1vw, 0.62rem)",
-                color: "rgba(255,255,255,0.18)", letterSpacing: "0.08em",
-                textTransform: "uppercase", background: "none", border: "none",
-                padding: 0, cursor: "pointer", transition: "color 0.2s",
-              }}
-            >
-              Admin
-            </button>
-          )}
-        </div>
+        {/* Copyright */}
+        <p className="font-serif" style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.62rem, 1.4vw, 0.72rem)' }}>
+          © 2026 DrMarioSanchez
+        </p>
       </div>
     </footer>
   );
