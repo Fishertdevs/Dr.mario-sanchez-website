@@ -52,6 +52,79 @@ interface DashStats {
   lastUpdated: Date;
 }
 
+function DonutChart({ approved, pending, max }: { approved: number; pending: number; max: number }) {
+  const r = 64;
+  const cx = 90;
+  const cy = 90;
+  const strokeWidth = 22;
+  const circumference = 2 * Math.PI * r;
+  const available = Math.max(0, max - approved - pending);
+
+  const segments = [
+    { value: approved, color: "#2d5a27", label: "Aprobadas" },
+    { value: pending,  color: "#f59e0b", label: "Pendientes" },
+    { value: available, color: "#e2eae1", label: "Disponibles" },
+  ];
+
+  let cumulative = 0;
+  const arcs = segments.map(seg => {
+    const length = max > 0 ? (seg.value / max) * circumference : 0;
+    const dashOffset = circumference / 4 - cumulative;
+    cumulative += length;
+    return { ...seg, length, dashOffset };
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+      <div style={{ position: "relative", width: 180, height: 180 }}>
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e8f0e7" strokeWidth={strokeWidth} />
+          {arcs.map((arc, i) =>
+            arc.length > 0.5 ? (
+              <circle
+                key={i}
+                cx={cx} cy={cy} r={r}
+                fill="none"
+                stroke={arc.color}
+                strokeWidth={strokeWidth}
+                strokeLinecap="butt"
+                strokeDasharray={`${arc.length} ${circumference - arc.length}`}
+                strokeDashoffset={arc.dashOffset}
+                style={{ transition: "stroke-dasharray 0.9s ease, stroke-dashoffset 0.9s ease" }}
+              />
+            ) : null
+          )}
+        </svg>
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        }}>
+          <span style={{ fontFamily: "serif", fontSize: "2rem", fontWeight: 700, color: DARK, lineHeight: 1 }}>
+            {approved + pending}
+          </span>
+          <span style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "3px" }}>
+            Reseñas
+          </span>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+        {[
+          { color: "#2d5a27", label: "Aprobadas", value: approved },
+          { color: "#f59e0b", label: "Pendientes", value: pending },
+          { color: "#c8d8c6", label: "Disponibles", value: available },
+        ].map(item => (
+          <div key={item.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", minWidth: "72px" }}>
+            <div style={{ width: "10px", height: "10px", borderRadius: "3px", background: item.color }} />
+            <span style={{ fontFamily: "serif", fontSize: "1.2rem", fontWeight: 700, color: DARK, lineHeight: 1 }}>{item.value}</span>
+            <span style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase" }}>{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Stars({ rating }: { rating: number }) {
   return (
     <span>
@@ -562,21 +635,13 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </p>
                       </div>
 
-                      {/* Stats row */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                        {[
-                          { label: "Total", value: dashStats.total, color: DARK, bg: "#f0f5ef" },
-                          { label: "Aprobadas", value: dashStats.approved, color: "#15803d", bg: "#dcfce7" },
-                          { label: "Pendientes", value: dashStats.pending, color: "#ca8a04", bg: "#fef9c3" },
-                        ].map(stat => (
-                          <div key={stat.label} style={{ background: "white", borderRadius: "14px", padding: "18px 14px", border: "1px solid #e2eae1", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-                            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: stat.bg, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke={stat.color} strokeWidth="2" fill="none"/></svg>
-                            </div>
-                            <p style={{ fontFamily: "serif", fontSize: "1.6rem", fontWeight: 700, color: stat.color, margin: "0 0 4px" }}>{stat.value}</p>
-                            <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>{stat.label}</p>
-                          </div>
-                        ))}
+                      {/* Donut chart */}
+                      <div style={{ background: "white", borderRadius: "16px", padding: "28px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                        <DonutChart
+                          approved={dashStats.approved}
+                          pending={dashStats.pending}
+                          max={MAX_REVIEWS}
+                        />
                       </div>
 
                       {/* Real-time indicator */}
