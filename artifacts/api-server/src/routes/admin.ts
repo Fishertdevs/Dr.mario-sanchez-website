@@ -60,37 +60,45 @@ router.get("/admin/status", async (_req, res) => {
   res.json({ needsSetup: !adminEmail });
 });
 
-router.post("/admin/setup", async (req, res) => {
-  const adminEmail = await getSetting("admin_email");
-  if (adminEmail) {
-    res.status(403).json({ error: "El administrador ya está configurado" });
+router.post("/admin/auth/google", async (req, res) => {
+  const { credential } = req.body ?? {};
+  if (!credential || typeof credential !== "string") {
+    res.status(400).json({ error: "Token de Google requerido" });
     return;
   }
-  const { email } = req.body ?? {};
-  if (!email || typeof email !== "string" || !email.includes("@")) {
-    res.status(400).json({ error: "Correo inválido" });
-    return;
-  }
-  const newToken = crypto.randomBytes(32).toString("hex");
-  await setSetting("admin_email", email.trim().toLowerCase());
-  await setSetting("session_token", newToken);
-  res.json({ token: newToken });
-});
 
-router.post("/admin/login", async (req, res) => {
-  const { email } = req.body ?? {};
+  let email: string;
+  try {
+    const r = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+    const payload = await r.json() as Record<string, string>;
+    if (payload["error"] || !payload["email"]) {
+      res.status(401).json({ error: "Token de Google inválido" });
+      return;
+    }
+    email = payload["email"].toLowerCase().trim();
+  } catch {
+    res.status(500).json({ error: "Error al verificar con Google" });
+    return;
+  }
+
   const adminEmail = await getSetting("admin_email");
+
   if (!adminEmail) {
-    res.status(500).json({ error: "El panel no está configurado aún" });
+    const newToken = crypto.randomBytes(32).toString("hex");
+    await setSetting("admin_email", email);
+    await setSetting("session_token", newToken);
+    res.json({ token: newToken, email });
     return;
   }
-  if (!email || email.toLowerCase().trim() !== adminEmail.toLowerCase().trim()) {
-    res.status(401).json({ error: "Correo no autorizado" });
+
+  if (email !== adminEmail.toLowerCase().trim()) {
+    res.status(401).json({ error: "Esta cuenta de Google no está autorizada para acceder al panel" });
     return;
   }
+
   const newToken = crypto.randomBytes(32).toString("hex");
   await setSetting("session_token", newToken);
-  res.json({ token: newToken });
+  res.json({ token: newToken, email });
 });
 
 router.post("/admin/logout", requireAdmin, async (_req, res) => {
@@ -113,7 +121,7 @@ router.put("/admin/settings", requireAdmin, async (req, res) => {
     res.status(400).json({ error: "key y value son requeridos" });
     return;
   }
-  if (key === "session_token") {
+  if (key === "session_token" || key === "admin_email") {
     res.status(403).json({ error: "Clave reservada" });
     return;
   }

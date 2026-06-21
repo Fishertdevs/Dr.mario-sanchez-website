@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const GREEN = "#2d5a27";
 const DARK = "#1a2e17";
 const MAX_REVIEWS = 50;
+
+const GOOGLE_CLIENT_ID = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID ?? "";
 
 const FIXED_NETWORKS = [
   { platform: "facebook",  label: "Facebook",  iconKey: "facebook",  placeholder: "https://www.facebook.com/..." },
@@ -170,8 +173,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function AdminPanel({ isOpen, onClose }: Props) {
-  const [email, setEmail] = useState("");
+function AdminPanelInner({ isOpen, onClose }: Props) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("admin_token"));
   const [loggedEmail, setLoggedEmail] = useState(() => localStorage.getItem("admin_logged_email") ?? "");
   const [loginError, setLoginError] = useState("");
@@ -180,9 +182,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
-  const [setupEmail, setSetupEmail] = useState("");
-  const [setupError, setSetupError] = useState("");
-  const [setupLoading, setSetupLoading] = useState(false);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -209,11 +208,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
   const [contactPhone, setContactPhone] = useState("");
   const [savingConfig, setSavingConfig] = useState(false);
 
-  const [currentAdminEmail, setCurrentAdminEmail] = useState("");
-  const [newAdminEmail, setNewAdminEmail] = useState(() => localStorage.getItem("admin_logged_email") ?? "");
-  const [savingAdminEmail, setSavingAdminEmail] = useState(false);
-  const [adminEmailMsg, setAdminEmailMsg] = useState("");
-
   const [dashStats, setDashStats] = useState<DashStats | null>(null);
   const [dashLoading, setDashLoading] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -229,46 +223,24 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     window.dispatchEvent(new CustomEvent("admin-auth-changed"));
   };
 
-  const setup = async () => {
-    if (!setupEmail.trim()) return;
-    setSetupLoading(true);
-    setSetupError("");
-    try {
-      const r = await fetch("/api/admin/setup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: setupEmail.trim() }),
-      });
-      if (!r.ok) {
-        const d = await r.json();
-        setSetupError(d.error ?? "Error al configurar");
-        return;
-      }
-      const { token: t } = await r.json();
-      setNeedsSetup(false);
-      applyToken(t, setupEmail.trim());
-    } finally {
-      setSetupLoading(false);
-    }
-  };
-
-  const login = async () => {
-    if (!email.trim()) return;
+  const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
+    if (!credentialResponse.credential) return;
     setLoginLoading(true);
     setLoginError("");
     try {
-      const r = await fetch("/api/admin/login", {
+      const r = await fetch("/api/admin/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ credential: credentialResponse.credential }),
       });
       if (!r.ok) {
         const d = await r.json();
-        setLoginError(d.error ?? "Correo no autorizado");
+        setLoginError(d.error ?? "Error al iniciar sesión con Google");
         return;
       }
-      const { token: t } = await r.json();
-      applyToken(t, email.trim());
+      const { token: t, email: emailUsed } = await r.json();
+      setNeedsSetup(false);
+      applyToken(t, emailUsed);
     } finally {
       setLoginLoading(false);
     }
@@ -286,7 +258,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_logged_email");
     setToken(null);
-    setEmail("");
     setLoggedEmail("");
     window.dispatchEvent(new CustomEvent("admin-auth-changed"));
     onClose();
@@ -301,7 +272,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_logged_email");
       setToken(null);
-      setEmail("");
       setLoggedEmail("");
       window.dispatchEvent(new CustomEvent("admin-auth-changed"));
     }
@@ -334,8 +304,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
       if (settingsRes.ok) {
         const settings = await settingsRes.json();
         setContactPhone(settings.contact_phone ?? "");
-        setCurrentAdminEmail(settings.admin_email ?? "");
-        setNewAdminEmail(settings.admin_email ?? "");
       }
     } finally {
       setSocialLoading(false);
@@ -437,29 +405,11 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
     }
   };
 
-  const saveAdminEmail = async () => {
-    if (!newAdminEmail.trim()) return;
-    setSavingAdminEmail(true);
-    setAdminEmailMsg("");
-    try {
-      await authFetch("/api/admin/settings", {
-        method: "PUT",
-        body: JSON.stringify({ key: "admin_email", value: newAdminEmail.trim() }),
-      });
-      setCurrentAdminEmail(newAdminEmail.trim());
-      localStorage.setItem("admin_logged_email", newAdminEmail.trim());
-      setLoggedEmail(newAdminEmail.trim());
-      setAdminEmailMsg("Correo actualizado correctamente");
-      setTimeout(() => setAdminEmailMsg(""), 3000);
-    } finally {
-      setSavingAdminEmail(false);
-    }
-  };
-
   if (!isOpen) return null;
 
   const usedPct = dashStats ? Math.min(100, Math.round((dashStats.approved / MAX_REVIEWS) * 100)) : 0;
-  const available = dashStats ? Math.max(0, MAX_REVIEWS - dashStats.approved - dashStats.pending) : 0;
+
+  const googleNotConfigured = !GOOGLE_CLIENT_ID;
 
   return (
     <div
@@ -493,7 +443,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
           gap: "8px", flexShrink: 0,
           boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
         }}>
-          {/* Left: greeting + email */}
           <div style={{ minWidth: 0, flex: 1, overflow: "hidden" }}>
             {isLoggedIn ? (
               <>
@@ -506,7 +455,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
               </>
             ) : null}
           </div>
-          {/* Right: logout + close */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
             {isLoggedIn && (
               <button onClick={logout} style={{
@@ -532,102 +480,86 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 12px 40px" }}>
           <div style={{ width: "100%", maxWidth: "560px" }}>
             {needsSetup === null ? (
-              /* ── Cargando status ── */
               <div style={{ display: "flex", justifyContent: "center", paddingTop: "60px" }}>
                 <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.82rem" }}>Cargando...</p>
               </div>
             ) : needsSetup ? (
-              /* ── Primera Configuración ── */
+              /* ── Primera Configuración con Google ── */
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
-                <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2a5 5 0 110 10A5 5 0 0112 2zM12 14c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z" fill={GREEN}/>
                   </svg>
                 </div>
                 <h1 style={{ fontFamily: "serif", fontSize: "1.4rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
                   Configurar Acceso
                 </h1>
-                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.78rem", marginBottom: "8px", textAlign: "center", maxWidth: "300px" }}>
-                  Primera vez aquí. Define el correo con el que accederás al panel de administrador.
+                <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.78rem", marginBottom: "6px", textAlign: "center", maxWidth: "300px" }}>
+                  Primera vez aquí. Inicia sesión con tu cuenta de Google para activar el panel.
                 </p>
-                <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.66rem", marginBottom: "28px", textAlign: "center" }}>
-                  Este correo se guardará en la base de datos.
+                <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.64rem", marginBottom: "32px", textAlign: "center" }}>
+                  Esa cuenta quedará registrada como la única con acceso.
                 </p>
-                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "28px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
-                  <label style={{ ...labelStyle, display: "block", textAlign: "center" }}>Tu correo de administrador</label>
-                  <input
-                    type="email"
-                    value={setupEmail}
-                    onChange={e => { setSetupEmail(e.target.value); setSetupError(""); }}
-                    onKeyDown={e => { if (e.key === "Enter") setup(); }}
-                    placeholder="correo@ejemplo.com"
-                    style={{ ...inputStyle, marginBottom: "16px", fontSize: "0.9rem" }}
-                    autoFocus
-                  />
-                  {setupError && (
-                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", marginBottom: "12px", textAlign: "center" }}>
-                      {setupError}
+
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "32px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+                  {googleNotConfigured ? (
+                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center" }}>
+                      VITE_GOOGLE_CLIENT_ID no está configurado.
                     </p>
+                  ) : loginLoading ? (
+                    <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69" }}>Verificando con Google...</p>
+                  ) : (
+                    <>
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => setLoginError("Error al conectar con Google")}
+                        text="signin_with"
+                        shape="rectangular"
+                        logo_alignment="left"
+                        size="large"
+                      />
+                      {loginError && (
+                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center", margin: 0 }}>
+                          {loginError}
+                        </p>
+                      )}
+                    </>
                   )}
-                  <button
-                    onClick={setup}
-                    disabled={setupLoading || !setupEmail.trim()}
-                    style={{
-                      width: "100%", padding: "12px",
-                      background: !setupEmail.trim() ? "#e2eae1" : GREEN,
-                      border: "none", borderRadius: "10px",
-                      color: !setupEmail.trim() ? "#9ca3af" : "white",
-                      fontFamily: "serif", fontSize: "0.8rem",
-                      cursor: setupLoading || !setupEmail.trim() ? "not-allowed" : "pointer",
-                      letterSpacing: "0.1em", textTransform: "uppercase",
-                      transition: "all 0.25s", fontWeight: 600,
-                    }}
-                  >
-                    {setupLoading ? "Configurando..." : "Activar Panel"}
-                  </button>
                 </div>
               </div>
             ) : !isLoggedIn ? (
-              /* ── Login ── */
+              /* ── Login con Google ── */
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "32px" }}>
                 <h1 style={{ fontFamily: "serif", fontSize: "1.6rem", color: DARK, fontWeight: 700, marginBottom: "6px", textAlign: "center" }}>
                   Panel de Administración
                 </h1>
                 <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.82rem", marginBottom: "36px", textAlign: "center" }}>
-                  Ingresa con tu correo de administrador
+                  Ingresa con tu cuenta de Google autorizada
                 </p>
-                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "32px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
-                  <label style={{ ...labelStyle, display: "block", textAlign: "center" }}>Correo electrónico</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={e => { setEmail(e.target.value); setLoginError(""); }}
-                    onKeyDown={e => { if (e.key === "Enter") login(); }}
-                    placeholder="ingresa tu correo"
-                    style={{ ...inputStyle, marginBottom: "16px", fontSize: "0.9rem" }}
-                    autoFocus
-                  />
-                  {loginError && (
-                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", marginBottom: "12px", textAlign: "center" }}>
-                      {loginError}
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "36px 28px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+                  {googleNotConfigured ? (
+                    <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center" }}>
+                      VITE_GOOGLE_CLIENT_ID no está configurado.
                     </p>
+                  ) : loginLoading ? (
+                    <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69" }}>Verificando con Google...</p>
+                  ) : (
+                    <>
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => setLoginError("Error al conectar con Google")}
+                        text="signin_with"
+                        shape="rectangular"
+                        logo_alignment="left"
+                        size="large"
+                      />
+                      {loginError && (
+                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#ef4444", textAlign: "center", margin: 0 }}>
+                          {loginError}
+                        </p>
+                      )}
+                    </>
                   )}
-                  <button
-                    onClick={login}
-                    disabled={loginLoading || !email.trim()}
-                    style={{
-                      width: "100%", padding: "12px",
-                      background: !email.trim() ? "#e2eae1" : GREEN,
-                      border: "none", borderRadius: "10px",
-                      color: !email.trim() ? "#9ca3af" : "white",
-                      fontFamily: "serif", fontSize: "0.8rem",
-                      cursor: loginLoading || !email.trim() ? "not-allowed" : "pointer",
-                      letterSpacing: "0.1em", textTransform: "uppercase",
-                      transition: "all 0.25s", fontWeight: 600,
-                    }}
-                  >
-                    {loginLoading ? "Verificando..." : "Ingresar"}
-                  </button>
                 </div>
               </div>
             ) : (
@@ -666,7 +598,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {/* Collapsible header */}
                       <button
                         onClick={() => setReviewsCollapsed(v => !v)}
                         style={{
@@ -683,7 +614,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </span>
                       </button>
 
-                      {/* List */}
                       {!reviewsCollapsed && reviews.map(r => (
                         <div key={r.id}>
                           {editingReview?.id === r.id ? (
@@ -725,7 +655,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                             </div>
                           ) : (
                             <div style={{ background: "white", borderRadius: "10px", padding: "9px 12px", border: "1px solid #e2eae1", display: "flex", alignItems: "center", gap: "10px" }}>
-                              {/* Stars + Status badge */}
                               <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: "3px" }}>
                                 <div style={{ display: "flex", gap: "1px" }}>
                                   {[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: "0.65rem", color: s <= r.rating ? "#f59e0b" : "#e5e7eb" }}>★</span>)}
@@ -735,7 +664,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                                   : <span style={{ padding: "1px 6px", background: "#fef9e7", borderRadius: "999px", fontFamily: "serif", fontSize: "0.46rem", color: "#d97706", letterSpacing: "0.05em" }}>Pendiente</span>
                                 }
                               </div>
-                              {/* Name + content */}
                               <div style={{ flex: 1, minWidth: 0 }}>
                                 <p style={{ fontFamily: "serif", fontSize: "0.75rem", color: DARK, fontWeight: 700, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                   {r.authorName}{r.authorRole ? <span style={{ fontWeight: 400, color: "#9ca3af" }}> · {r.authorRole}</span> : null}
@@ -744,7 +672,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                                   {r.content}
                                 </p>
                               </div>
-                              {/* Action buttons */}
                               <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
                                 {!r.isApproved && (
                                   <button onClick={() => approveReview(r.id)} title="Aprobar" style={{ width: "28px", height: "28px", background: "#f0f5ef", border: "none", borderRadius: "6px", color: GREEN, cursor: "pointer", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center" }}>✓</button>
@@ -815,67 +742,37 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                           </div>
                         </div>
 
-                        {/* Guardar Configuración — borderless green text */}
                         <button
                           onClick={saveAllConfig}
                           disabled={savingConfig}
                           style={{
-                            background: "none",
-                            border: "none",
+                            background: "none", border: "none",
                             color: savingConfig ? "#9ca3af" : GREEN,
-                            fontFamily: "serif",
-                            fontSize: "0.68rem",
+                            fontFamily: "serif", fontSize: "0.68rem",
                             cursor: savingConfig ? "not-allowed" : "pointer",
-                            letterSpacing: "0.1em",
-                            textTransform: "uppercase",
-                            fontWeight: 700,
-                            padding: "8px 0",
-                            width: "100%",
+                            letterSpacing: "0.1em", textTransform: "uppercase",
+                            fontWeight: 700, padding: "8px 0", width: "100%",
                           }}
                         >
                           {savingConfig ? "Guardando..." : "Guardar Configuración"}
                         </button>
 
-                        {/* Acceso Admin */}
-                        <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 4px", textAlign: "center" }}>
-                            Acceso Administrador
+                        {/* Cuenta Google autorizada */}
+                        <div style={{ background: "#f8faf8", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.75rem", color: DARK, fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
+                            Cuenta Google Autorizada
                           </h3>
-                          <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: "0 0 10px", textAlign: "center" }}>
-                            Cambia el correo de acceso al panel. Tendrás que usarlo en el próximo ingreso.
-                          </p>
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#6b7c69"/>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24">
+                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                             </svg>
-                            <span style={{ fontFamily: "serif", fontSize: "0.7rem", color: DARK, fontWeight: 600 }}>
-                              Correo de acceso
+                            <span style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#6b7c69" }}>
+                              {loggedEmail || "—"}
                             </span>
                           </div>
-                          <input
-                            type="email"
-                            value={newAdminEmail}
-                            onChange={e => setNewAdminEmail(e.target.value)}
-                            placeholder={currentAdminEmail || "correo@ejemplo.com"}
-                            style={{ ...sectionInputStyle, marginBottom: "12px" }}
-                          />
-                          {adminEmailMsg && (
-                            <p style={{ fontFamily: "serif", fontSize: "0.7rem", color: GREEN, margin: "0 0 10px" }}>{adminEmailMsg}</p>
-                          )}
-                          <button
-                            onClick={saveAdminEmail}
-                            disabled={savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail}
-                            style={{
-                              background: "none", border: "none",
-                              color: (savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail) ? "#9ca3af" : GREEN,
-                              fontFamily: "serif", fontSize: "0.75rem",
-                              cursor: (savingAdminEmail || !newAdminEmail.trim() || newAdminEmail.trim() === currentAdminEmail) ? "not-allowed" : "pointer",
-                              letterSpacing: "0.08em", textTransform: "uppercase",
-                              fontWeight: 700, padding: 0, width: "100%", textAlign: "center",
-                            }}
-                          >
-                            {savingAdminEmail ? "Actualizando..." : "Actualizar correo"}
-                          </button>
                         </div>
                       </>
                     )}
@@ -888,7 +785,6 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                     <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
                   ) : dashStats ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                      {/* Review space card */}
                       <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
                           <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -909,11 +805,9 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </div>
                         <div style={{ background: "#e8f0e7", borderRadius: "9999px", height: "7px", overflow: "hidden", marginBottom: "6px" }}>
                           <div style={{
-                            height: "100%",
-                            width: `${usedPct}%`,
+                            height: "100%", width: `${usedPct}%`,
                             background: `linear-gradient(90deg, ${GREEN}, #4a8f42)`,
-                            borderRadius: "9999px",
-                            transition: "width 0.8s ease",
+                            borderRadius: "9999px", transition: "width 0.8s ease",
                           }} />
                         </div>
                         <p style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", margin: 0 }}>
@@ -921,54 +815,34 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </p>
                       </div>
 
-                      {/* 3 Animated donut charts */}
                       <div style={{ background: "white", borderRadius: "12px", padding: "16px 14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
                         <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 16px", textAlign: "center" }}>
                           Distribución de Reseñas
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
-                          <DonutChart
-                            value={dashStats.approved}
-                            max={MAX_REVIEWS}
-                            color="#2d5a27"
-                            accent="#e8f5e4"
-                            label="Aprobadas"
-                          />
-                          <DonutChart
-                            value={dashStats.pending}
-                            max={MAX_REVIEWS}
-                            color="#f59e0b"
-                            accent="#fef9e7"
-                            label="Pendientes"
-                          />
-                          <DonutChart
-                            value={available}
-                            max={MAX_REVIEWS}
-                            color="#3b82f6"
-                            accent="#eff6ff"
-                            label="Disponibles"
-                          />
+                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#2d5a27" accent="#e8f5e4" label="Aprobadas" />
+                          <DonutChart value={dashStats.pending} max={MAX_REVIEWS} color="#d97706" accent="#fef9e7" label="Pendientes" />
+                          <DonutChart value={dashStats.total} max={MAX_REVIEWS} color="#6b7280" accent="#f3f4f6" label="Total" />
                         </div>
                       </div>
 
-                      {/* Real-time indicator */}
-                      <div style={{ background: "#f0f5ef", borderRadius: "10px", padding: "10px 12px", border: "1px solid #d1dbd0", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#22c55e", flexShrink: 0, boxShadow: "0 0 0 3px rgba(34,197,94,0.25)" }} />
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: GREEN, margin: 0, fontWeight: 600 }}>
-                            Actualización en tiempo real
-                          </p>
-                          <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {dashStats.lastUpdated.toLocaleTimeString("es-CO")} · cada 30 seg
-                          </p>
+                      <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                        <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 12px", textAlign: "center" }}>
+                          Estado del Sistema
+                        </p>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                          {[
+                            { label: "API", status: "online", color: GREEN },
+                            { label: "Base de datos", status: "online", color: GREEN },
+                            { label: "Autenticación", status: "Google", color: "#4285F4" },
+                            { label: "Actualizado", status: dashStats.lastUpdated.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }), color: "#6b7280" },
+                          ].map(item => (
+                            <div key={item.label} style={{ background: "#f8faf8", borderRadius: "8px", padding: "8px 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
+                              <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase" }}>{item.label}</span>
+                              <span style={{ fontFamily: "serif", fontSize: "0.72rem", color: item.color, fontWeight: 700 }}>{item.status}</span>
+                            </div>
+                          ))}
                         </div>
-                        <button
-                          onClick={loadDashboard}
-                          disabled={dashLoading}
-                          style={{ marginLeft: "auto", padding: "5px 10px", background: "white", border: "1px solid #d1dbd0", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.55rem", cursor: "pointer", flexShrink: 0 }}
-                        >
-                          {dashLoading ? "..." : "↻"}
-                        </button>
                       </div>
                     </div>
                   ) : null
@@ -979,5 +853,13 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminPanel({ isOpen, onClose }: Props) {
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AdminPanelInner isOpen={isOpen} onClose={onClose} />
+    </GoogleOAuthProvider>
   );
 }
