@@ -544,12 +544,12 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                       </p>
                     </div>
                   ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       {reviews.map(r => (
                         <div key={r.id}>
                           {editingReview?.id === r.id ? (
-                            <div style={{ background: "white", borderRadius: "12px", padding: "20px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(45,90,39,0.06)" }}>
-                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
+                            <div style={{ background: "white", borderRadius: "12px", padding: "16px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(45,90,39,0.06)" }}>
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                                 <div>
                                   <label style={labelStyle}>Nombre</label>
                                   <input style={inputStyle} value={editingReview.authorName}
@@ -561,58 +561,57 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                                     onChange={e => setEditingReview(v => v && ({ ...v, authorRole: e.target.value }))} />
                                 </div>
                               </div>
-                              <div style={{ marginBottom: "10px" }}>
+                              <div style={{ marginBottom: "8px" }}>
                                 <label style={labelStyle}>Calificación</label>
-                                <div style={{ display: "flex", gap: "6px" }}>
+                                <div style={{ display: "flex", gap: "4px" }}>
                                   {[1, 2, 3, 4, 5].map(s => (
                                     <button key={s} onClick={() => setEditingReview(v => v && ({ ...v, rating: s }))}
-                                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.3rem", color: s <= editingReview.rating ? "#f59e0b" : "#d1d5db", padding: 0 }}>★</button>
+                                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.1rem", color: s <= editingReview.rating ? "#f59e0b" : "#d1d5db", padding: 0 }}>★</button>
                                   ))}
                                 </div>
                               </div>
-                              <div style={{ marginBottom: "14px" }}>
+                              <div style={{ marginBottom: "10px" }}>
                                 <label style={labelStyle}>Contenido</label>
-                                <textarea rows={3} style={{ ...inputStyle, resize: "vertical" }} value={editingReview.content}
+                                <textarea rows={2} style={{ ...inputStyle, resize: "vertical" }} value={editingReview.content}
                                   onChange={e => setEditingReview(v => v && ({ ...v, content: e.target.value }))} />
                               </div>
-                              <div style={{ display: "flex", gap: "8px" }}>
-                                <button onClick={() => setEditingReview(null)} style={{ flex: 1, padding: "9px", background: "#f3f4f6", border: "none", borderRadius: "8px", color: "#6b7280", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer" }}>
+                              <div style={{ display: "flex", gap: "6px" }}>
+                                <button onClick={() => setEditingReview(null)} style={{ flex: 1, padding: "7px", background: "#f3f4f6", border: "none", borderRadius: "7px", color: "#6b7280", fontFamily: "serif", fontSize: "0.68rem", cursor: "pointer" }}>
                                   Cancelar
                                 </button>
-                                <button onClick={saveReview} style={{ flex: 2, padding: "9px", background: GREEN, border: "none", borderRadius: "8px", color: "white", fontFamily: "serif", fontSize: "0.72rem", cursor: "pointer", fontWeight: 600 }}>
+                                <button onClick={saveReview} style={{ flex: 2, padding: "7px", background: GREEN, border: "none", borderRadius: "7px", color: "white", fontFamily: "serif", fontSize: "0.68rem", cursor: "pointer", fontWeight: 600 }}>
                                   Guardar
                                 </button>
                               </div>
                             </div>
                           ) : (
-                            <div style={{ background: "white", borderRadius: "12px", padding: "16px 18px", border: "1px solid #e2eae1", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
-                              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "6px" }}>
-                                <div>
-                                  <p style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, margin: "0 0 2px", fontWeight: 700 }}>{r.authorName}</p>
-                                  {r.authorRole && <p style={{ fontFamily: "serif", fontSize: "0.68rem", color: "#9ca3af", margin: 0 }}>{r.authorRole}</p>}
+                            <div style={{ background: "white", borderRadius: "10px", padding: "9px 12px", border: "1px solid #e2eae1", display: "flex", alignItems: "center", gap: "10px" }}>
+                              {/* Stars + Status badge */}
+                              <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: "3px" }}>
+                                <div style={{ display: "flex", gap: "1px" }}>
+                                  {[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: "0.65rem", color: s <= r.rating ? "#f59e0b" : "#e5e7eb" }}>★</span>)}
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                  <Stars rating={r.rating} />
-                                  {r.isApproved ? (
-                                    <span style={{ padding: "2px 8px", background: "#f0f5ef", borderRadius: "999px", fontFamily: "serif", fontSize: "0.55rem", color: GREEN, letterSpacing: "0.06em" }}>Aprobada</span>
-                                  ) : (
-                                    <span style={{ padding: "2px 8px", background: "#fef9e7", borderRadius: "999px", fontFamily: "serif", fontSize: "0.55rem", color: "#d97706", letterSpacing: "0.06em" }}>Pendiente</span>
-                                  )}
-                                </div>
+                                {r.isApproved
+                                  ? <span style={{ padding: "1px 6px", background: "#f0f5ef", borderRadius: "999px", fontFamily: "serif", fontSize: "0.46rem", color: GREEN, letterSpacing: "0.05em" }}>Aprobada</span>
+                                  : <span style={{ padding: "1px 6px", background: "#fef9e7", borderRadius: "999px", fontFamily: "serif", fontSize: "0.46rem", color: "#d97706", letterSpacing: "0.05em" }}>Pendiente</span>
+                                }
                               </div>
-                              <p style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#4b5563", margin: "0 0 12px", lineHeight: 1.5 }}>{r.content}</p>
-                              <div style={{ display: "flex", gap: "6px" }}>
+                              {/* Name + content */}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <p style={{ fontFamily: "serif", fontSize: "0.75rem", color: DARK, fontWeight: 700, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                  {r.authorName}{r.authorRole ? <span style={{ fontWeight: 400, color: "#9ca3af" }}> · {r.authorRole}</span> : null}
+                                </p>
+                                <p style={{ fontFamily: "serif", fontSize: "0.66rem", color: "#6b7280", margin: "2px 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                  {r.content}
+                                </p>
+                              </div>
+                              {/* Action buttons */}
+                              <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
                                 {!r.isApproved && (
-                                  <button onClick={() => approveReview(r.id)} style={{ padding: "7px 16px", background: "#f0f5ef", border: "none", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer", fontWeight: 600 }}>
-                                    Aprobar
-                                  </button>
+                                  <button onClick={() => approveReview(r.id)} title="Aprobar" style={{ width: "28px", height: "28px", background: "#f0f5ef", border: "none", borderRadius: "6px", color: GREEN, cursor: "pointer", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center" }}>✓</button>
                                 )}
-                                <button onClick={() => setEditingReview(r)} style={{ padding: "7px 16px", background: "#f8f8f8", border: "none", borderRadius: "7px", color: "#6b7280", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
-                                  Editar
-                                </button>
-                                <button onClick={() => deleteReview(r.id)} style={{ padding: "7px 16px", background: "#fef2f2", border: "none", borderRadius: "7px", color: "#dc2626", fontFamily: "serif", fontSize: "0.65rem", cursor: "pointer" }}>
-                                  Eliminar
-                                </button>
+                                <button onClick={() => setEditingReview(r)} title="Editar" style={{ width: "28px", height: "28px", background: "#f8f9fa", border: "none", borderRadius: "6px", color: "#6b7280", cursor: "pointer", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center" }}>✏</button>
+                                <button onClick={() => deleteReview(r.id)} title="Eliminar" style={{ width: "28px", height: "28px", background: "#fef2f2", border: "none", borderRadius: "6px", color: "#dc2626", cursor: "pointer", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
                               </div>
                             </div>
                           )}

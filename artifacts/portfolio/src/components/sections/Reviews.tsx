@@ -5,6 +5,11 @@ const GREEN = "#2d5a27";
 const DARK_GREEN = "#1e3d1a";
 const BLACK = "#0a0a0a";
 
+const BATCH = 3;
+const CARD_DELAY = 900;
+const READ_PAUSE = 5000;
+const FADE_DURATION = 500;
+
 interface Review {
   id: number;
   authorName: string;
@@ -14,48 +19,57 @@ interface Review {
   createdAt: string;
 }
 
-function Stars({ rating, size = "0.9rem" }: { rating: number; size?: string }) {
-  return (
-    <div style={{ display: "flex", gap: "3px", marginBottom: "14px" }}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} style={{ fontSize: size, color: i <= rating ? "#ffd700" : "rgba(255,255,255,0.2)" }}>★</span>
-      ))}
-    </div>
-  );
+function formatDate(iso: string) {
+  try {
+    return new Date(iso).toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
+  } catch {
+    return "";
+  }
 }
 
-function ReviewCard({ review, index }: { review: Review; index: number }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+function ReviewCard({ review, index, fading }: { review: Review; index: number; fading: boolean }) {
   return (
     <motion.div
-      ref={ref}
+      layout
       initial={{ opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      animate={fading ? { opacity: 0, y: -20 } : { opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: fading ? FADE_DURATION / 1000 : 0.55, delay: fading ? 0 : index * 0.12, ease: [0.16, 1, 0.3, 1] }}
       style={{
         background: BLACK, borderRadius: "16px",
         padding: "28px 24px 24px",
         display: "flex", flexDirection: "column", height: "100%",
       }}
     >
-      <Stars rating={review.rating} />
+      {/* Stars + Date */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+        <div style={{ display: "flex", gap: "3px" }}>
+          {[1,2,3,4,5].map(i => (
+            <span key={i} style={{ fontSize: "0.9rem", color: i <= review.rating ? "#ffd700" : "rgba(255,255,255,0.2)" }}>★</span>
+          ))}
+        </div>
+        <span className="font-serif" style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.35)", letterSpacing: "0.06em" }}>
+          {formatDate(review.createdAt)}
+        </span>
+      </div>
+
+      {/* Content — centered */}
       <p className="font-serif" style={{
         fontSize: "0.82rem", lineHeight: 1.8,
         color: "rgba(255,255,255,0.72)", flex: 1, marginBottom: "20px",
-        fontStyle: "italic",
+        fontStyle: "italic", textAlign: "center",
       }}>
         "{review.content}"
       </p>
+
+      {/* Footer — name · role on same line */}
       <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "14px" }}>
         <p className="font-serif" style={{ fontSize: "0.78rem", color: "white", fontWeight: 700, margin: 0 }}>
           {review.authorName}
+          {review.authorRole && (
+            <span style={{ fontWeight: 400, color: "rgba(255,255,255,0.45)", fontSize: "0.65rem" }}> · {review.authorRole}</span>
+          )}
         </p>
-        {review.authorRole && (
-          <p className="font-serif" style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)", margin: "3px 0 0", letterSpacing: "0.06em" }}>
-            {review.authorRole}
-          </p>
-        )}
       </div>
     </motion.div>
   );
@@ -345,48 +359,81 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
   );
 }
 
-const CARD_H = 355;
-const CARD_INTERVAL = 4500;
+const MOBILE_CARD_H = 340;
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [activeIdx, setActiveIdx] = useState(0);
+
+  // Desktop 3-at-a-time cycle state
+  const [batchIdx, setBatchIdx] = useState(0);
+  const [shownCount, setShownCount] = useState(0);
+  const [fading, setFading] = useState(false);
+  const [cycle, setCycle] = useState(0);
+
+  // Mobile carousel state
+  const [mobileIdx, setMobileIdx] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartX = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
   useEffect(() => {
     fetch("/api/reviews")
       .then(r => r.json())
-      .then(setReviews)
+      .then(d => setReviews(Array.isArray(d) ? d : []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
+  /* Desktop cycle: show BATCH cards one by one, pause, fade, next batch */
   useEffect(() => {
-    if (reviews.length <= 1) return;
-    timerRef.current = setInterval(() => {
-      setActiveIdx(i => (i + 1) % reviews.length);
-    }, CARD_INTERVAL);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [reviews.length]);
+    if (!isInView || reviews.length === 0) return;
+    const totalBatches = Math.ceil(reviews.length / BATCH);
+    const currentBatch = reviews.slice(batchIdx * BATCH, (batchIdx + 1) * BATCH);
+    const batchSize = currentBatch.length;
 
-  const resetTimer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActiveIdx(i => (i + 1) % reviews.length);
-    }, CARD_INTERVAL);
-  };
+    const ts: ReturnType<typeof setTimeout>[] = [];
+    const run = (fn: () => void, ms: number) => { const id = setTimeout(fn, ms); ts.push(id); };
 
-  const goTo = (i: number) => { setActiveIdx(i); resetTimer(); };
+    setShownCount(0);
+    setFading(false);
 
-  const headerRef = useRef(null);
+    // Cards appear one by one
+    for (let i = 0; i < batchSize; i++) {
+      run(() => setShownCount(i + 1), i * CARD_DELAY + 150);
+    }
+
+    // Fade out after READ_PAUSE
+    const endTime = (batchSize - 1) * CARD_DELAY + 150 + READ_PAUSE;
+    run(() => setFading(true), endTime);
+
+    // Next batch
+    run(() => {
+      setFading(false);
+      if (totalBatches > 1) {
+        setBatchIdx(prev => (prev + 1) % totalBatches);
+        setCycle(c => c + 1);
+      } else {
+        // Single batch: just restart
+        setCycle(c => c + 1);
+      }
+    }, endTime + FADE_DURATION + 200);
+
+    return () => ts.forEach(clearTimeout);
+  }, [isInView, cycle, reviews.length]);
+
+  const currentBatch = reviews.slice(batchIdx * BATCH, (batchIdx + 1) * BATCH);
+
+  const goMobile = (i: number) => setMobileIdx(Math.max(0, Math.min(reviews.length - 1, i)));
+
+  const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-80px" });
 
   return (
-    <section id="resenas" style={{ background: GREEN, position: "relative" }}>
+    <section id="resenas" ref={sectionRef} style={{ background: GREEN, position: "relative" }}>
 
       {/* ── Content ── */}
       <div style={{ padding: "clamp(28px, 4vw, 48px) 0 clamp(56px, 9vw, 96px)" }}>
@@ -413,10 +460,7 @@ export default function Reviews() {
             transition={{ duration: 0.7, delay: 0.1 }}
             style={{
               fontSize: "min(calc((100vw - 32px) / 18.5), 3rem)",
-              color: "white",
-              lineHeight: 1.2,
-              marginBottom: "18px",
-              whiteSpace: "nowrap",
+              color: "white", lineHeight: 1.2, marginBottom: "18px", whiteSpace: "nowrap",
             }}
           >
             Lo que dicen nuestros pacientes
@@ -426,11 +470,7 @@ export default function Reviews() {
             initial={{ scaleX: 0 }}
             animate={headerInView ? { scaleX: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.3 }}
-            style={{
-              height: "2px", width: "40px",
-              background: "rgba(255,255,255,0.4)",
-              borderRadius: "9999px", margin: "0 auto",
-            }}
+            style={{ height: "2px", width: "40px", background: "rgba(255,255,255,0.4)", borderRadius: "9999px", margin: "0 auto" }}
           />
         </div>
 
@@ -447,7 +487,7 @@ export default function Reviews() {
           </div>
         ) : (
           <>
-            {/* ── Desktop grid ── */}
+            {/* ── Desktop: 3-at-a-time loop ── */}
             <div
               className="hidden md:grid"
               style={{
@@ -455,22 +495,38 @@ export default function Reviews() {
                 gap: "20px",
                 padding: "0 clamp(20px, 5vw, 60px)",
                 marginBottom: "40px",
+                minHeight: "260px",
+                alignItems: "stretch",
               }}
             >
-              {reviews.map((r, i) => (
-                <ReviewCard key={r.id} review={r} index={i} />
-              ))}
+              <AnimatePresence mode="popLayout">
+                {currentBatch.slice(0, shownCount).map((r, i) => (
+                  <ReviewCard key={r.id} review={r} index={i} fading={fading} />
+                ))}
+              </AnimatePresence>
             </div>
+
+            {/* Batch dots — desktop only */}
+            {reviews.length > BATCH && (
+              <div className="hidden md:flex" style={{ justifyContent: "center", gap: "8px", marginBottom: "12px" }}>
+                {Array.from({ length: Math.ceil(reviews.length / BATCH) }).map((_, i) => (
+                  <div key={i} style={{
+                    width: i === batchIdx ? "22px" : "7px", height: "7px", borderRadius: "9999px",
+                    background: i === batchIdx ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.25)",
+                    transition: "all 0.35s ease",
+                  }} />
+                ))}
+              </div>
+            )}
 
             {/* ── Mobile carousel ── */}
             <div className="md:hidden" style={{ position: "relative", overflow: "hidden", marginBottom: "28px" }}>
               <div
                 style={{
                   display: "flex",
-                  transform: `translateX(calc(-${activeIdx * 100}% - ${activeIdx * 16}px))`,
+                  transform: `translateX(calc(-${mobileIdx * 100}% - ${mobileIdx * 16}px))`,
                   transition: isDragging ? "none" : "transform 0.42s cubic-bezier(0.16,1,0.3,1)",
-                  padding: "0 20px",
-                  gap: "16px",
+                  padding: "0 20px", gap: "16px",
                 }}
                 onPointerDown={e => { dragStartX.current = e.clientX; setIsDragging(true); }}
                 onPointerMove={() => {}}
@@ -478,55 +534,52 @@ export default function Reviews() {
                   setIsDragging(false);
                   const dx = e.clientX - dragStartX.current;
                   if (Math.abs(dx) < 40) return;
-                  if (dx < 0 && activeIdx < reviews.length - 1) goTo(activeIdx + 1);
-                  else if (dx > 0 && activeIdx > 0) goTo(activeIdx - 1);
+                  if (dx < 0) goMobile(mobileIdx + 1);
+                  else goMobile(mobileIdx - 1);
                 }}
               >
                 {reviews.map((r) => (
-                  <div key={r.id} style={{ minWidth: "calc(100vw - 40px)", height: `${CARD_H}px`, flexShrink: 0 }}>
+                  <div key={r.id} style={{ minWidth: "calc(100vw - 40px)", height: `${MOBILE_CARD_H}px`, flexShrink: 0 }}>
                     <div style={{
                       background: BLACK, borderRadius: "16px",
-                      padding: "28px 24px 24px", height: "100%",
+                      padding: "24px 20px 20px", height: "100%",
                       display: "flex", flexDirection: "column", boxSizing: "border-box",
                     }}>
-                      <Stars rating={r.rating} />
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                        <div style={{ display: "flex", gap: "3px" }}>
+                          {[1,2,3,4,5].map(i => <span key={i} style={{ fontSize: "0.9rem", color: i <= r.rating ? "#ffd700" : "rgba(255,255,255,0.2)" }}>★</span>)}
+                        </div>
+                        <span className="font-serif" style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.35)" }}>
+                          {formatDate(r.createdAt)}
+                        </span>
+                      </div>
                       <p className="font-serif" style={{
-                        fontSize: "0.82rem", lineHeight: 1.8,
+                        fontSize: "0.82rem", lineHeight: 1.8, textAlign: "center",
                         color: "rgba(255,255,255,0.72)", flex: 1, fontStyle: "italic",
-                        overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 8,
+                        overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 6,
                         WebkitBoxOrient: "vertical",
                       }}>
                         "{r.content}"
                       </p>
-                      <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "14px", marginTop: "12px" }}>
+                      <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px", marginTop: "10px" }}>
                         <p className="font-serif" style={{ fontSize: "0.78rem", color: "white", fontWeight: 700, margin: 0 }}>
                           {r.authorName}
+                          {r.authorRole && <span style={{ fontWeight: 400, color: "rgba(255,255,255,0.45)", fontSize: "0.65rem" }}> · {r.authorRole}</span>}
                         </p>
-                        {r.authorRole && (
-                          <p className="font-serif" style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)", margin: "3px 0 0" }}>
-                            {r.authorRole}
-                          </p>
-                        )}
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Dots */}
+              {/* Mobile dots */}
               <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "20px" }}>
                 {reviews.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => goTo(i)}
-                    style={{
-                      width: i === activeIdx ? "22px" : "7px",
-                      height: "7px", borderRadius: "9999px",
-                      background: i === activeIdx ? "white" : "rgba(255,255,255,0.3)",
-                      border: "none", cursor: "pointer", padding: 0,
-                      transition: "all 0.35s ease",
-                    }}
-                  />
+                  <button key={i} onClick={() => goMobile(i)} style={{
+                    width: i === mobileIdx ? "22px" : "7px", height: "7px", borderRadius: "9999px",
+                    background: i === mobileIdx ? "white" : "rgba(255,255,255,0.3)",
+                    border: "none", cursor: "pointer", padding: 0, transition: "all 0.35s ease",
+                  }} />
                 ))}
               </div>
             </div>
