@@ -106,9 +106,6 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               onMouseEnter={e => (e.currentTarget.style.background = "#1a3a17")}
               onMouseLeave={e => (e.currentTarget.style.background = "#2d5a27")}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" strokeWidth="2" strokeLinejoin="round" fill="none"/>
-              </svg>
               Bienvenido Admin
             </button>
           )}
@@ -158,9 +155,6 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
                 cursor: "pointer", fontWeight: 700, alignSelf: "flex-start",
               }}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" strokeWidth="2" strokeLinejoin="round" fill="none"/>
-              </svg>
               Bienvenido Admin
             </button>
           )}
