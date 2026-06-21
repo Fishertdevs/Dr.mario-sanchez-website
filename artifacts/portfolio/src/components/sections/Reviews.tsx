@@ -241,7 +241,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   {step === 1 && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                       <div>
-                        <p className="font-serif" style={labelStyle}>Nombre *:</p>
+                        <p className="font-serif" style={labelStyle}>Nombre:</p>
                         <input
                           value={form.authorName}
                           onChange={e => setForm(f => ({ ...f, authorName: e.target.value }))}
@@ -269,7 +269,7 @@ function SubmitModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   {/* Step 2 — Content */}
                   {step === 2 && (
                     <div>
-                      <p className="font-serif" style={labelStyle}>Tu experiencia *:</p>
+                      <p className="font-serif" style={labelStyle}>Tu experiencia:</p>
                       <textarea
                         value={form.content}
                         onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
