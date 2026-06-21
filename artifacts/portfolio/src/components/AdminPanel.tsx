@@ -90,7 +90,7 @@ function DonutChart({ value, max, color, accent, label }: {
   value: number; max: number; color: string; accent: string; label: string;
 }) {
   const [filled, setFilled] = useState(false);
-  const r = 36;
+  const r = 26;
   const circ = 2 * Math.PI * r;
   const pct = max > 0 ? value / max : 0;
   const dash = filled ? pct * circ : 0;
@@ -102,30 +102,30 @@ function DonutChart({ value, max, color, accent, label }: {
   }, [value, max]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-      <div style={{ position: "relative", width: 88, height: 88 }}>
-        <svg width="88" height="88" viewBox="0 0 88 88">
-          <circle cx="44" cy="44" r={r} fill="none" stroke={accent} strokeWidth="10"/>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+      <div style={{ position: "relative", width: 64, height: 64 }}>
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r={r} fill="none" stroke={accent} strokeWidth="8"/>
           <circle
-            cx="44" cy="44" r={r} fill="none"
-            stroke={color} strokeWidth="10"
+            cx="32" cy="32" r={r} fill="none"
+            stroke={color} strokeWidth="8"
             strokeDasharray={`${dash} ${circ - dash}`}
             strokeLinecap="round"
             style={{
-              transformOrigin: "44px 44px",
+              transformOrigin: "32px 32px",
               transform: "rotate(-90deg)",
               transition: "stroke-dasharray 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: "serif", fontSize: "1.05rem", fontWeight: 700, color }}>{value}</span>
+          <span style={{ fontFamily: "serif", fontSize: "0.82rem", fontWeight: 700, color }}>{value}</span>
         </div>
       </div>
-      <span style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
+      <span style={{ fontFamily: "serif", fontSize: "0.5rem", color: "#9ca3af", letterSpacing: "0.09em", textTransform: "uppercase", textAlign: "center" }}>
         {label}
       </span>
-      <span style={{ fontFamily: "serif", fontSize: "0.72rem", fontWeight: 700, color }}>
+      <span style={{ fontFamily: "serif", fontSize: "0.6rem", fontWeight: 700, color }}>
         {Math.round(pct * 100)}%
       </span>
     </div>
@@ -157,11 +157,11 @@ const labelStyle: React.CSSProperties = {
 
 const sectionInputStyle: React.CSSProperties = {
   width: "100%", boxSizing: "border-box",
-  padding: "10px 14px",
+  padding: "7px 10px",
   background: "#f9fafb",
   border: "1px solid #e2e8f0",
-  borderRadius: "8px",
-  fontFamily: "sans-serif", fontSize: "0.82rem",
+  borderRadius: "7px",
+  fontFamily: "sans-serif", fontSize: "0.7rem",
   color: "#374151", outline: "none",
 };
 
@@ -414,7 +414,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: "min(620px, 100%)", height: "100%", background: "#ffffff",
+          width: "min(620px, 55vw)", height: "100%", background: "#ffffff",
           display: "flex", flexDirection: "column",
           boxShadow: "-8px 0 40px rgba(0,0,0,0.18)",
           borderLeft: "1px solid #e2eae1",
@@ -466,7 +466,7 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
         </div>
 
         {/* Body */}
-        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "32px 24px 60px" }}>
+        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 12px 40px" }}>
           <div style={{ width: "100%", maxWidth: "560px" }}>
             {!isLoggedIn ? (
               /* ── Login ── */
@@ -649,15 +649,15 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                     ) : (
                       <>
                         {/* Contacto */}
-                        <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: "0 0 16px" }}>
+                        <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 10px" }}>
                             Contacto
                           </h3>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                               <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#6b7c69"/>
                             </svg>
-                            <span style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, fontWeight: 600 }}>
+                            <span style={{ fontFamily: "serif", fontSize: "0.7rem", color: DARK, fontWeight: 600 }}>
                               Teléfono de contacto
                             </span>
                           </div>
@@ -671,16 +671,16 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </div>
 
                         {/* Redes Sociales */}
-                        <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: "0 0 20px" }}>
+                        <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 12px" }}>
                             Redes Sociales
                           </h3>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                             {FIXED_NETWORKS.map(net => (
                               <div key={net.iconKey}>
-                                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                                   {NET_ICONS[net.iconKey]}
-                                  <span style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, fontWeight: 600 }}>
+                                  <span style={{ fontFamily: "serif", fontSize: "0.7rem", color: DARK, fontWeight: 600 }}>
                                     {net.label}
                                   </span>
                                 </div>
@@ -705,12 +705,12 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                             border: "none",
                             color: savingConfig ? "#9ca3af" : GREEN,
                             fontFamily: "serif",
-                            fontSize: "0.82rem",
+                            fontSize: "0.68rem",
                             cursor: savingConfig ? "not-allowed" : "pointer",
                             letterSpacing: "0.1em",
                             textTransform: "uppercase",
                             fontWeight: 700,
-                            padding: "10px 0",
+                            padding: "8px 0",
                             width: "100%",
                           }}
                         >
@@ -718,18 +718,18 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                         </button>
 
                         {/* Acceso Admin */}
-                        <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-                          <h3 style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, fontWeight: 700, margin: "0 0 6px" }}>
+                        <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                          <h3 style={{ fontFamily: "serif", fontSize: "0.8rem", color: DARK, fontWeight: 700, margin: "0 0 4px" }}>
                             Acceso Administrador
                           </h3>
-                          <p style={{ fontFamily: "serif", fontSize: "0.7rem", color: "#9ca3af", margin: "0 0 16px" }}>
+                          <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: "#9ca3af", margin: "0 0 10px" }}>
                             Cambia el correo de acceso al panel. Tendrás que usarlo en el próximo ingreso.
                           </p>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                               <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#6b7c69"/>
                             </svg>
-                            <span style={{ fontFamily: "serif", fontSize: "0.88rem", color: DARK, fontWeight: 600 }}>
+                            <span style={{ fontFamily: "serif", fontSize: "0.7rem", color: DARK, fontWeight: 600 }}>
                               Correo de acceso
                             </span>
                           </div>
@@ -770,25 +770,25 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                   ) : dashStats ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                       {/* Review space card */}
-                      <div style={{ background: "white", borderRadius: "16px", padding: "24px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px" }}>
-                          <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                          <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                               <ellipse cx="12" cy="5" rx="9" ry="3" stroke={GREEN} strokeWidth="1.8"/>
                               <path d="M3 5v14c0 1.657 4.03 3 9 3s9-1.343 9-3V5" stroke={GREEN} strokeWidth="1.8"/>
                               <path d="M3 12c0 1.657 4.03 3 9 3s9-1.343 9-3" stroke={GREEN} strokeWidth="1.8"/>
                             </svg>
                           </div>
-                          <div>
-                            <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>Almacenamiento</p>
-                            <p style={{ fontFamily: "serif", fontSize: "1rem", color: DARK, margin: 0, fontWeight: 700 }}>Espacio de Reseñas</p>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", margin: 0, letterSpacing: "0.1em", textTransform: "uppercase" }}>Almacenamiento</p>
+                            <p style={{ fontFamily: "serif", fontSize: "0.82rem", color: DARK, margin: 0, fontWeight: 700 }}>Espacio de Reseñas</p>
                           </div>
-                          <span style={{ marginLeft: "auto", fontFamily: "serif", fontSize: "1.1rem", fontWeight: 700, color: GREEN }}>{usedPct}%</span>
+                          <span style={{ marginLeft: "auto", fontFamily: "serif", fontSize: "0.9rem", fontWeight: 700, color: GREEN, flexShrink: 0 }}>{usedPct}%</span>
                         </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                          <span style={{ fontFamily: "serif", fontSize: "0.78rem", color: "#6b7c69" }}>{dashStats.approved} de {MAX_REVIEWS} reseñas aprobadas</span>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                          <span style={{ fontFamily: "serif", fontSize: "0.62rem", color: "#6b7c69" }}>{dashStats.approved} de {MAX_REVIEWS} reseñas aprobadas</span>
                         </div>
-                        <div style={{ background: "#e8f0e7", borderRadius: "9999px", height: "10px", overflow: "hidden", marginBottom: "8px" }}>
+                        <div style={{ background: "#e8f0e7", borderRadius: "9999px", height: "7px", overflow: "hidden", marginBottom: "6px" }}>
                           <div style={{
                             height: "100%",
                             width: `${usedPct}%`,
@@ -797,14 +797,14 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                             transition: "width 0.8s ease",
                           }} />
                         </div>
-                        <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: "#9ca3af", margin: 0 }}>
+                        <p style={{ fontFamily: "serif", fontSize: "0.58rem", color: "#9ca3af", margin: 0 }}>
                           {MAX_REVIEWS - dashStats.approved} espacios disponibles
                         </p>
                       </div>
 
                       {/* 3 Animated donut charts */}
-                      <div style={{ background: "white", borderRadius: "16px", padding: "28px 20px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
-                        <p style={{ fontFamily: "serif", fontSize: "0.65rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 24px", textAlign: "center" }}>
+                      <div style={{ background: "white", borderRadius: "12px", padding: "16px 14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                        <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 16px", textAlign: "center" }}>
                           Distribución de Reseñas
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
@@ -833,22 +833,22 @@ export default function AdminPanel({ isOpen, onClose }: Props) {
                       </div>
 
                       {/* Real-time indicator */}
-                      <div style={{ background: "#f0f5ef", borderRadius: "12px", padding: "14px 18px", border: "1px solid #d1dbd0", display: "flex", alignItems: "center", gap: "10px" }}>
-                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e", flexShrink: 0, boxShadow: "0 0 0 3px rgba(34,197,94,0.25)" }} />
-                        <div>
-                          <p style={{ fontFamily: "serif", fontSize: "0.72rem", color: GREEN, margin: 0, fontWeight: 600 }}>
+                      <div style={{ background: "#f0f5ef", borderRadius: "10px", padding: "10px 12px", border: "1px solid #d1dbd0", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#22c55e", flexShrink: 0, boxShadow: "0 0 0 3px rgba(34,197,94,0.25)" }} />
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontFamily: "serif", fontSize: "0.6rem", color: GREEN, margin: 0, fontWeight: 600 }}>
                             Actualización en tiempo real
                           </p>
-                          <p style={{ fontFamily: "serif", fontSize: "0.62rem", color: "#9ca3af", margin: 0 }}>
-                            Última actualización: {dashStats.lastUpdated.toLocaleTimeString("es-CO")} · cada 30 seg
+                          <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#9ca3af", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {dashStats.lastUpdated.toLocaleTimeString("es-CO")} · cada 30 seg
                           </p>
                         </div>
                         <button
                           onClick={loadDashboard}
                           disabled={dashLoading}
-                          style={{ marginLeft: "auto", padding: "6px 14px", background: "white", border: "1px solid #d1dbd0", borderRadius: "8px", color: GREEN, fontFamily: "serif", fontSize: "0.62rem", cursor: "pointer", flexShrink: 0 }}
+                          style={{ marginLeft: "auto", padding: "5px 10px", background: "white", border: "1px solid #d1dbd0", borderRadius: "7px", color: GREEN, fontFamily: "serif", fontSize: "0.55rem", cursor: "pointer", flexShrink: 0 }}
                         >
-                          {dashLoading ? "..." : "↻ Actualizar"}
+                          {dashLoading ? "..." : "↻"}
                         </button>
                       </div>
                     </div>
