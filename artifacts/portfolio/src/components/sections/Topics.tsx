@@ -1,5 +1,5 @@
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
 import medAltImg        from "@assets/image_1781918088749.png";
 import consultaImg     from "@assets/image_1781918588839.png";
@@ -63,7 +63,7 @@ const IlluAlternativa = () => (
 /* 2 — Consulta Domiciliaria */
 const IlluDomiciliaria = () => (
   <svg viewBox="0 0 130 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <Blob cx="58" cy="75" rx="44" ry="30" />
+    <Blob cx={58} cy={75} rx={44} ry={30} />
     {/* House */}
     <polygon points="58,22 96,50 90,50 90,86 26,86 26,50 20,50" fill="white" stroke={GREEN} strokeWidth="2" />
     <polygon points="58,22 96,50 20,50" fill={GREEN_LIGHT} />
@@ -94,7 +94,7 @@ const IlluDomiciliaria = () => (
 /* 3 — Proceso Terapéutico */
 const IlluTerapeutico = () => (
   <svg viewBox="0 0 130 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <Blob cx="65" cy="80" rx="50" ry="28" />
+    <Blob cx={65} cy={80} rx={50} ry={28} />
     {/* Therapist (left) */}
     <circle cx="38" cy="44" r="10" fill={SKIN} />
     <path d="M28 44 Q28 36 38 35 Q48 36 48 44" fill={DARK} />
@@ -128,7 +128,7 @@ const IlluTerapeutico = () => (
 /* 4 — Medicamentos Inhalados */
 const IlluInhalados = () => (
   <svg viewBox="0 0 130 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <Blob cx="65" cy="82" rx="48" ry="28" />
+    <Blob cx={65} cy={82} rx={48} ry={28} />
     {/* Person */}
     <circle cx="72" cy="36" r="11" fill={SKIN} />
     <path d="M61 36 Q61 27 72 26 Q83 27 83 36" fill={DARK} />
@@ -158,7 +158,7 @@ const IlluInhalados = () => (
 /* 5 — Fisioterapia Respiratoria */
 const IlluFisioterapia = () => (
   <svg viewBox="0 0 130 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <Blob cx="65" cy="80" rx="50" ry="28" />
+    <Blob cx={65} cy={80} rx={50} ry={28} />
     {/* Person standing, arms wide */}
     <circle cx="65" cy="36" r="11" fill={SKIN} />
     <path d="M54 36 Q54 27 65 26 Q76 27 76 36" fill="#8b4513" />
@@ -220,7 +220,7 @@ const IlluApnea = () => (
 /* 7 — Rehabilitación Cardio Pulmonar */
 const IlluRehabilitacion = () => (
   <svg viewBox="0 0 130 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <Blob cx="65" cy="90" rx="52" ry="22" />
+    <Blob cx={65} cy={90} rx={52} ry={22} />
     {/* Treadmill */}
     <rect x="28" y="82" width="74" height="12" rx="6" fill={DARK_GREEN} opacity="0.7" />
     <ellipse cx="42" cy="82" rx="9" ry="5.5" fill={GREEN} opacity="0.65" />
@@ -251,7 +251,7 @@ const IlluRehabilitacion = () => (
 /* 8 — Inyectología */
 const IlluInyectologia = () => (
   <svg viewBox="0 0 130 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <Blob cx="65" cy="82" rx="48" ry="28" />
+    <Blob cx={65} cy={82} rx={48} ry={28} />
     {/* Nurse */}
     <circle cx="42" cy="40" r="10" fill={SKIN} />
     <path d="M32 40 Q32 32 42 31 Q52 32 52 40" fill={DARK} />
@@ -350,7 +350,7 @@ const FADE_DURATION = 600;  // ms fade transition
 /* ═══════════════════════════════════
    CARD COMPONENT
 ═══════════════════════════════════ */
-function SpecCard({ title, desc, descLong, Illus, num, imgSrc }: { title: string; desc: string; descLong?: string; Illus: () => JSX.Element; num: number; imgSrc?: string }) {
+function SpecCard({ title, desc, descLong, Illus, num, imgSrc }: { title: string; desc: string; descLong?: string; Illus: () => React.ReactElement; num: number; imgSrc?: string }) {
   return (
     <motion.div
       layout

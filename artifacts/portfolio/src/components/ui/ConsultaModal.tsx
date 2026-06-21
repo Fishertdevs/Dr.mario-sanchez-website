@@ -100,7 +100,7 @@ export default function ConsultaModal({ open, onClose }: Props) {
                 {/* Nombre */}
                 <div>
                   <label className={labelCls} style={{ color: GREEN }}>Nombre completo *</label>
-                  <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={{ ...inputStyle, focusRingColor: GREEN }} />
+                  <input required value={form.nombre} onChange={set("nombre")} placeholder="Ej: Juan García" className={inputCls} style={inputStyle} />
                 </div>
 
                 {/* Email + Teléfono */}

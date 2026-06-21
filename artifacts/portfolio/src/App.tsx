@@ -13,12 +13,12 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/">{() => <Home />}</Route>
       <Route path="/admin">{() => <Home openAdmin={true} />}</Route>
-      <Route path="/politica-privacidad" component={PoliticaPrivacidad} />
-      <Route path="/politica-cookies" component={PoliticaCookies} />
-      <Route path="/terminos" component={Terminos} />
-      <Route component={NotFound} />
+      <Route path="/politica-privacidad">{() => <PoliticaPrivacidad />}</Route>
+      <Route path="/politica-cookies">{() => <PoliticaCookies />}</Route>
+      <Route path="/terminos">{() => <Terminos />}</Route>
+      <Route>{() => <NotFound />}</Route>
     </Switch>
   );
 }
