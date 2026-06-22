@@ -314,13 +314,15 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
         body: JSON.stringify({ access_token }),
       });
       if (!r.ok) {
-        const d = await r.json();
-        setLoginError(d.error ?? "Error al iniciar sesión con Google");
+        const d = await r.json().catch(() => ({}));
+        setLoginError(d.error ?? `Error ${r.status} al iniciar sesión`);
         return;
       }
       const { token: t, email: emailUsed } = await r.json();
       setNeedsSetup(false);
       applyToken(t, emailUsed);
+    } catch (err) {
+      setLoginError("No se pudo conectar con el servidor. Verifica que el API esté activo.");
     } finally {
       setLoginLoading(false);
     }

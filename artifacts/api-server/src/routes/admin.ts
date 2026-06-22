@@ -7,10 +7,10 @@ import crypto from "node:crypto";
 const router = Router();
 
 const DEFAULT_SOCIAL_LINKS = [
-  { platform: "youtube",   label: "YouTube",   url: "https://youtube.com/@drmariosanchez",      iconKey: "youtube",   isActive: true, sortOrder: 0 },
-  { platform: "tiktok",    label: "TikTok",    url: "https://tiktok.com/@dr..terapia",          iconKey: "tiktok",    isActive: true, sortOrder: 1 },
-  { platform: "whatsapp",  label: "WhatsApp",  url: "https://wa.me/573143127513",               iconKey: "whatsapp",  isActive: true, sortOrder: 2 },
-  { platform: "instagram", label: "Instagram", url: "https://instagram.com/drmariosanchez7124", iconKey: "instagram", isActive: true, sortOrder: 3 },
+  { platform: "youtube",   label: "YouTube",   url: "https://youtube.com/@drmariosanchez7124", iconKey: "youtube",   isActive: true, sortOrder: 0 },
+  { platform: "tiktok",    label: "TikTok",    url: "https://tiktok.com/@dr.terapia",          iconKey: "tiktok",    isActive: true, sortOrder: 1 },
+  { platform: "whatsapp",  label: "WhatsApp",  url: "https://wa.me/573143127513",              iconKey: "whatsapp",  isActive: true, sortOrder: 2 },
+  { platform: "instagram", label: "Instagram", url: "https://instagram.com/drterapia3",        iconKey: "instagram", isActive: true, sortOrder: 3 },
 ];
 
 async function seedSocialLinks() {
