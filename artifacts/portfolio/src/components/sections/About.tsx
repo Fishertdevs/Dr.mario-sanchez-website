@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import doctorPhoto from "@assets/image_1781916620650.png";
 
 const BLACK = "#0a0a0a";
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 
 export default function About() {
   return (
@@ -55,7 +55,7 @@ export default function About() {
             Perfil Profesional
           </h2>
           <div className="flex justify-center mb-8">
-            <div className="h-px w-16" style={{ background: '#2d5a27' }} />
+            <div className="h-px w-16" style={{ background: '#1565C0' }} />
           </div>
           <div className="space-y-5 font-serif leading-relaxed max-w-lg text-left" style={{ color: '#444', fontWeight: 300, fontSize: '1.05rem' }}>
             <p>
@@ -102,7 +102,7 @@ export default function About() {
           Perfil Profesional
         </motion.h2>
         <div className="flex justify-center mb-6">
-          <div className="h-px w-16" style={{ background: '#2d5a27' }} />
+          <div className="h-px w-16" style={{ background: '#1565C0' }} />
         </div>
         <motion.p
           className="font-serif text-sm leading-relaxed text-center max-w-xs"

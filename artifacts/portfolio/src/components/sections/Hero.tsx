@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import doctorPhoto from "@assets/image_1781821171932.png";
 
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 const BLACK = "#0a0a0a";
 
 const scrollTo = (id: string) => {

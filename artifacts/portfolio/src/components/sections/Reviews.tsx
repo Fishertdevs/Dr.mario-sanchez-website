@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
-const GREEN = "#2d5a27";
-const DARK_GREEN = "#1e3d1a";
+const GREEN = "#1565C0";
+const DARK_GREEN = "#0D47A1";
 const BLACK = "#0a0a0a";
 
 const BATCH = 3;

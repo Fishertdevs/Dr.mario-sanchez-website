@@ -5,7 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 
 interface Section {
   title: string;

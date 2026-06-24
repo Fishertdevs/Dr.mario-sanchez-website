@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 
 interface SocialLink {
   id: number;
@@ -117,14 +117,14 @@ export default function Footer() {
         {/* Legal links */}
         <div className="flex flex-col items-center gap-2 md:gap-3 mb-5 md:mb-6">
           <div className="flex items-center justify-center gap-5 md:gap-8 flex-nowrap">
-            <Link href="/politica-cookies" className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#a8d5a2] hover:underline underline-offset-2" style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}>
+            <Link href="/politica-cookies" className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#90CAF9] hover:underline underline-offset-2" style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}>
               Política de Cookies
             </Link>
-            <Link href="/politica-privacidad" className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#a8d5a2] hover:underline underline-offset-2" style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}>
+            <Link href="/politica-privacidad" className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#90CAF9] hover:underline underline-offset-2" style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}>
               Política de Privacidad
             </Link>
           </div>
-          <Link href="/terminos" className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#a8d5a2] hover:underline underline-offset-2" style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}>
+          <Link href="/terminos" className="font-serif whitespace-nowrap transition-all duration-200 hover:text-[#90CAF9] hover:underline underline-offset-2" style={{ color: '#ffffff', fontSize: 'clamp(0.7rem, 1.8vw, 0.82rem)' }}>
             Términos y Condiciones
           </Link>
         </div>

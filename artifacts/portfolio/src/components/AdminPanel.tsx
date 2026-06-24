@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 const DARK = "#1a2e17";
 const MAX_REVIEWS = 50;
 
@@ -546,7 +546,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
           padding: "0 14px", minHeight: "60px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           gap: "8px", flexShrink: 0,
-          boxShadow: "0 1px 4px rgba(45,90,39,0.06)",
+          boxShadow: "0 1px 4px rgba(21,101,192,0.06)",
         }}>
           <div style={{ minWidth: 0, flex: 1, overflow: "hidden" }}>
             {isLoggedIn ? (
@@ -600,7 +600,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                 <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.6rem", marginBottom: isMobile ? "16px" : "24px", textAlign: "center" }}>
                   Esa cuenta quedará como la única con acceso.
                 </p>
-                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "24px 24px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "24px 24px", boxShadow: "0 4px 24px rgba(21,101,192,0.08)", border: "1px solid #e2eae1" }}>
                   <GoogleButtonBlock
                     loading={loginLoading}
                     error={loginError}
@@ -618,7 +618,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                 <p style={{ fontFamily: "serif", color: "#6b7c69", fontSize: "0.75rem", marginBottom: isMobile ? "16px" : "28px", textAlign: "center" }}>
                   Ingresa con tu cuenta de Google autorizada
                 </p>
-                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "24px 24px", boxShadow: "0 4px 24px rgba(45,90,39,0.08)", border: "1px solid #e2eae1" }}>
+                <div style={{ width: "100%", maxWidth: "360px", background: "white", borderRadius: "16px", padding: "24px 24px", boxShadow: "0 4px 24px rgba(21,101,192,0.08)", border: "1px solid #e2eae1" }}>
                   <GoogleButtonBlock
                     loading={loginLoading}
                     error={loginError}
@@ -682,7 +682,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                       {!reviewsCollapsed && reviews.map(r => (
                         <div key={r.id}>
                           {editingReview?.id === r.id ? (
-                            <div style={{ background: "white", borderRadius: "12px", padding: "16px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(45,90,39,0.06)" }}>
+                            <div style={{ background: "white", borderRadius: "12px", padding: "16px", border: "1px solid #d1dbd0", boxShadow: "0 2px 8px rgba(21,101,192,0.06)" }}>
                               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                                 <div>
                                   <label style={labelStyle}>Nombre</label>
@@ -877,7 +877,7 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                     <p style={{ fontFamily: "serif", color: "#9ca3af", fontSize: "0.8rem", textAlign: "center", padding: "40px 0" }}>Cargando...</p>
                   ) : dashStats ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                      <div style={{ background: "white", borderRadius: "12px", padding: "14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(21,101,192,0.06)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
                           <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#f0f5ef", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -907,12 +907,12 @@ function AdminPanelInner({ isOpen, onClose }: Props) {
                         </p>
                       </div>
 
-                      <div style={{ background: "white", borderRadius: "12px", padding: "16px 14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(45,90,39,0.06)" }}>
+                      <div style={{ background: "white", borderRadius: "12px", padding: "16px 14px", border: "1px solid #e2eae1", boxShadow: "0 1px 6px rgba(21,101,192,0.06)" }}>
                         <p style={{ fontFamily: "serif", fontSize: "0.52rem", color: "#000000", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 16px", textAlign: "center" }}>
                           Distribución de Reseñas
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
-                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#2d5a27" accent="#e8f5e4" label="Aprobadas" compact={isMobile} />
+                          <DonutChart value={dashStats.approved} max={MAX_REVIEWS} color="#1565C0" accent="#E3F2FD" label="Aprobadas" compact={isMobile} />
                           <DonutChart value={dashStats.pending} max={MAX_REVIEWS} color="#d97706" accent="#fef9e7" label="Pendientes" compact={isMobile} />
                           <DonutChart value={dashStats.total} max={MAX_REVIEWS} color="#6b7280" accent="#f3f4f6" label="Total" compact={isMobile} />
                         </div>

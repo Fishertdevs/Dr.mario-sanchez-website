@@ -12,11 +12,11 @@ import inyectologiaImg from "@assets/image_1781926059684.png";
 import consultaImg2    from "@assets/image_1781927114542.png";
 import terapeuticoImg2 from "@assets/image_1781926871196.png";
 
-const GREEN = "#2d5a27";
-const GREEN_LIGHT = "#dff0dc";
+const GREEN = "#1565C0";
+const GREEN_LIGHT = "#E0F2F1";
 const SKIN = "#f5d5b0";
 const DARK = "#2a1f1a";
-const DARK_GREEN = "#1e3d1a";
+const DARK_GREEN = "#0D47A1";
 
 /* ══════════════════════════════════════════════
    SVG ILLUSTRATIONS — flat-design, medical theme

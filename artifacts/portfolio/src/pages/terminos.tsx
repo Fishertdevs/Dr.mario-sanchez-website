@@ -1,6 +1,6 @@
 import PolicyLayout from "@/components/layout/PolicyLayout";
 
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 
 const link = (href: string, text: string) => (
   <a href={href} className="underline underline-offset-2" style={{ color: GREEN }}>{text}</a>

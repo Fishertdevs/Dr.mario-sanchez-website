@@ -81,8 +81,8 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               key={link.name}
               onClick={() => handleLink(link.id)}
               data-testid={`link-nav-${link.name.toLowerCase()}`}
-              className="font-serif text-sm tracking-[0.12em] uppercase transition-all duration-200 hover:text-[#6aab5e] relative after:absolute after:bottom-[-3px] after:left-0 after:w-0 after:h-[1.5px] after:bg-[#6aab5e] after:transition-all after:duration-200 hover:after:w-full"
-              style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
+              className="font-serif text-sm tracking-[0.12em] uppercase transition-all duration-200 hover:text-[#42A5F5] relative after:absolute after:bottom-[-3px] after:left-0 after:w-0 after:h-[1.5px] after:bg-[#42A5F5] after:transition-all after:duration-200 hover:after:w-full"
+              style={{ color: '#1565C0', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
             </button>
@@ -94,17 +94,17 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               style={{
                 display: "flex", alignItems: "center", gap: "7px",
                 padding: "8px 18px",
-                background: "#2d5a27",
+                background: "#1565C0",
                 border: "none", borderRadius: "9999px",
                 color: "white",
                 fontFamily: "serif", fontSize: "0.72rem",
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 cursor: "pointer", fontWeight: 700,
-                boxShadow: "0 2px 10px rgba(45,90,39,0.25)",
+                boxShadow: "0 2px 10px rgba(21,101,192,0.25)",
                 transition: "all 0.2s",
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#1a3a17")}
-              onMouseLeave={e => (e.currentTarget.style.background = "#2d5a27")}
+              onMouseEnter={e => (e.currentTarget.style.background = "#0D47A1")}
+              onMouseLeave={e => (e.currentTarget.style.background = "#1565C0")}
             >
               Bienvenido Admin
             </button>
@@ -137,8 +137,8 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               key={link.name}
               onClick={() => handleLink(link.id)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
-              className="font-serif text-xs tracking-[0.2em] uppercase transition-all duration-200 text-left hover:text-[#6aab5e]"
-              style={{ color: '#2d5a27', background: 'none', border: 'none', cursor: 'pointer' }}
+              className="font-serif text-xs tracking-[0.2em] uppercase transition-all duration-200 text-left hover:text-[#42A5F5]"
+              style={{ color: '#1565C0', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
             </button>
@@ -148,7 +148,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               onClick={() => { setMenuOpen(false); onOpenAdmin(); }}
               style={{
                 display: "flex", alignItems: "center", gap: "7px",
-                padding: "10px 18px", background: "#2d5a27",
+                padding: "10px 18px", background: "#1565C0",
                 border: "none", borderRadius: "9999px", color: "white",
                 fontFamily: "serif", fontSize: "0.72rem",
                 letterSpacing: "0.08em", textTransform: "uppercase",

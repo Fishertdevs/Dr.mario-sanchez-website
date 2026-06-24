@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const GREEN = "#2d5a27";
+const GREEN = "#1565C0";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);

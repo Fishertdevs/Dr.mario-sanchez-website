@@ -6,8 +6,8 @@ import {
 } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const GREEN = "#2d5a27";
-const DARK_GREEN = "#1e3d1a";
+const GREEN = "#1565C0";
+const DARK_GREEN = "#0D47A1";
 const PHONE = "573143127513";
 
 const MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];

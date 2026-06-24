@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const GREEN = "#2d5a27";
-const DARK_GREEN = "#1e3d1a";
+const GREEN = "#1565C0";
+const DARK_GREEN = "#0D47A1";
 const PHONE = "573143127513";
 
 interface Form {
@@ -57,7 +57,7 @@ export default function ConsultaModal({ open, onClose }: Props) {
 
   const labelCls = "block font-serif text-[0.65rem] tracking-[0.15em] uppercase mb-1";
   const inputCls = "w-full font-serif text-sm px-3 py-2 rounded-lg border outline-none transition-all duration-200 focus:ring-2";
-  const inputStyle = { borderColor: "rgba(45,90,39,0.25)", color: "#0a0a0a", background: "#fafaf9" };
+  const inputStyle = { borderColor: "rgba(21,101,192,0.25)", color: "#0a0a0a", background: "#fafaf9" };
 
   return (
     <AnimatePresence>
