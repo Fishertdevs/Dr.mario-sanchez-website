@@ -13,6 +13,7 @@ import consultaImg2    from "@assets/image_1781927114542.png";
 import terapeuticoImg2 from "@assets/image_1781926871196.png";
 
 const GREEN = "#1565C0";
+const TEAL = "#009688";
 const GREEN_LIGHT = "#E0F2F1";
 const SKIN = "#f5d5b0";
 const DARK = "#2a1f1a";
@@ -369,11 +370,12 @@ function SpecCard({ title, desc, descLong, Illus, num, imgSrc }: { title: string
     >
       {/* Illustration / Photo */}
       {imgSrc ? (
-        <div style={{ height: '175px', borderRadius: '22px 22px 0 0', overflow: 'hidden', flexShrink: 0 }}>
+        <div style={{ height: '175px', borderRadius: '22px 22px 0 0', overflow: 'hidden', flexShrink: 0, background: '#f0f8ff' }}>
           <img
             src={imgSrc}
             alt={title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+            className="object-contain md:object-cover object-center md:object-top"
+            style={{ width: '100%', height: '100%', display: 'block' }}
           />
         </div>
       ) : (
@@ -402,7 +404,7 @@ function SpecCard({ title, desc, descLong, Illus, num, imgSrc }: { title: string
         <p className={descLong ? 'md:hidden' : ''} style={{ fontFamily: 'serif', fontSize: '0.73rem', lineHeight: 1.6, color: '#666', marginBottom: '6px' }}>
           {desc}
         </p>
-        <div style={{ height: '1.5px', width: '32px', borderRadius: '9999px', background: GREEN, marginTop: 'auto' }} />
+        <div style={{ height: '1.5px', width: '32px', borderRadius: '9999px', background: TEAL, marginTop: 'auto' }} />
       </div>
 
       {/* Page-number — mobile only, no leading zero */}
@@ -488,7 +490,7 @@ export default function Topics() {
   const batchOffset = pcBatch === 1 ? 0 : 4;
 
   return (
-    <section id="topics" ref={sectionRef} className="relative" style={{ background: GREEN }} data-testid="section-topics">
+    <section id="topics" ref={sectionRef} className="relative" style={{ background: `linear-gradient(135deg, ${GREEN} 0%, ${TEAL} 100%)` }} data-testid="section-topics">
       <div className="container mx-auto px-6 md:px-12 pt-10 pb-10 md:pt-14 md:pb-28">
 
         {/* Header */}

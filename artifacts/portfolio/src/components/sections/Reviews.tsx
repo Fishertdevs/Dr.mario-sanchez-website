@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
 const GREEN = "#1565C0";
+const TEAL = "#009688";
 const DARK_GREEN = "#0D47A1";
 const BLACK = "#0a0a0a";
 
@@ -433,7 +434,7 @@ export default function Reviews() {
   const headerInView = useInView(headerRef, { once: true, margin: "-80px" });
 
   return (
-    <section id="resenas" ref={sectionRef} style={{ background: GREEN, position: "relative" }}>
+    <section id="resenas" ref={sectionRef} style={{ background: `linear-gradient(135deg, ${GREEN} 0%, ${TEAL} 100%)`, position: "relative" }}>
 
       {/* ── Content ── */}
       <div style={{ padding: "clamp(28px, 4vw, 48px) 0 clamp(56px, 9vw, 96px)" }}>

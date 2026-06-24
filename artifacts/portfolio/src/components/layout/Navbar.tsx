@@ -81,7 +81,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               key={link.name}
               onClick={() => handleLink(link.id)}
               data-testid={`link-nav-${link.name.toLowerCase()}`}
-              className="font-serif text-sm tracking-[0.12em] uppercase transition-all duration-200 hover:text-[#42A5F5] relative after:absolute after:bottom-[-3px] after:left-0 after:w-0 after:h-[1.5px] after:bg-[#42A5F5] after:transition-all after:duration-200 hover:after:w-full"
+              className="font-serif text-sm tracking-[0.12em] uppercase transition-all duration-200 hover:text-[#009688] relative after:absolute after:bottom-[-3px] after:left-0 after:w-0 after:h-[1.5px] after:bg-[#009688] after:transition-all after:duration-200 hover:after:w-full"
               style={{ color: '#1565C0', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}
@@ -137,7 +137,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               key={link.name}
               onClick={() => handleLink(link.id)}
               data-testid={`link-mobile-${link.name.toLowerCase()}`}
-              className="font-serif text-xs tracking-[0.2em] uppercase transition-all duration-200 text-left hover:text-[#42A5F5]"
+              className="font-serif text-xs tracking-[0.2em] uppercase transition-all duration-200 text-left hover:text-[#009688]"
               style={{ color: '#1565C0', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               {link.name}

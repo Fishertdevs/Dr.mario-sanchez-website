@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import doctorPhoto from "@assets/image_1781821171932.png";
 
 const GREEN = "#1565C0";
+const TEAL = "#009688";
 const BLACK = "#0a0a0a";
 
 const scrollTo = (id: string) => {
@@ -84,7 +85,7 @@ export default function Hero() {
               onClick={() => scrollTo("contact")}
               data-testid="link-hero-agendar"
               className="font-serif text-sm tracking-[0.28em] uppercase hover:opacity-60 transition-opacity duration-200 cursor-pointer"
-              style={{ color: GREEN, fontWeight: 600, background: 'none', border: 'none', padding: 0 }}
+              style={{ color: TEAL, fontWeight: 600, background: 'none', border: 'none', padding: 0 }}
             >
               Agendar consulta
             </button>
@@ -167,7 +168,7 @@ export default function Hero() {
               onClick={() => scrollTo("contact")}
               data-testid="link-hero-agendar-mobile"
               className="font-serif text-[11px] tracking-[0.25em] uppercase hover:opacity-60 transition-opacity cursor-pointer"
-              style={{ color: GREEN, fontWeight: 600, background: 'none', border: 'none', padding: 0 }}
+              style={{ color: TEAL, fontWeight: 600, background: 'none', border: 'none', padding: 0 }}
             >
               Agendar consulta
             </button>
